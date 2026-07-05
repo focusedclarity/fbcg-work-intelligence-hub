@@ -1,0 +1,142 @@
+{
+  "_comment": "Structured JSON of the Sorter (Flow 1) AI-classify step + SharePoint create step. Site Address = full URL 'https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155' (NOT the short name — the short form errors with 'Site Address ... is not valid'), list 'Inbox Action Register'. NOTE: the source prompt declared only 9 output keys but the SharePoint step maps 13 — outputContract below is the corrected 13-key set; update the prompt's 'these keys' line to match or owner/dueDateStated/recipientScope/triggerWordsHit return empty.",
+  "classifyEmailStep": {
+    "name": "Classify Email for Action Register",
+    "type": "AI prompt (GPT)",
+    "inputs": {
+      "subject": "When a new email arrives (V3) > Subject",
+      "from": "When a new email arrives (V3) > From address",
+      "to": "When a new email arrives (V3) > To",
+      "cc": "When a new email arrives (V3) > Cc",
+      "body": "When a new email arrives (V3) > Body preview"
+    },
+    "persona": "Classify one email for Gina Thomas, Business Systems & Solutions Manager, Business Services Dept (BSD), First Baptist Church of Glenarden. Return ONLY a JSON object. No prose.",
+    "declaredKeysInstruction": "Return ONLY a JSON object with these 13 keys and allowed values: businessCategory, digestLane, sourceSystem, pillar, actionOwner, owner, priority, status, dueDateStated, reviewed, recipientScope, confidence, triggerWordsHit.",
+    "outputContract": {
+      "businessCategory": "<one businessCategory enum, keep en-dash –>",
+      "digestLane": "<one digestLane enum>",
+      "sourceSystem": "<one sourceSystem enum, or Other>",
+      "pillar": "<one pillar enum>",
+      "actionOwner": "Me | Someone Else | None",
+      "owner": "<name/email of who owns the next step, or empty>",
+      "priority": "Critical | High | Normal | Low",
+      "status": "New | Waiting | Blocked | Reference",
+      "dueDateStated": "<ISO date YYYY-MM-DD if stated, else empty>",
+      "reviewed": "Yes | No",
+      "recipientScope": "Direct to Me | CC | Distribution List",
+      "confidence": "<integer 0-100>",
+      "triggerWordsHit": "<matched phrases, comma-separated, or empty>"
+    },
+    "allowedValues": {
+      "businessCategory": [
+        "CONTRACTS – Intake / Review",
+        "PROCUREMENT – PO / Requisition",
+        "VENDOR – Setup / Master Data",
+        "FINANCE / AP – Check Request",
+        "SYSTEM – NetSuite / NextProcess",
+        "AI / AUTOMATION DESIGN",
+        "REPORTING – CBO / Leadership",
+        "TRAINING / SOP / ENABLEMENT",
+        "ACTION – System Exception",
+        "ACTION – Reply Needed",
+        "ACTION – Approval / Decision",
+        "WAITING – Someone Else",
+        "BLOCKED – Needs Escalation",
+        "LEGAL / POLICY / COMPLIANCE",
+        "FYI – Reference / Learning",
+        "PROMOTIONS / SUBSCRIPTIONS / MISC",
+        "MINISTRY / CHURCH-COMMUNITY (non-BSD)",
+        "FACILITIES – Inspection Reports"
+      ],
+      "digestLane": [
+        "System Exceptions / Workflow Breaks",
+        "Action Required",
+        "Waiting On Others",
+        "Leadership / Reporting",
+        "Ministry / Community",
+        "FYI / Learning Reference",
+        "Promotions / Subscriptions / Misc"
+      ],
+      "sourceSystem": [
+        "Smartsheet", "NetSuite", "NextProcess", "Oracle", "ADP", "DocuSign",
+        "Microsoft 365 / Teams", "Zoom", "Amazon Business", "Canva",
+        "OmegaCor IT", "Internal Email", "External Email", "Other"
+      ],
+      "pillar": ["P1", "P2", "P3", "P4", "P5", "P6", "Ops/Admin", "N/A"],
+      "actionOwner": ["Me", "Someone Else", "None"],
+      "priority": ["Critical", "High", "Normal", "Low"],
+      "status": ["New", "Waiting", "Blocked", "Reference"],
+      "reviewed": ["Yes", "No"],
+      "recipientScope": ["Direct to Me", "CC", "Distribution List"]
+    },
+    "rules": {
+      "R1": "Platform is NOT the category. Sending system (Smartsheet/NetSuite/NextProcess/Oracle/ADP/etc.) goes in sourceSystem; classify businessCategory by what the email is ABOUT.",
+      "R2": "A NetSuite/NextProcess/Oracle business transaction = the transaction category (requisition/PO=PROCUREMENT; bill/check/journal/invoice/past-due=FINANCE/AP; vendor record=VENDOR). Use SYSTEM only for platform notices (upgrade/config/integration/break).",
+      "R3": "Contract lifecycle steps (submit/review/approve/execute/renew-by/signature)=CONTRACTS; use LEGAL only for genuine counsel/policy/compliance.",
+      "R5": "Ministry Gina actively works (WCWC)=MINISTRY; broadcast church info (Funerals, digests, staff-meeting blasts)=FYI.",
+      "R6": "KEY. If Gina owns the next action -> actionOwner='Me' and an action lane. If she is only cc'd/informed -> actionOwner='Someone Else' (or 'None'), digestLane='FYI / Learning Reference', priority='Low', regardless of content. Direct-to-her outranks a distribution list.",
+      "R7": "NetSuite/NextProcess money item=FINANCE/AP; platform notice=SYSTEM; a request to design/acquire capability=AI / AUTOMATION DESIGN.",
+      "R8": "'Build/revisit a process or form'=AI / AUTOMATION DESIGN; a request needing only a short reply=ACTION – Reply Needed.",
+      "R9": "Educational/how-to/AI-learning content or professional newsletters=FYI – Reference / Learning. Reserve PROMOTIONS / SUBSCRIPTIONS / MISC for consumer/vendor marketing (restaurants, salon, streaming sign-ups, product trials).",
+      "R10": "Routine IT-support tickets/equipment automations=FYI. A named person's request awaiting Gina's fulfillment=ACTION (Procurement or Approval).",
+      "recipientScope": "Direct to Me if gthomas@fbcglenarden.org is in To; CC if only in Cc; Distribution List if reached via a group/DL address.",
+      "needsReview": "If action-vs-FYI is genuinely unclear, or confidence < 60, set reviewed='No' and digestLane='Action Required'. Otherwise reviewed='Yes'."
+    },
+    "pillarDefaultMap": {
+      "CONTRACTS – Intake / Review": "P5",
+      "PROCUREMENT – PO / Requisition": "P5",
+      "VENDOR – Setup / Master Data": "P5",
+      "FINANCE / AP – Check Request": "P2",
+      "SYSTEM – NetSuite / NextProcess": "P3",
+      "ACTION – System Exception": "P3",
+      "AI / AUTOMATION DESIGN": "P2",
+      "REPORTING – CBO / Leadership": "P4",
+      "TRAINING / SOP / ENABLEMENT": "P1",
+      "FACILITIES – Inspection Reports": "Ops/Admin",
+      "PROMOTIONS / SUBSCRIPTIONS / MISC": "N/A",
+      "FYI – Reference / Learning": "N/A",
+      "MINISTRY / CHURCH-COMMUNITY (non-BSD)": "N/A",
+      "_contentJudged": ["ACTION – Reply Needed", "ACTION – Approval / Decision", "WAITING – Someone Else", "BLOCKED – Needs Escalation", "LEGAL / POLICY / COMPLIANCE"]
+    },
+    "priorityLogic": {
+      "Critical": "A system exception Gina owns, or subject has 'urgent'/'past due'/'immediate attention required'.",
+      "High": "Contract legal-review/approval/signature, renew-by, escalations, direct approval requests.",
+      "Normal": "Routine owned action.",
+      "Low": "Anything actionOwner != 'Me', FYI, promotions, ministry broadcast, inspection reports.",
+      "_note": "'ACTION REQUIRED: CBO Master Initiative Tracker' is a routine status nudge -> REPORTING, Normal (not Critical)."
+    },
+    "statusLogic": "New if actionOwner='Me'; otherwise Reference. Use Waiting for WAITING items, Blocked for BLOCKED items.",
+    "timezone": "America/New_York"
+  },
+  "registerActionStep": {
+    "name": "Register Action in SharePoint",
+    "action": "SharePoint — Create item",
+    "site": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155",
+    "list": "Inbox Action Register",
+    "fieldMapping": {
+      "Email Subject": "When a new email arrives (V3) > Subject",
+      "Received Date": "When a new email arrives (V3) > Received time",
+      "Sender": "When a new email arrives (V3) > From address",
+      "Mailbox Source": "Primary",
+      "Source Link / Message ID": "When a new email arrives (V3) > internet message id",
+      "Web Link": "When a new email arrives (V3) > web link",
+      "Has Attachments": "When a new email arrives (V3) > has attachments",
+      "Classified Date": "utcNow()",
+      "Last Status Change": "utcNow()",
+      "Business Category": "Classify Email for Action Register > businessCategory",
+      "Digest Lane": "Classify Email for Action Register > digestLane",
+      "Source System": "Classify Email for Action Register > sourceSystem",
+      "Pillar": "Classify Email for Action Register > pillar",
+      "Action Owner": "Classify Email for Action Register > actionOwner",
+      "Owner": "Classify Email for Action Register > owner",
+      "Priority": "Classify Email for Action Register > priority",
+      "Status": "Classify Email for Action Register > status",
+      "Due Date Stated": "Classify Email for Action Register > dueDateStated",
+      "Reviewed": "Classify Email for Action Register > reviewed",
+      "Recipient Scope": "Classify Email for Action Register > recipientScope",
+      "Confidence": "Classify Email for Action Register > confidence",
+      "Trigger Words Hit": "Classify Email for Action Register > triggerWordsHit"
+    },
+    "leaveEmpty": ["Follow-Up Date", "Waiting On", "Draft Status"]
+  }
+}

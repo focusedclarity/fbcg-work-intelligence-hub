@@ -1,0 +1,35 @@
+{
+  "$comment": "Scout (Flow 0, Step 7) column-definition array for List C = 'User Profile Register'. One row per tester/Hub instance. Scout writes it during onboarding (Steps 8-9); Onboarding Complete=Yes is the activation gate that turns Flows 1-10 on (Step 9). Decisions confirmed 2026-07-03: Reports To = Text (#4); Key Systems = Note (#3). OneDrive URL is CACHE/display only — flows resolve the site URL live via Get my profile (V2), never from this field. Field-creation mechanics identical to List A — see scout_listA_columns_README.md. FieldTypeKind: Text=2, Note=3, DateTime=4, Choice=6, Boolean=8, URL=11.",
+  "list": "User Profile Register",
+  "schemaVersion": "v1-frozen-2026-07-03",
+  "titleRename": {
+    "method": "patchTitle",
+    "internalName": "Title",
+    "displayName": "Display Name",
+    "note": "PATCH/MERGE Title -> 'Display Name' (tester's name). UPN/Email below is the upsert key the flows match on."
+  },
+  "columns": [
+    { "internalName": "UPNEmail", "displayName": "UPN / Email", "fieldType": "Text", "fieldTypeKind": 2, "maxLength": 255, "required": true, "description": "Upsert key for this list. From Get my profile (V2)." },
+    { "internalName": "OneDriveURL", "displayName": "OneDrive URL", "fieldType": "URL", "fieldTypeKind": 11, "displayFormat": "Hyperlink", "required": false, "description": "CACHE / display only. Flows derive the live site URL via Get my profile (V2); never build a path from this stored value (Scout Step 2)." },
+    { "internalName": "SchemaVersion", "displayName": "Schema Version", "fieldType": "Text", "fieldTypeKind": 2, "maxLength": 50, "default": "v4", "required": false, "description": "Spec version this instance was provisioned from. Mirrors the Pilot Roster; feeds the Schema Drift Check view." },
+    { "internalName": "OnboardingDate", "displayName": "Onboarding Date", "fieldType": "DateTime", "fieldTypeKind": 4, "displayFormat": "DateOnly", "required": false, "description": "Set on provisioning." },
+    { "internalName": "OnboardingComplete", "displayName": "Onboarding Complete", "fieldType": "Boolean", "fieldTypeKind": 8, "default": "0", "required": false, "description": "THE ACTIVATION GATE (Step 9). Flows 1-10 check this = true before doing anything for this user. Scout sets it true only once all five card fields are populated." },
+    { "internalName": "Department", "displayName": "Department", "fieldType": "Text", "fieldTypeKind": 2, "maxLength": 255, "required": false, "description": "Onboarding card 1. Pilot value: Business Services Department (BSD)." },
+    { "internalName": "ReportsTo", "displayName": "Reports To", "fieldType": "Text", "fieldTypeKind": 2, "maxLength": 255, "required": false, "description": "Onboarding card 2. Text (decision #4 — simpler for self-service, survives directory changes). Pilot value: Rev. Lettie Carr, Esq. (Director, BSD)." },
+    { "internalName": "KeySystems", "displayName": "Key Systems", "fieldType": "Note", "fieldTypeKind": 3, "numLines": 4, "richText": false, "required": false, "description": "Onboarding card 3 (decision #3 — free-text Note, cross-tester safe). Pilot value from Phase U: Smartsheet, NetSuite (Oracle), NextProcess, ADP, DocuSign, Microsoft 365/Teams, Zoom, Amazon Business, Canva." },
+    { "internalName": "KeyContacts", "displayName": "Key Contacts", "fieldType": "Note", "fieldTypeKind": 3, "numLines": 6, "richText": false, "required": false, "description": "Onboarding card 4. Filled from Phase U sender map (Deliverable 1 §D card #4): Lettie Carr, Tomiko Hankerson, Vincent Miller, Yolanda Dudley, Stefanie May, Stefn Capito, Rachelle Patterson, Tore Girty, Nina Ellis; + external: Oracle NetSuite team, NextProcess, OmegaCor IT, Isaac Marks (outside counsel)." },
+    { "internalName": "PriorityTriggerWords", "displayName": "Priority Trigger Words", "fieldType": "Note", "fieldTypeKind": 3, "numLines": 6, "richText": false, "required": false, "description": "Onboarding card 5. Filled from Phase U Deliverable 3: ACTION REQUIRED, Immediate Attention Required, Urgent/Past Due, Escalation, requires your review/approval, Renew By, + system-exception signatures (Data Shuttle failure, Not all recipients will receive, IP Validation Failure, Waiting on Client, VENDOR NOT IN NETSUITE)." },
+    { "internalName": "AdditionalMailboxes", "displayName": "Additional Mailboxes", "fieldType": "Note", "fieldTypeKind": 3, "numLines": 3, "richText": false, "required": false, "description": "Shared mailboxes with delegation; Sweep/multi-mailbox scans read this. PILOT VALUE = EMPTY (Gina 2026-07-03: no shared mailboxes). Semicolon- or line-delimited when used." },
+    { "internalName": "DigestChannel", "displayName": "Digest Channel", "fieldType": "Choice", "fieldTypeKind": 6, "editFormat": "Dropdown", "fillInChoice": false, "default": "Teams", "required": false, "choices": ["Teams", "Email", "Both"], "description": "Escalation/nudge pings MUST respect this, not hardcode Teams (build-review gap #7). Pilot default Teams (the new BSSI Teams channel)." },
+    { "internalName": "DigestTime", "displayName": "Digest Time", "fieldType": "Choice", "fieldTypeKind": 6, "editFormat": "Dropdown", "fillInChoice": true, "required": false, "choices": ["7:00 AM", "8:00 AM", "9:00 AM", "12:00 PM", "5:00 PM"], "description": "Optional preferred delivery time for the daily/weekly digest. fillInChoice for custom times." },
+    { "internalName": "BusinessHoursStart", "displayName": "Business-Hours Start", "fieldType": "Text", "fieldTypeKind": 2, "maxLength": 10, "default": "9:00 AM", "required": false, "description": "Feeds the 'business day' math for follow-up windows (build-review gap #6)." },
+    { "internalName": "BusinessHoursEnd", "displayName": "Business-Hours End", "fieldType": "Text", "fieldTypeKind": 2, "maxLength": 10, "default": "5:00 PM", "required": false, "description": "Feeds business-day math for follow-up windows (gap #6)." },
+    { "internalName": "Notes", "displayName": "Notes", "fieldType": "Note", "fieldTypeKind": 3, "numLines": 4, "richText": false, "required": false, "description": "Freeform." }
+  ],
+  "views": [
+    { "name": "All Profiles", "default": true },
+    { "name": "Active Instances", "filter": "Onboarding Complete = Yes" },
+    { "name": "Incomplete Onboarding", "filter": "Onboarding Complete = No", "note": "The 'stuck at setup' working view." },
+    { "name": "Schema Drift Check", "groupBy": "Schema Version", "note": "Anyone not on the current version stands out." }
+  ]
+}

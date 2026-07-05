@@ -1,0 +1,41 @@
+table,dimension,bucket,count,basis
+MONTHLY_TOTAL,month,2026-01,1925,reliable (Graph totalResultCount, Inbox)
+MONTHLY_TOTAL,month,2026-02,1422,reliable
+MONTHLY_TOTAL,month,2026-03,1885,reliable
+MONTHLY_TOTAL,month,2026-04,1732,reliable
+MONTHLY_TOTAL,month,2026-05,1507,reliable
+MONTHLY_TOTAL,month,2026-06,1966,reliable
+MONTHLY_TOTAL,month,2026-07(1-3),302,reliable
+MONTHLY_TOTAL,month,WINDOW_TOTAL,10739,reliable (sum)
+SENDER_CLUSTER,cluster,Internal @fbcglenarden.org,3331,reliable (sender filter, window)
+SENDER_CLUSTER,cluster,Smartsheet automation (app.smartsheet.com),2117,reliable
+SENDER_CLUSTER,cluster,NextProcess (nextprocess.net),625,reliable
+SENDER_CLUSTER,cluster,NetSuite (netsuite.com),298,reliable
+SENDER_CLUSTER,cluster,Oracle NetSuite team (oracle.com),222,reliable
+SENDER_CLUSTER,cluster,OmegaCor IT (omegacorit.com),41,reliable
+SENDER_CLUSTER,cluster,Other external (promotions/newsletters/community/other vendors),4105,derived (window total minus named clusters)
+CATEGORY_EST,business_category,FYI - Reference / Learning,3000,ESTIMATE (sample-extrapolated) - largest tail
+CATEGORY_EST,business_category,PROMOTIONS / SUBSCRIPTIONS / MISC,1500,ESTIMATE - proposed new first-class category
+CATEGORY_EST,business_category,MINISTRY / CHURCH-COMMUNITY (non-BSD) [NEW],1200,ESTIMATE - proposed new category, currently unhoused
+CATEGORY_EST,business_category,CONTRACTS - Intake / Review,900,ESTIMATE - Smartsheet contract workflow + internal
+CATEGORY_EST,business_category,FACILITIES - Inspection Reports [NEW/low-priority],700,ESTIMATE - Smartsheet WC/MC/CL daily+weekly stream
+CATEGORY_EST,business_category,REPORTING - CBO / Leadership,650,ESTIMATE - Initiative Tracker + digests + reports
+CATEGORY_EST,business_category,PROCUREMENT - PO / Requisition,600,ESTIMATE - NextProcess-driven
+CATEGORY_EST,business_category,ACTION - Reply Needed,550,ESTIMATE - internal
+CATEGORY_EST,business_category,ACTION - Approval / Decision,450,ESTIMATE - contract/transfer/requisition approvals
+CATEGORY_EST,business_category,VENDOR - Setup / Master Data,300,ESTIMATE - New Vendor Request workflow
+CATEGORY_EST,business_category,SYSTEM - NetSuite / NextProcess,300,ESTIMATE - system reports/notices
+CATEGORY_EST,business_category,FINANCE / AP - Check Request,200,ESTIMATE
+CATEGORY_EST,business_category,ACTION - System Exception,180,ESTIMATE - Data Shuttle/workflow breaks/IT/IP-validation
+CATEGORY_EST,business_category,LEGAL / POLICY / COMPLIANCE,120,ESTIMATE - overlaps CONTRACTS
+CATEGORY_EST,business_category,TRAINING / SOP / ENABLEMENT,90,ESTIMATE
+CATEGORY_EST,business_category,AI / AUTOMATION DESIGN,60,ESTIMATE - mostly vendor marketing, thin genuine design
+CATEGORY_EST,business_category,WAITING - Someone Else,50,ESTIMATE
+CATEGORY_EST,business_category,BLOCKED - Needs Escalation,20,ESTIMATE - rare but high-severity
+LANE_EST,digest_lane,FYI / Learning Reference,3000,ESTIMATE
+LANE_EST,digest_lane,Promotions / Subscriptions / Misc,1500,ESTIMATE
+LANE_EST,digest_lane,(proposed) Ministry / Community,1200,ESTIMATE - not in current lane set
+LANE_EST,digest_lane,Action lanes (Reply/Approval/Contracts/Vendor/Proc),3600,ESTIMATE
+LANE_EST,digest_lane,Leadership / Reporting,650,ESTIMATE
+LANE_EST,digest_lane,System Exceptions / Workflow Breaks,180,ESTIMATE
+LANE_EST,digest_lane,Waiting On Others,50,ESTIMATE

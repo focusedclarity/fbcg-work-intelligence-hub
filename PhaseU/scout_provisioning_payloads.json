@@ -1,0 +1,106 @@
+{
+  "$comment": "Pre-rendered provisioning payloads for Scout (Flow 0), consumed by scout_flow0_build.md. Each list has: createListBody (POST _api/web/lists), titleMerge (MERGE the Title field -> display name), fields[] (ordered SchemaXml strings for POST .../fields/createfieldasxml), and views[] (POST .../views). Fields are IN CREATE ORDER — run the Apply-to-each with concurrency=1 so calculated fields land after their inputs. All SchemaXml controls the internal Name so downstream flows (Tempo/Watchdog/Sweep/Sorter) reference stable names. Send bodies UTF-8; the en-dash (–) in category names is intentional Unicode.",
+  "createFieldEndpoint": "_api/web/lists/getbytitle('{listTitle}')/fields/createfieldasxml",
+  "createFieldBodyTemplate": { "parameters": { "__metadata": { "type": "SP.XmlSchemaFieldCreationInformation" }, "SchemaXml": "{one string from fields[]}", "Options": 12 } },
+  "lists": [
+    {
+      "title": "Inbox Action Register",
+      "createListBody": { "__metadata": { "type": "SP.List" }, "BaseTemplate": 100, "Title": "Inbox Action Register", "Description": "Work Action Intelligence Hub — List A. Provisioned by Scout from Phase U frozen taxonomy v4." },
+      "titleMerge": { "endpoint": "_api/web/lists/getbytitle('Inbox Action Register')/fields/getbytitle('Title')", "httpMethod": "MERGE", "body": { "__metadata": { "type": "SP.FieldText" }, "Title": "Email Subject" } },
+      "fields": [
+        "<Field Type=\"DateTime\" Name=\"ReceivedDate\" DisplayName=\"Received Date\" Format=\"DateTime\" Required=\"TRUE\"/>",
+        "<Field Type=\"Text\" Name=\"Sender\" DisplayName=\"Sender\" MaxLength=\"255\" Required=\"FALSE\"/>",
+        "<Field Type=\"Text\" Name=\"SenderDomain\" DisplayName=\"Sender Domain\" MaxLength=\"255\" Required=\"FALSE\"/>",
+        "<Field Type=\"Choice\" Name=\"RecipientScope\" DisplayName=\"Recipient Scope\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><CHOICES><CHOICE>Direct to Me</CHOICE><CHOICE>CC</CHOICE><CHOICE>Distribution List</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"MailboxSource\" DisplayName=\"Mailbox Source\" Format=\"Dropdown\" FillInChoice=\"TRUE\"><Default>Primary</Default><CHOICES><CHOICE>Primary</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"SourceSystem\" DisplayName=\"Source System\" Format=\"Dropdown\" FillInChoice=\"TRUE\"><CHOICES><CHOICE>Smartsheet</CHOICE><CHOICE>NetSuite</CHOICE><CHOICE>NextProcess</CHOICE><CHOICE>Oracle</CHOICE><CHOICE>ADP</CHOICE><CHOICE>DocuSign</CHOICE><CHOICE>Microsoft 365 / Teams</CHOICE><CHOICE>Zoom</CHOICE><CHOICE>Amazon Business</CHOICE><CHOICE>Canva</CHOICE><CHOICE>OmegaCor IT</CHOICE><CHOICE>Internal Email</CHOICE><CHOICE>External Email</CHOICE><CHOICE>Other</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"BusinessCategory\" DisplayName=\"Business Category\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><CHOICES><CHOICE>CONTRACTS – Intake / Review</CHOICE><CHOICE>PROCUREMENT – PO / Requisition</CHOICE><CHOICE>VENDOR – Setup / Master Data</CHOICE><CHOICE>FINANCE / AP – Check Request</CHOICE><CHOICE>SYSTEM – NetSuite / NextProcess</CHOICE><CHOICE>AI / AUTOMATION DESIGN</CHOICE><CHOICE>REPORTING – CBO / Leadership</CHOICE><CHOICE>TRAINING / SOP / ENABLEMENT</CHOICE><CHOICE>ACTION – System Exception</CHOICE><CHOICE>ACTION – Reply Needed</CHOICE><CHOICE>ACTION – Approval / Decision</CHOICE><CHOICE>WAITING – Someone Else</CHOICE><CHOICE>BLOCKED – Needs Escalation</CHOICE><CHOICE>LEGAL / POLICY / COMPLIANCE</CHOICE><CHOICE>FYI – Reference / Learning</CHOICE><CHOICE>PROMOTIONS / SUBSCRIPTIONS / MISC</CHOICE><CHOICE>MINISTRY / CHURCH-COMMUNITY (non-BSD)</CHOICE><CHOICE>FACILITIES – Inspection Reports</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"DigestLane\" DisplayName=\"Digest Lane\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><CHOICES><CHOICE>System Exceptions / Workflow Breaks</CHOICE><CHOICE>Action Required</CHOICE><CHOICE>Waiting On Others</CHOICE><CHOICE>Leadership / Reporting</CHOICE><CHOICE>Ministry / Community</CHOICE><CHOICE>FYI / Learning Reference</CHOICE><CHOICE>Promotions / Subscriptions / Misc</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"Pillar\" DisplayName=\"Pillar\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><CHOICES><CHOICE>P1</CHOICE><CHOICE>P2</CHOICE><CHOICE>P3</CHOICE><CHOICE>P4</CHOICE><CHOICE>P5</CHOICE><CHOICE>P6</CHOICE><CHOICE>Ops/Admin</CHOICE><CHOICE>N/A</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"ActionOwner\" DisplayName=\"Action Owner\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><CHOICES><CHOICE>Me</CHOICE><CHOICE>Someone Else</CHOICE><CHOICE>None</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Text\" Name=\"Owner\" DisplayName=\"Owner\" MaxLength=\"255\" Required=\"FALSE\"/>",
+        "<Field Type=\"Text\" Name=\"WaitingOn\" DisplayName=\"Waiting On\" MaxLength=\"255\" Required=\"FALSE\"/>",
+        "<Field Type=\"Choice\" Name=\"Priority\" DisplayName=\"Priority\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><Default>Normal</Default><CHOICES><CHOICE>Critical</CHOICE><CHOICE>High</CHOICE><CHOICE>Normal</CHOICE><CHOICE>Low</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"HubStatus\" DisplayName=\"Status\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><Default>New</Default><CHOICES><CHOICE>New</CHOICE><CHOICE>In Progress</CHOICE><CHOICE>Waiting</CHOICE><CHOICE>Blocked</CHOICE><CHOICE>Snoozed</CHOICE><CHOICE>Done</CHOICE><CHOICE>Reference</CHOICE></CHOICES></Field>",
+        "<Field Type=\"DateTime\" Name=\"DueDateStated\" DisplayName=\"Due Date Stated\" Format=\"DateOnly\" Required=\"FALSE\"/>",
+        "<Field Type=\"DateTime\" Name=\"FollowUpDate\" DisplayName=\"Follow-Up Date\" Format=\"DateOnly\" Required=\"FALSE\"/>",
+        "<Field Type=\"DateTime\" Name=\"LastStatusChange\" DisplayName=\"Last Status Change\" Format=\"DateTime\" Required=\"FALSE\"/>",
+        "<Field Type=\"Calculated\" Name=\"DaysSinceReceived\" DisplayName=\"Days Since Received\" ResultType=\"Number\" Decimals=\"0\"><Formula>=TODAY()-[Received Date]</Formula><FieldRefs><FieldRef Name=\"ReceivedDate\"/></FieldRefs></Field>",
+        "<Field Type=\"Choice\" Name=\"Reviewed\" DisplayName=\"Reviewed\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><Default>No</Default><CHOICES><CHOICE>Yes</CHOICE><CHOICE>No</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"SuggestedFlag\" DisplayName=\"Suggested Flag\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><Default>None</Default><CHOICES><CHOICE>Today</CHOICE><CHOICE>This Week</CHOICE><CHOICE>Next Week</CHOICE><CHOICE>None</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"DraftStatus\" DisplayName=\"Draft Status\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><Default>None</Default><CHOICES><CHOICE>None</CHOICE><CHOICE>Draft Ready</CHOICE><CHOICE>Approved to Send</CHOICE><CHOICE>Sent</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Number\" Name=\"Confidence\" DisplayName=\"Confidence\" Decimals=\"0\" Min=\"0\" Max=\"100\" Required=\"FALSE\"/>",
+        "<Field Type=\"Calculated\" Name=\"ConfidenceBand\" DisplayName=\"Confidence Band\" ResultType=\"Text\"><Formula>=IF([Confidence]&gt;=85,\"High\",IF([Confidence]&gt;=60,\"Medium\",\"Low\"))</Formula><FieldRefs><FieldRef Name=\"Confidence\"/></FieldRefs></Field>",
+        "<Field Type=\"Note\" Name=\"TriggerWordsHit\" DisplayName=\"Trigger Words Hit\" NumLines=\"3\" RichText=\"FALSE\" Required=\"FALSE\"/>",
+        "<Field Type=\"Text\" Name=\"SourceLinkMessageId\" DisplayName=\"Source Link / Message ID\" MaxLength=\"255\" Required=\"FALSE\"/>",
+        "<Field Type=\"URL\" Name=\"WebLink\" DisplayName=\"Web Link\" Format=\"Hyperlink\"/>",
+        "<Field Type=\"Boolean\" Name=\"HasAttachments\" DisplayName=\"Has Attachments\"><Default>0</Default></Field>",
+        "<Field Type=\"Note\" Name=\"PillarRationale\" DisplayName=\"Pillar Rationale\" NumLines=\"3\" RichText=\"FALSE\" Required=\"FALSE\"/>",
+        "<Field Type=\"DateTime\" Name=\"ClassifiedDate\" DisplayName=\"Classified Date\" Format=\"DateTime\" Required=\"FALSE\"/>",
+        "<Field Type=\"Note\" Name=\"Notes\" DisplayName=\"Notes\" NumLines=\"6\" RichText=\"FALSE\" Required=\"FALSE\"/>"
+      ],
+      "views": [
+        { "title": "Open Actions", "personal": false, "viewQuery": "<Where><And><Neq><FieldRef Name='HubStatus'/><Value Type='Choice'>Done</Value></Neq><Neq><FieldRef Name='HubStatus'/><Value Type='Choice'>Reference</Value></Neq></And></Where><OrderBy><FieldRef Name='Priority'/></OrderBy>", "viewFields": ["Title","BusinessCategory","DigestLane","Priority","HubStatus","ActionOwner","FollowUpDate","DaysSinceReceived"] },
+        { "title": "Overdue", "viewQuery": "<Where><And><Leq><FieldRef Name='FollowUpDate'/><Value Type='DateTime'><Today/></Value></Leq><And><Neq><FieldRef Name='HubStatus'/><Value Type='Choice'>Done</Value></Neq><Neq><FieldRef Name='HubStatus'/><Value Type='Choice'>Reference</Value></Neq></And></And></Where>", "viewFields": ["Title","BusinessCategory","Priority","HubStatus","FollowUpDate","Owner"] },
+        { "title": "Needs Review", "viewQuery": "<Where><Eq><FieldRef Name='Reviewed'/><Value Type='Choice'>No</Value></Eq></Where>", "viewFields": ["Title","BusinessCategory","DigestLane","Confidence","ConfidenceBand","HubStatus"] },
+        { "title": "Drafts Awaiting Approval", "viewQuery": "<Where><Eq><FieldRef Name='DraftStatus'/><Value Type='Choice'>Draft Ready</Value></Eq></Where>", "viewFields": ["Title","Sender","BusinessCategory","DraftStatus","Priority"] },
+        { "title": "By Mailbox Source", "viewQuery": "<GroupBy Collapse='TRUE'><FieldRef Name='MailboxSource'/></GroupBy>", "viewFields": ["Title","MailboxSource","BusinessCategory","HubStatus"] },
+        { "title": "By Lane", "viewQuery": "<GroupBy Collapse='TRUE'><FieldRef Name='DigestLane'/></GroupBy>", "viewFields": ["Title","DigestLane","BusinessCategory","Priority","HubStatus"] },
+        { "title": "Dead-Letter", "viewQuery": "<Where><Eq><FieldRef Name='HubStatus'/><Value Type='Choice'>Blocked</Value></Eq></Where>", "viewFields": ["Title","BusinessCategory","Owner","WaitingOn","LastStatusChange","Notes"] },
+        { "title": "Stale — Review to Close", "viewQuery": "<Where><And><Eq><FieldRef Name='Reviewed'/><Value Type='Choice'>No</Value></Eq><And><Neq><FieldRef Name='HubStatus'/><Value Type='Choice'>Done</Value></Neq><Neq><FieldRef Name='HubStatus'/><Value Type='Choice'>Reference</Value></Neq></And></And></Where><OrderBy><FieldRef Name='LastStatusChange'/></OrderBy>", "viewFields": ["Title","BusinessCategory","HubStatus","LastStatusChange","Reviewed"], "note": "30-day stale logic (spec 1b) is applied by Watchdog which sets Reviewed=No on items with LastStatusChange older than 30 days; this view then surfaces them." }
+      ]
+    },
+    {
+      "title": "Subscription Register",
+      "createListBody": { "__metadata": { "type": "SP.List" }, "BaseTemplate": 100, "Title": "Subscription Register", "Description": "Work Action Intelligence Hub — List B. One row per sender domain; Sorter upserts inline." },
+      "titleMerge": { "endpoint": "_api/web/lists/getbytitle('Subscription Register')/fields/getbytitle('Title')", "httpMethod": "MERGE", "body": { "__metadata": { "type": "SP.FieldText" }, "Title": "Sender Domain" } },
+      "fields": [
+        "<Field Type=\"Text\" Name=\"SenderName\" DisplayName=\"Sender Name\" MaxLength=\"255\" Required=\"FALSE\"/>",
+        "<Field Type=\"Text\" Name=\"SenderEmail\" DisplayName=\"Sender Email\" MaxLength=\"255\" Required=\"FALSE\"/>",
+        "<Field Type=\"Choice\" Name=\"SubscriptionType\" DisplayName=\"Subscription Type\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><Default>Unknown</Default><CHOICES><CHOICE>Promotion</CHOICE><CHOICE>Newsletter</CHOICE><CHOICE>FYI / Reference</CHOICE><CHOICE>Vendor Marketing</CHOICE><CHOICE>System Notification</CHOICE><CHOICE>Unknown</CHOICE></CHOICES></Field>",
+        "<Field Type=\"DateTime\" Name=\"FirstSeen\" DisplayName=\"First Seen\" Format=\"DateTime\" Required=\"FALSE\"/>",
+        "<Field Type=\"DateTime\" Name=\"LastSeen\" DisplayName=\"Last Seen\" Format=\"DateTime\" Required=\"FALSE\"/>",
+        "<Field Type=\"Number\" Name=\"MessageCount\" DisplayName=\"Message Count\" Decimals=\"0\" Min=\"0\" Required=\"FALSE\"/>",
+        "<Field Type=\"Choice\" Name=\"SubStatus\" DisplayName=\"Status\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><Default>Active</Default><CHOICES><CHOICE>Active</CHOICE><CHOICE>Unsubscribe Candidate</CHOICE><CHOICE>Unsubscribed</CHOICE><CHOICE>Keep</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"Pillar\" DisplayName=\"Pillar\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><Default>N/A</Default><CHOICES><CHOICE>P1</CHOICE><CHOICE>P2</CHOICE><CHOICE>P3</CHOICE><CHOICE>P4</CHOICE><CHOICE>P5</CHOICE><CHOICE>P6</CHOICE><CHOICE>Ops/Admin</CHOICE><CHOICE>N/A</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Note\" Name=\"Notes\" DisplayName=\"Notes\" NumLines=\"4\" RichText=\"FALSE\" Required=\"FALSE\"/>",
+        "<Field Type=\"DateTime\" Name=\"LastStatusChange\" DisplayName=\"Last Status Change\" Format=\"DateTime\" Required=\"FALSE\"/>"
+      ],
+      "views": [
+        { "title": "All Subscriptions", "viewQuery": "<OrderBy><FieldRef Name='MessageCount' Ascending='FALSE'/></OrderBy>", "viewFields": ["Title","SenderName","SubscriptionType","MessageCount","SubStatus","LastSeen"] },
+        { "title": "Unsubscribe Candidates", "viewQuery": "<Where><Eq><FieldRef Name='SubStatus'/><Value Type='Choice'>Unsubscribe Candidate</Value></Eq></Where><OrderBy><FieldRef Name='MessageCount' Ascending='FALSE'/></OrderBy>", "viewFields": ["Title","SenderName","MessageCount","SubStatus"] },
+        { "title": "By Type", "viewQuery": "<GroupBy Collapse='TRUE'><FieldRef Name='SubscriptionType'/></GroupBy>", "viewFields": ["Title","SubscriptionType","MessageCount"] },
+        { "title": "Noisiest Senders", "viewQuery": "<OrderBy><FieldRef Name='MessageCount' Ascending='FALSE'/></OrderBy>", "viewFields": ["Title","MessageCount","SubscriptionType","SubStatus"] }
+      ]
+    },
+    {
+      "title": "User Profile Register",
+      "createListBody": { "__metadata": { "type": "SP.List" }, "BaseTemplate": 100, "Title": "User Profile Register", "Description": "Work Action Intelligence Hub — List C. One row per tester; Onboarding Complete gates the flows." },
+      "titleMerge": { "endpoint": "_api/web/lists/getbytitle('User Profile Register')/fields/getbytitle('Title')", "httpMethod": "MERGE", "body": { "__metadata": { "type": "SP.FieldText" }, "Title": "Display Name" } },
+      "fields": [
+        "<Field Type=\"Text\" Name=\"UPNEmail\" DisplayName=\"UPN / Email\" MaxLength=\"255\" Required=\"TRUE\"/>",
+        "<Field Type=\"URL\" Name=\"OneDriveURL\" DisplayName=\"OneDrive URL\" Format=\"Hyperlink\"/>",
+        "<Field Type=\"Text\" Name=\"SchemaVersion\" DisplayName=\"Schema Version\" MaxLength=\"50\" Required=\"FALSE\"/>",
+        "<Field Type=\"DateTime\" Name=\"OnboardingDate\" DisplayName=\"Onboarding Date\" Format=\"DateOnly\" Required=\"FALSE\"/>",
+        "<Field Type=\"Boolean\" Name=\"OnboardingComplete\" DisplayName=\"Onboarding Complete\"><Default>0</Default></Field>",
+        "<Field Type=\"Text\" Name=\"Department\" DisplayName=\"Department\" MaxLength=\"255\" Required=\"FALSE\"/>",
+        "<Field Type=\"Text\" Name=\"ReportsTo\" DisplayName=\"Reports To\" MaxLength=\"255\" Required=\"FALSE\"/>",
+        "<Field Type=\"Note\" Name=\"KeySystems\" DisplayName=\"Key Systems\" NumLines=\"4\" RichText=\"FALSE\" Required=\"FALSE\"/>",
+        "<Field Type=\"Note\" Name=\"KeyContacts\" DisplayName=\"Key Contacts\" NumLines=\"6\" RichText=\"FALSE\" Required=\"FALSE\"/>",
+        "<Field Type=\"Note\" Name=\"PriorityTriggerWords\" DisplayName=\"Priority Trigger Words\" NumLines=\"6\" RichText=\"FALSE\" Required=\"FALSE\"/>",
+        "<Field Type=\"Note\" Name=\"AdditionalMailboxes\" DisplayName=\"Additional Mailboxes\" NumLines=\"3\" RichText=\"FALSE\" Required=\"FALSE\"/>",
+        "<Field Type=\"Choice\" Name=\"DigestChannel\" DisplayName=\"Digest Channel\" Format=\"Dropdown\" FillInChoice=\"FALSE\"><Default>Teams</Default><CHOICES><CHOICE>Teams</CHOICE><CHOICE>Email</CHOICE><CHOICE>Both</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Choice\" Name=\"DigestTime\" DisplayName=\"Digest Time\" Format=\"Dropdown\" FillInChoice=\"TRUE\"><CHOICES><CHOICE>7:00 AM</CHOICE><CHOICE>8:00 AM</CHOICE><CHOICE>9:00 AM</CHOICE><CHOICE>12:00 PM</CHOICE><CHOICE>5:00 PM</CHOICE></CHOICES></Field>",
+        "<Field Type=\"Text\" Name=\"BusinessHoursStart\" DisplayName=\"Business-Hours Start\" MaxLength=\"10\" Required=\"FALSE\"/>",
+        "<Field Type=\"Text\" Name=\"BusinessHoursEnd\" DisplayName=\"Business-Hours End\" MaxLength=\"10\" Required=\"FALSE\"/>",
+        "<Field Type=\"Note\" Name=\"Notes\" DisplayName=\"Notes\" NumLines=\"4\" RichText=\"FALSE\" Required=\"FALSE\"/>"
+      ],
+      "views": [
+        { "title": "All Profiles", "viewQuery": "", "viewFields": ["Title","UPNEmail","OnboardingComplete","SchemaVersion","DigestChannel"] },
+        { "title": "Active Instances", "viewQuery": "<Where><Eq><FieldRef Name='OnboardingComplete'/><Value Type='Boolean'>1</Value></Eq></Where>", "viewFields": ["Title","UPNEmail","Department","OnboardingDate"] },
+        { "title": "Incomplete Onboarding", "viewQuery": "<Where><Eq><FieldRef Name='OnboardingComplete'/><Value Type='Boolean'>0</Value></Eq></Where>", "viewFields": ["Title","UPNEmail","OnboardingDate"] },
+        { "title": "Schema Drift Check", "viewQuery": "<GroupBy Collapse='TRUE'><FieldRef Name='SchemaVersion'/></GroupBy>", "viewFields": ["Title","SchemaVersion","OnboardingComplete"] }
+      ]
+    }
+  ]
+}

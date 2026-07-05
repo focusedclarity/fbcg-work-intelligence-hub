@@ -1,0 +1,29 @@
+{
+  "$comment": "Scout (Flow 0, Step 7) column-definition array for List B = 'Subscription Register'. One row per recurring newsletter/promo/FYI SENDER DOMAIN (not per email). WRITE PATH (decision #1, confirmed 2026-07-03): Sorter (Flow 1) upserts INLINE — when it classifies a message as PROMOTIONS/SUBSCRIPTIONS/MISC or an FYI-reference subtype, it upserts here keyed on Sender Domain (Title), incrementing Message Count and stamping Last Seen; no dedicated Flow 2. Never-Opened Flag (old col #9) DROPPED for pilot (decision #2). Field-creation mechanics identical to List A — see scout_listA_columns_README.md (CreateFieldAsXml, Options=12, create in array order, concurrency=1, XML-escape values). FieldTypeKind: Text=2, Note=3, DateTime=4, Choice=6, Boolean=8, Number=9.",
+  "list": "Subscription Register",
+  "schemaVersion": "v1-frozen-2026-07-03",
+  "titleRename": {
+    "method": "patchTitle",
+    "internalName": "Title",
+    "displayName": "Sender Domain",
+    "note": "The built-in Title IS the upsert key (sender domain, e.g. mailchimp.com). PATCH/MERGE Title -> 'Sender Domain'; do not create a separate field. Sorter upserts by matching this."
+  },
+  "columns": [
+    { "internalName": "SenderName", "displayName": "Sender Name", "fieldType": "Text", "fieldTypeKind": 2, "maxLength": 255, "required": false, "description": "Friendly display name of the most recent sender from this domain." },
+    { "internalName": "SenderEmail", "displayName": "Sender Email", "fieldType": "Text", "fieldTypeKind": 2, "maxLength": 255, "required": false, "description": "Most recent full from-address (a domain can have several)." },
+    { "internalName": "SubscriptionType", "displayName": "Subscription Type", "fieldType": "Choice", "fieldTypeKind": 6, "editFormat": "Dropdown", "fillInChoice": false, "default": "Unknown", "required": false, "choices": ["Promotion", "Newsletter", "FYI / Reference", "Vendor Marketing", "System Notification", "Unknown"], "description": "Set by Sorter at upsert from the message's classification." },
+    { "internalName": "FirstSeen", "displayName": "First Seen", "fieldType": "DateTime", "fieldTypeKind": 4, "displayFormat": "DateTime", "required": false, "description": "Set once, on row creation." },
+    { "internalName": "LastSeen", "displayName": "Last Seen", "fieldType": "DateTime", "fieldTypeKind": 4, "displayFormat": "DateTime", "required": false, "description": "Overwritten on every upsert." },
+    { "internalName": "MessageCount", "displayName": "Message Count", "fieldType": "Number", "fieldTypeKind": 9, "numDecimals": 0, "min": 0, "required": false, "description": "Incremented on every upsert — the 'how noisy is this' signal; default view sorts on it desc." },
+    { "internalName": "SubStatus", "displayName": "Status", "fieldType": "Choice", "fieldTypeKind": 6, "editFormat": "Dropdown", "fillInChoice": false, "default": "Active", "required": false, "choices": ["Active", "Unsubscribe Candidate", "Unsubscribed", "Keep"], "description": "Human-set. Internal name is 'SubStatus' to avoid colliding with any built-in; display shows 'Status'." },
+    { "internalName": "Pillar", "displayName": "Pillar", "fieldType": "Choice", "fieldTypeKind": 6, "editFormat": "Dropdown", "fillInChoice": false, "default": "N/A", "required": false, "choices": ["P1", "P2", "P3", "P4", "P5", "P6", "Ops/Admin", "N/A"], "description": "Same set as List A. Most Promo/FYI resolve to N/A; vendor marketing may map to P5." },
+    { "internalName": "Notes", "displayName": "Notes", "fieldType": "Note", "fieldTypeKind": 3, "numLines": 4, "richText": false, "required": false, "description": "Freeform." },
+    { "internalName": "LastStatusChange", "displayName": "Last Status Change", "fieldType": "DateTime", "fieldTypeKind": 4, "displayFormat": "DateTime", "required": false, "description": "Stamped when Status changes (List A convention)." }
+  ],
+  "views": [
+    { "name": "All Subscriptions", "default": true, "sort": "Message Count desc", "note": "Default working view." },
+    { "name": "Unsubscribe Candidates", "filter": "Status = 'Unsubscribe Candidate'", "sort": "Message Count desc", "note": "Never-Opened OR-clause removed since that column was dropped for the pilot." },
+    { "name": "By Type", "groupBy": "Subscription Type" },
+    { "name": "Noisiest Senders", "sort": "Message Count desc", "note": "The 'clean this up' view." }
+  ]
+}

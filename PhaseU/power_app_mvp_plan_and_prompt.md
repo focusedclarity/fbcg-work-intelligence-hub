@@ -66,3 +66,91 @@ When "later" arrives, this is the path — reusing what already exists rather th
 4. Add a List C profile row for the new client (the existing "Onboarding Complete" flag is already the activation gate — no new mechanism needed).
 
 Nothing above needs to happen now — it's here so the MVP build in Sections 2–3 doesn't accidentally hardcode anything that would make this harder later (e.g., prefer referencing the site/list names once rather than re-typing the full URL in every screen's formulas).
+
+---
+
+## 5. Connecting live data — Power Fx formulas to paste in Power Apps Studio
+Gina confirmed the Power Apps route for live data (not the static-HTML-plus-MSAL route — that would need an Azure AD app registration and a real browser session neither of which exist in this Claude Code session). This section is the concrete "make it live" step: real Power Fx formulas against the actual SharePoint lists, ready to paste into the controls once the app in Section 3 exists. Everything here assumes **Data source added via Screen → Data → Add data → SharePoint → `https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155`**, selecting "Inbox Action Register" and "User Profile Register" (List B/"Subscription Register" intentionally not added — folded into Sweep per the 2026-07-05 decision).
+
+### Home screen — KPI tile counts
+Set each tile's Text/label control's `Text` property:
+
+```
+// Overdue Actions
+CountRows(Filter('Inbox Action Register',
+    'Follow-Up Date' <= Today(),
+    Status <> "Done", Status <> "Reference"
+))
+
+// Needs Review
+CountRows(Filter('Inbox Action Register', Reviewed = "No"))
+
+// Drafts Awaiting Approval
+CountRows(Filter('Inbox Action Register', 'Draft Status' = "Draft Ready"))
+
+// Open Actions (used to drive the Register screen's default filter, and optionally its own tile)
+CountRows(Filter('Inbox Action Register', Status <> "Done", Status <> "Reference"))
+```
+
+There is no "Meetings Tomorrow" or "Teams Unread" tile in this MVP — those need the Outlook/Teams connectors, which are a follow-on once Lists A/C are live and proven (see the placeholder note at the end of this section).
+
+### Register screen — gallery `Items` property, switchable by a Filter dropdown
+Give the filter dropdown (`ddFilterView`) these `Items`: `["Open Actions","Overdue","Needs Review","By Lane","By Mailbox Source","Dead-Letter","Stale - Review to Close"]`, then set the gallery's `Items`:
+
+```
+Switch(ddFilterView.Selected.Value,
+    "Overdue", Filter('Inbox Action Register',
+        'Follow-Up Date' <= Today(), Status <> "Done", Status <> "Reference"),
+    "Needs Review", Filter('Inbox Action Register', Reviewed = "No"),
+    "By Lane", SortByColumns('Inbox Action Register', "Digest Lane"),
+    "By Mailbox Source", SortByColumns('Inbox Action Register', "Mailbox Source"),
+    "Dead-Letter", Filter('Inbox Action Register', Status = "Blocked"),
+    "Stale - Review to Close", SortByColumns(
+        Filter('Inbox Action Register', Reviewed = "No", Status <> "Done", Status <> "Reference"),
+        "Last Status Change", Ascending),
+    /* default: Open Actions */
+    SortByColumns(Filter('Inbox Action Register', Status <> "Done", Status <> "Reference"), "Priority")
+)
+```
+
+Gallery row template — show `ThisItem.'Email Subject'`, `ThisItem.Sender`, `ThisItem.Priority`, `ThisItem.Status`, `ThisItem.'Digest Lane'`, `ThisItem.'Follow-Up Date'`, `ThisItem.'Days Since Received'`; row `OnSelect`: `Navigate(ScreenDetail, ScreenTransition.Cover, {selectedItem: ThisItem})`.
+
+### Detail screen — read + Notes save
+Bind display controls to `selectedItem.<Column>`. Save button `OnSelect`:
+
+```
+Patch('Inbox Action Register', selectedItem, {Notes: txtNotes.Text})
+```
+
+Web Link button `OnSelect`: `Launch(selectedItem.'Web Link'.Value)` (Hyperlink columns come through as a record with `.Value`/`.DisplayText` — check the actual shape once the data source is connected; adjust to `Launch(selectedItem.'Web Link')` if it comes through as a plain text URL instead).
+
+### Approvals screen — gallery + Approve action
+Gallery `Items`: `Filter('Inbox Action Register', 'Draft Status' = "Draft Ready")`.
+Approve button (per row) `OnSelect`:
+
+```
+Patch('Inbox Action Register', ThisItem, {'Draft Status': "Approved to Send"})
+```
+
+### Settings screen — signed-in user's own row
+Screen `OnVisible` (or a variable set at app start):
+
+```
+Set(myProfile, LookUp('User Profile Register', 'UPN / Email' = User().Email))
+```
+
+Bind each editable control to `myProfile.<Column>` for display, and on a Save button:
+
+```
+Patch('User Profile Register', myProfile, {
+    'Digest Channel': ddDigestChannel.Selected.Value,
+    'Digest Time': ddDigestTime.Selected.Value,
+    'Business-Hours Start': txtBizStart.Text,
+    'Business-Hours End': txtBizEnd.Text
+})
+```
+
+If `myProfile` is blank (no matching row — shouldn't happen post-pilot, but worth guarding), show a message rather than patching a blank record: wrap the Save `OnSelect` in `If(!IsBlank(myProfile), Patch(...), Notify("No profile row found for this account", NotificationType.Error))`.
+
+### What's still a placeholder after this step
+Calendar (Tomorrow's Schedule, Week Calendar Load), Mail (Emails Needing a Reply), and Teams (Unread Teams Chats) sections still need the native **Office 365 Outlook** and **Microsoft Teams** connectors added as additional data sources — same "Add data" mechanism as SharePoint, no Graph/MSAL code needed since Power Apps handles the sign-in itself via your existing M365 session. Not scoped in this pass because Gina's decision was to confirm the Lists A/C connection works first; adding those two connectors is a small, low-risk follow-on once this is live, not a redesign.

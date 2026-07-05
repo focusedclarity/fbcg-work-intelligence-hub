@@ -1,6 +1,13 @@
 # Review & Challenge — HANDOFF "Still to do" Items 1–6, + Dashboard Placement/Live-Feed Options
 _As of 2026-07-05_
 
+## Decisions (Gina, 2026-07-05)
+- **Tempo:** confirmed — add a same-business-day response sub-window for High/Direct-to-Me, keep 2-business-day resolution. Matches HANDOFF's original Finalization-decisions text; the build spec needs this sub-window added.
+- **List B / Buyback gate:** fold directly into Sweep. Do not build the standalone Subscription Register (Flow 2) — no separate list, no upsert logic, no expression-dependency risk. Sweep absorbs the Buyback-gate archive-on-sight logic instead.
+- **Watchdog:** keep the 30-calendar-day stale threshold as-is. Not tightening toward Meisel's 2-week convention.
+- **Dashboard:** Power Apps app as a Teams tab, extending the existing Watchdog/Sorter Teams feed as the "live" layer. Explicitly ruled out Power BI (streaming or embedded report).
+- Still open: AI middle tier (OpenRouter vs. AI Builder credit top-up), the Views "Schedule" bucket gap. Sweep's build spec is now unblocked (item 4 resolved) and is the next concrete deliverable.
+
 ## Scope note (read this first)
 This is a **review/analysis memo, not a build spec**. This session has no browser access to make.powerautomate.com or SharePoint — the prior builds all went through an interactive Claude-in-Chrome session, which this session isn't. So "complete 1–6" here means: confirm what's actually already done vs. spec'd vs. missing, cross-check the design against Dan Martell / Nate Herk / Ari Meisel and general SLA-industry practice, and surface the gaps and disagreements Gina should decide on before anyone opens Power Automate again.
 
@@ -34,17 +41,23 @@ These don't match — the Finalization-decisions text implies High gets a same-d
 
 Secondary data point: general SLA-tier benchmarks (help-desk P1–P4 conventions) run in **hours**, not business days, for top-tier urgency — e.g. P1 acknowledgment in 15–30 minutes, P2 in ~1 hour. That's a different context (customer support, not an internal exec inbox), so business-day granularity for Tempo isn't wrong on its face — but it's worth Gina explicitly confirming that's intentional rather than an artifact of copying Martell's placeholder template, especially since the same document already implies a same-day tier should exist for the top bucket.
 
+**Decided (2026-07-05):** add the same-business-day response sub-window for High/Direct-to-Me, keep the 2-business-day resolution target. The Tempo build spec (`tempo_watchdog_listB_build.md` §1a and the "Tempo – Compute Follow-Up" AI-step instruction) needs a second output — a response/acknowledgment date on top of the existing resolution `followUpDate` — for High priority items where Recipient Scope = Direct to Me. Not yet written into the spec file itself; flagged as the next edit to that file whenever Sweep's spec work happens.
+
 ## 4. List B upsert / Buyback gate (Flow 2, feeding Subscription Register)
 **Status:** Fully spec'd — `tempo_watchdog_listB_build.md`, "FLOW 2 — LIST B UPSERT" section. The spec itself already flags an open dependency risk: the found/not-found check and the `+1` count increment need an inline expression, and the doc says to defer List B to full Power Automate if the restricted agent rejects it.
 **Traces to:** `dan-martell-ai-operating-system.md`'s **DRIP Matrix** — the Buyback gate (`Priority=Low AND Recipient Scope≠Direct to Me AND Category∈{Promotions/Misc, FYI, Newsletters}`) is a textbook **Delegate** quadrant signal (low value, not draining enough to matter, hand it to automation).
 
 **Challenge:** Herk's inbox agent handles this same category ("Promotion") far more simply — mark as read, done, no persistent register. List B instead builds a whole second SharePoint list with upsert logic and a flagged expression-dependency risk, purely to track subscription metadata (sender, message count, first/last seen). Is that complexity buying something Gina actually wants (a real subscription inventory she can act on — e.g., "these 12 senders account for 80% of noise, unsubscribe from the top 3"), or would folding the same signal straight into Sweep/Steward's archival logic (no separate list, just move-and-forget) get 90% of the value with none of the build risk? This is worth deciding **before** Sweep gets spec'd, since Sweep is exactly where this simpler alternative would live.
 
+**Decided (2026-07-05):** fold into Sweep. Do not build List B / the standalone Subscription Register (Flow 2) — no separate list, no upsert logic, no expression-dependency risk to work around. Sweep will apply the Buyback-gate signal (`Priority=Low AND Recipient Scope≠Direct to Me AND Category∈{Promotions/Misc, FYI, Newsletters}`) directly as archive-on-sight logic when it gets spec'd.
+
 ## 5. Watchdog (Flow 6)
 **Status:** Fully spec'd — `tempo_watchdog_listB_build.md`, "FLOW 6 — WATCHDOG" section.
 **Traces to:** `dan-martell-exec-admin-playbook.md`'s inbox cadence — "twice a day, target inbox-zero by ~10 AM and again by ~5 PM" — which HANDOFF.md already correctly mapped to Watchdog's two-digest-passes/day design. Good alignment, no gap here.
 
 **Challenge:** Watchdog's `stale` threshold is **30 calendar days** (`calendar-days(Last Status Change→today) > 30`). Ari Meisel's "Less Doing" inbox-zero framework — a much more aggressive minimalism model — recommends archiving anything untouched after **2 weeks**. 30 days is more than double that. That's not automatically wrong (Meisel is optimizing a personal inbox for volume/speed; this Hub is optimizing for not losing track of real business action items, where premature archiving is a bigger cost than staleness), but it's worth Gina confirming 30 days is a deliberate choice and not just an unexamined round number — especially since the "Stale — Review to Close" view already exists and a tighter threshold would surface items for review sooner without actually closing/deleting anything.
+
+**Decided (2026-07-05):** keep 30 calendar days. Not tightening toward Meisel's 2-week convention — internal business action items are judged to legitimately sit longer than a personal inbox would tolerate, and the threshold only flags for review, not deletion.
 
 ## 6. Sweep (Flow 8) — the actual gap
 **Status:** **No build spec exists.** Only a one-paragraph stub in `BUILD_RUNBOOK.md` Part 5 and a one-line mention in `HANDOFF.md`'s to-do list ("on Status→Done/Reference, Outlook move to BSSI Hub/Done or /Reference; on lookup fail write to Notes"). This is genuinely the only unfinished item among 1–6.

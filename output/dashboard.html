@@ -1,0 +1,885 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>FBCG Intelligence Hub — Dashboard Prototype</title>
+
+<!--
+  FBCG Intelligence Hub — Dashboard Prototype
+  ============================================
+  This file is fully self-contained: no CDN, no external fonts, no external
+  scripts, no canvas/Chart.js/D3. All charts are pure CSS (flex bars + a
+  conic-gradient doughnut). All KPI values and list content are hardcoded
+  directly into the markup below (static-first) so the page is fully
+  readable even with JavaScript disabled or blocked.
+
+  The mock content here mirrors ../data/sample-dashboard.json exactly.
+  When wiring this up to live Microsoft Graph / SharePoint data, treat
+  that JSON file as the data contract and replace each hardcoded block
+  below with server-rendered or client-rendered output from the same
+  shape. See ../docs/integration-notes.md for endpoint-by-endpoint notes.
+
+  The only JavaScript on this page is a progressive-enhancement dark
+  mode toggle. Nothing here is required for the page to render its
+  content — remove <script> entirely and every section still displays.
+-->
+
+<style>
+  /* ============================================================
+     FBCG BRAND TOKENS
+     Placeholder hex values — swap for official FBCG brand colors
+     the moment they're provided. Do not introduce blues as a
+     primary brand color; purple/gold/white/off-white only.
+     ============================================================ */
+  :root {
+    --brand-purple: #2e1a47;
+    --brand-purple-dark: #1f1233;
+    --brand-gold: #c9a227;
+    --brand-gold-soft: #f5e6b3;
+    --brand-white: #ffffff;
+    --brand-off-white: #faf8f2;
+    --brand-ink: #1f2937;
+    --brand-muted: #6b7280;
+    --card-bg: #ffffff;
+    --page-bg: linear-gradient(135deg, #1f1233 0%, #2e1a47 45%, #faf8f2 100%);
+    --header-bg: linear-gradient(135deg, #1f1233 0%, #2e1a47 55%, #c9a227 100%);
+    --accent: #c9a227;
+    --border-soft: rgba(46, 26, 71, 0.16);
+    --shadow-soft: 0 18px 45px rgba(31, 18, 51, 0.16);
+
+    /* Urgent banner — theme-aware tokens (light defaults) */
+    --urgent-bg: #fff4f2;
+    --urgent-heading: #7a1f1f;
+    --urgent-item-bg: #ffffff;
+    --urgent-item-hover: #fff0ee;
+    --urgent-watermark: rgba(122, 31, 31, 0.07);
+
+    /* Chart-only helper colors */
+    --danger: #b3261e;
+    --neutral-bar: #c7c9d1;
+  }
+
+  /* Dark mode overrides — toggled via [data-theme="dark"] on <html> */
+  :root[data-theme="dark"] {
+    --brand-white: #12101a;
+    --brand-off-white: #1b1826;
+    --brand-ink: #f2eefb;
+    --brand-muted: #b8b2c9;
+    --card-bg: #1f1c2b;
+    --page-bg: linear-gradient(135deg, #0d0b14 0%, #1f1233 45%, #241c33 100%);
+    --header-bg: linear-gradient(135deg, #0d0b14 0%, #2e1a47 55%, #8a6d1e 100%);
+    --border-soft: rgba(245, 230, 179, 0.14);
+    --shadow-soft: 0 18px 45px rgba(0, 0, 0, 0.5);
+
+    --urgent-bg: #2e1414;
+    --urgent-heading: #ffb4a8;
+    --urgent-item-bg: #3a1a1a;
+    --urgent-item-hover: #4a2222;
+    --urgent-watermark: rgba(255, 180, 168, 0.08);
+
+    --neutral-bar: #4b4860;
+  }
+
+  /* ============================================================
+     RESET + BASE
+     System font stack only — no @font-face, no external fonts.
+     ============================================================ */
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+  }
+  body {
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif;
+    background: var(--page-bg);
+    color: var(--brand-ink);
+    min-height: 100vh;
+    line-height: 1.45;
+  }
+  a { color: inherit; text-decoration: none; }
+  h1, h2, h3, p, ul, ol { margin: 0; }
+  ul { padding: 0; list-style: none; }
+
+  .wrap {
+    max-width: 1280px;
+    margin: 0 auto;
+    padding: 0 24px 48px;
+  }
+
+  /* ============================================================
+     HEADER
+     ============================================================ */
+  header.hub-header {
+    background: var(--header-bg);
+    color: var(--brand-white);
+    padding: 28px 24px 34px;
+    margin-bottom: 24px;
+  }
+  .header-inner {
+    max-width: 1280px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .header-inner h1 {
+    font-size: 1.7rem;
+    font-weight: 600;
+    letter-spacing: 0.2px;
+  }
+  .header-sub {
+    margin-top: 6px;
+    color: var(--brand-gold-soft);
+    font-size: 0.95rem;
+  }
+  .header-hint {
+    margin-top: 10px;
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.78);
+  }
+  .header-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+  }
+  .refreshed-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.85);
+  }
+  .pulse-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: #6ee7a8;
+    box-shadow: 0 0 0 rgba(110, 231, 168, 0.6);
+    animation: pulse 2.2s infinite;
+    flex-shrink: 0;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(110, 231, 168, 0.55); }
+    70%  { box-shadow: 0 0 0 9px rgba(110, 231, 168, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(110, 231, 168, 0); }
+  }
+
+  #theme-toggle {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    color: var(--brand-white);
+    padding: 7px 14px;
+    border-radius: 999px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  #theme-toggle:hover { background: rgba(255, 255, 255, 0.22); }
+
+  /* No-JS fallback: hide the toggle entirely if scripting is unavailable,
+     so users never see a dead button. Enabled by the .js-ready class the
+     inline script adds to <html> the instant it runs. */
+  #theme-toggle { display: none; }
+  html.js-ready #theme-toggle { display: inline-block; }
+
+  /* ============================================================
+     ENTRANCE ANIMATION (CSS-only)
+     ============================================================ */
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .card, .kpi-tile, .urgent-banner {
+    animation: slideUp 0.5s ease both;
+  }
+  .kpi-tile:nth-child(1) { animation-delay: 0.02s; }
+  .kpi-tile:nth-child(2) { animation-delay: 0.06s; }
+  .kpi-tile:nth-child(3) { animation-delay: 0.10s; }
+  .kpi-tile:nth-child(4) { animation-delay: 0.14s; }
+  .kpi-tile:nth-child(5) { animation-delay: 0.18s; }
+  .kpi-tile:nth-child(6) { animation-delay: 0.22s; }
+
+  /* ============================================================
+     KPI STRIP
+     ============================================================ */
+  .kpi-strip {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .kpi-tile {
+    background: var(--card-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 16px;
+    box-shadow: var(--shadow-soft);
+    display: block;
+  }
+  .kpi-value {
+    font-size: 1.9rem;
+    font-weight: 700;
+    color: var(--brand-purple);
+  }
+  :root[data-theme="dark"] .kpi-value { color: var(--brand-gold-soft); }
+  .kpi-label {
+    margin-top: 4px;
+    font-size: 0.78rem;
+    color: var(--brand-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* ============================================================
+     CARDS + GRID LAYOUT
+     ============================================================ */
+  .card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 20px 22px;
+    box-shadow: var(--shadow-soft);
+    margin-bottom: 22px;
+  }
+  .card h2 {
+    font-size: 1.02rem;
+    font-weight: 700;
+    color: var(--brand-purple);
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  :root[data-theme="dark"] .card h2 { color: var(--brand-gold-soft); }
+
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 22px;
+  }
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 22px;
+  }
+  .grid-2 > .card, .grid-3 > .card { margin-bottom: 0; }
+
+  @media (max-width: 1024px) {
+    .kpi-strip { grid-template-columns: repeat(3, 1fr); }
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .kpi-strip { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  /* ============================================================
+     LIST ITEM ROWS (shared across most cards)
+     ============================================================ */
+  .row-list li { margin-bottom: 10px; }
+  .row-list li:last-child { margin-bottom: 0; }
+  .row-link {
+    display: block;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border-soft);
+    transition: background 0.15s ease, transform 0.1s ease;
+  }
+  .row-link:hover { background: var(--brand-off-white); transform: translateX(2px); }
+  .row-title { font-weight: 600; font-size: 0.92rem; }
+  .row-meta { font-size: 0.78rem; color: var(--brand-muted); margin-top: 3px; }
+  .pill {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    margin-left: 6px;
+  }
+  .pill-critical { background: #fde2df; color: #7a1f1f; }
+  .pill-high { background: var(--brand-gold-soft); color: #6b4f00; }
+  .pill-normal { background: #e6e2f0; color: var(--brand-purple); }
+  :root[data-theme="dark"] .pill-critical { background: #4a1c1c; color: #ffb4a8; }
+  :root[data-theme="dark"] .pill-high { background: #4a3c10; color: var(--brand-gold-soft); }
+  :root[data-theme="dark"] .pill-normal { background: #322a48; color: var(--brand-gold-soft); }
+
+  /* ============================================================
+     URGENT BANNER
+     ============================================================ */
+  .urgent-banner {
+    position: relative;
+    overflow: hidden;
+    background: var(--urgent-bg);
+    border: 1px solid var(--border-soft);
+    border-radius: 16px;
+    padding: 20px 22px;
+    margin-bottom: 22px;
+  }
+  .urgent-banner::before {
+    content: "\26A0";
+    position: absolute;
+    right: 10px;
+    top: -18px;
+    font-size: 7rem;
+    color: var(--urgent-watermark);
+    line-height: 1;
+    pointer-events: none;
+  }
+  .urgent-banner h2 {
+    color: var(--urgent-heading);
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .urgent-list { position: relative; }
+  .urgent-list li { margin-bottom: 8px; }
+  .urgent-list li:last-child { margin-bottom: 0; }
+  .urgent-row {
+    display: block;
+    background: var(--urgent-item-bg);
+    border-radius: 10px;
+    padding: 12px 14px;
+    border: 1px solid var(--border-soft);
+    transition: background 0.15s ease;
+  }
+  .urgent-row:hover { background: var(--urgent-item-hover); }
+  .urgent-row .row-title { color: var(--urgent-heading); }
+
+  /* ============================================================
+     WEEK CALENDAR LOAD — CSS-only bar chart
+     ============================================================ */
+  .week-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 14px;
+    height: 160px;
+    padding-top: 8px;
+  }
+  .week-bar-col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    height: 100%;
+  }
+  .week-bar {
+    width: 100%;
+    max-width: 42px;
+    border-radius: 8px 8px 3px 3px;
+    transition: opacity 0.15s ease;
+  }
+  .week-bar.heavy  { background: linear-gradient(180deg, #d84438 0%, var(--danger) 100%); }
+  .week-bar.normal { background: linear-gradient(180deg, var(--brand-gold) 0%, var(--brand-purple) 100%); }
+  .week-bar.light  { background: var(--neutral-bar); }
+  .week-bar-label { margin-top: 8px; font-size: 0.78rem; font-weight: 600; color: var(--brand-muted); }
+  .week-bar-hours { font-size: 0.7rem; color: var(--brand-muted); }
+  .week-legend { display: flex; gap: 16px; margin-top: 14px; font-size: 0.75rem; color: var(--brand-muted); flex-wrap: wrap; }
+  .legend-swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+
+  /* ============================================================
+     TIME ALLOCATION — CSS-only conic-gradient doughnut
+     ============================================================ */
+  .doughnut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .doughnut {
+    position: relative;
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background: conic-gradient(
+      var(--brand-gold) 0% 30%,
+      var(--brand-purple) 30% 55%,
+      #8a6d3b 55% 77%,
+      var(--brand-muted) 77% 90%,
+      var(--brand-gold-soft) 90% 100%
+    );
+    flex-shrink: 0;
+  }
+  .doughnut::after {
+    content: "";
+    position: absolute;
+    inset: 22px;
+    background: var(--card-bg);
+    border-radius: 50%;
+    display: flex;
+  }
+  .doughnut-center {
+    position: absolute;
+    inset: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    z-index: 1;
+  }
+  .doughnut-center strong { font-size: 1.1rem; color: var(--brand-purple); }
+  :root[data-theme="dark"] .doughnut-center strong { color: var(--brand-gold-soft); }
+  .doughnut-center span { font-size: 0.68rem; color: var(--brand-muted); }
+  .doughnut-legend { flex: 1; min-width: 180px; }
+  .doughnut-legend li {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.82rem;
+    padding: 5px 0;
+    border-bottom: 1px dashed var(--border-soft);
+  }
+  .doughnut-legend li:last-child { border-bottom: none; }
+
+  /* ============================================================
+     PROJECT PROGRESS BARS
+     ============================================================ */
+  .project-row { margin-bottom: 14px; }
+  .project-row:last-child { margin-bottom: 0; }
+  .project-top { display: flex; justify-content: space-between; font-size: 0.85rem; margin-bottom: 5px; }
+  .project-track { background: var(--brand-off-white); border-radius: 999px; height: 8px; overflow: hidden; border: 1px solid var(--border-soft); }
+  .project-fill { height: 100%; background: linear-gradient(90deg, var(--brand-gold) 0%, var(--brand-purple) 100%); border-radius: 999px; }
+
+  /* ============================================================
+     FOOTER
+     ============================================================ */
+  footer {
+    text-align: center;
+    color: var(--brand-white);
+    font-size: 0.8rem;
+    padding: 24px 12px 8px;
+    opacity: 0.85;
+  }
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     HEADER
+     Graph mapping (future): GET /me  → greeting name / photo
+     ============================================================ -->
+<header class="hub-header">
+  <div class="header-inner">
+    <div>
+      <h1>Good morning, Gina 👋</h1>
+      <div class="header-sub">Sunday, July 5, 2026 · FBCG Intelligence Hub</div>
+      <div class="header-hint">💡 Every item below is clickable — it opens the source record in a new tab.</div>
+    </div>
+    <div class="header-right">
+      <button id="theme-toggle" type="button" onclick="toggleTheme()">🌙 Dark mode</button>
+      <div class="refreshed-row">
+        <span class="pulse-dot"></span>
+        <span>Last refreshed: Today at 8:12 AM</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- ============================================================
+       KPI STRIP — static-first: real numbers hardcoded, not
+       populated from JS/state. Mirrors data/sample-dashboard.json → kpis
+       ============================================================ -->
+  <section class="kpi-strip" aria-label="Key metrics">
+    <div class="kpi-tile"><div class="kpi-value">5</div><div class="kpi-label">Overdue Actions</div></div>
+    <div class="kpi-tile"><div class="kpi-value">12</div><div class="kpi-label">Unread Emails</div></div>
+    <div class="kpi-tile"><div class="kpi-value">4</div><div class="kpi-label">Meetings Tomorrow</div></div>
+    <div class="kpi-tile"><div class="kpi-value">7</div><div class="kpi-label">Teams Unread</div></div>
+    <div class="kpi-tile"><div class="kpi-value">6</div><div class="kpi-label">Active Projects</div></div>
+    <div class="kpi-tile"><div class="kpi-value">9</div><div class="kpi-label">SP List Items Needing Attention</div></div>
+  </section>
+
+  <!-- ============================================================
+       URGENT BANNER
+       Graph mapping (future): union of overdue Follow-Up Date items
+       (SharePoint list) + Critical/Direct-to-Me unread mail (Graph
+       /me/messages) + Draft Status = Draft Ready items.
+       ============================================================ -->
+  <section class="urgent-banner">
+    <h2>⚠ Needs attention today</h2>
+    <ul class="urgent-list row-list">
+      <li><a class="urgent-row row-link" target="_blank" rel="noopener noreferrer" href="https://outlook.office.com/mail/deeplink/read/mock-msg-4471">
+        <div class="row-title">Vendor Setup escalation — NextProcess PO #4471 blocked 3 days</div>
+        <div class="row-meta">Digest Lane: System Exceptions / Workflow Breaks · Priority: Critical</div>
+      </a></li>
+      <li><a class="urgent-row row-link" target="_blank" rel="noopener noreferrer" href="https://outlook.office.com/mail/deeplink/read/mock-msg-5502">
+        <div class="row-title">Contract review due today — Facilities inspection vendor renewal</div>
+        <div class="row-meta">Digest Lane: Action Required · Due Date Stated: Today</div>
+      </a></li>
+      <li><a class="urgent-row row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=118">
+        <div class="row-title">Approval needed — Draft reply to Rev. Lettie Carr re: budget memo</div>
+        <div class="row-meta">Draft Status: Draft Ready · Waiting since yesterday 4:10 PM</div>
+      </a></li>
+    </ul>
+  </section>
+
+  <!-- ============================================================
+       ROW: Tomorrow's Schedule | Prep Notes
+       Graph mapping (future): GET /me/calendarview (Tomorrow's Schedule)
+       ============================================================ -->
+  <div class="grid-2">
+    <section class="card">
+      <h2>📅 Tomorrow's Schedule</h2>
+      <ul class="row-list">
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://teams.microsoft.com/l/meetup-join/mock-event-1">
+          <div class="row-title">9:00 AM — BSSI Weekly Ops Sync</div>
+          <div class="row-meta">Teams</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://teams.microsoft.com/l/meetup-join/mock-event-2">
+          <div class="row-title">11:00 AM — NetSuite vendor master data review</div>
+          <div class="row-meta">Conference Rm B</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://teams.microsoft.com/l/meetup-join/mock-event-3">
+          <div class="row-title">1:30 PM — 1:1 with Rev. Lettie Carr, Esq.</div>
+          <div class="row-meta">Her office</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://teams.microsoft.com/l/meetup-join/mock-event-4">
+          <div class="row-title">3:00 PM — Power Apps dashboard walkthrough</div>
+          <div class="row-meta">Teams</div>
+        </a></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>📝 Prep Notes</h2>
+      <ul class="row-list">
+        <li class="row-link" style="cursor:default;">Bring updated ROI numbers (Time Saved / Cost / Output Consistency) for the Ops Sync.</li>
+        <li class="row-link" style="cursor:default;">NetSuite review: confirm the 3 vendor records flagged by Sorter as duplicate Sender Domains.</li>
+        <li class="row-link" style="cursor:default;">1:1: raise the OpenRouter vs. AI Builder credit top-up decision.</li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       ROW: Top Projects | Week Calendar Load
+       ============================================================ -->
+  <div class="grid-2">
+    <section class="card">
+      <h2>🚀 Top Projects</h2>
+      <div class="project-row">
+        <div class="project-top"><a target="_blank" rel="noopener noreferrer" href="https://make.powerautomate.com/mock/flows/sorter-flow1"><strong>Sorter (Flow 1) — Email Classification</strong></a><span>Live / credit-resilient</span></div>
+        <div class="project-track"><div class="project-fill" style="width:100%"></div></div>
+      </div>
+      <div class="project-row">
+        <div class="project-top"><a target="_blank" rel="noopener noreferrer" href="https://make.powerautomate.com/mock/flows/tempo-flow5a"><strong>Tempo (Flow 5a) — Follow-Up SLA Windows</strong></a><span>Spec'd, pending build</span></div>
+        <div class="project-track"><div class="project-fill" style="width:60%"></div></div>
+      </div>
+      <div class="project-row">
+        <div class="project-top"><a target="_blank" rel="noopener noreferrer" href="https://make.powerautomate.com/mock/flows/watchdog-flow6"><strong>Watchdog (Flow 6) — Twice-Daily Digest</strong></a><span>Spec'd, pending build</span></div>
+        <div class="project-track"><div class="project-fill" style="width:55%"></div></div>
+      </div>
+      <div class="project-row">
+        <div class="project-top"><a target="_blank" rel="noopener noreferrer" href="https://make.powerautomate.com/mock/flows/sweep-flow8"><strong>Sweep (Flow 8) — Disposition &amp; Archive</strong></a><span>Design in progress</span></div>
+        <div class="project-track"><div class="project-fill" style="width:20%"></div></div>
+      </div>
+      <div class="project-row">
+        <div class="project-top"><a target="_blank" rel="noopener noreferrer" href="https://make.powerapps.com/mock/apps/intelligence-hub"><strong>Intelligence Hub Dashboard (Power Apps)</strong></a><span>Prototype (this build)</span></div>
+        <div class="project-track"><div class="project-fill" style="width:15%"></div></div>
+      </div>
+      <div class="project-row">
+        <div class="project-top"><a target="_blank" rel="noopener noreferrer" href="https://make.powerautomate.com/mock/flows/courier-flow9"><strong>Courier (Flow 9) — Send-Only Approvals</strong></a><span>Not started</span></div>
+        <div class="project-track"><div class="project-fill" style="width:0%"></div></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>📊 Week Calendar Load</h2>
+      <div class="week-chart">
+        <div class="week-bar-col">
+          <div class="week-bar-hours">7.5h</div>
+          <div class="week-bar heavy" style="height:94%"></div>
+          <div class="week-bar-label">Mon</div>
+        </div>
+        <div class="week-bar-col">
+          <div class="week-bar-hours">5.0h</div>
+          <div class="week-bar normal" style="height:63%"></div>
+          <div class="week-bar-label">Tue</div>
+        </div>
+        <div class="week-bar-col">
+          <div class="week-bar-hours">8.0h</div>
+          <div class="week-bar heavy" style="height:100%"></div>
+          <div class="week-bar-label">Wed</div>
+        </div>
+        <div class="week-bar-col">
+          <div class="week-bar-hours">3.0h</div>
+          <div class="week-bar light" style="height:38%"></div>
+          <div class="week-bar-label">Thu</div>
+        </div>
+        <div class="week-bar-col">
+          <div class="week-bar-hours">4.5h</div>
+          <div class="week-bar normal" style="height:56%"></div>
+          <div class="week-bar-label">Fri</div>
+        </div>
+      </div>
+      <div class="week-legend">
+        <span><span class="legend-swatch" style="background:var(--danger)"></span>Heavy (&ge;85%)</span>
+        <span><span class="legend-swatch" style="background:var(--brand-gold)"></span>Normal</span>
+        <span><span class="legend-swatch" style="background:var(--neutral-bar)"></span>Light</span>
+      </div>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       ROW: Time Allocation | Emails Needing a Reply
+       ============================================================ -->
+  <div class="grid-2">
+    <section class="card">
+      <h2>🥯 Time Allocation</h2>
+      <div class="doughnut-wrap">
+        <div class="doughnut">
+          <div class="doughnut-center"><strong>168h</strong><span>this month</span></div>
+        </div>
+        <ul class="doughnut-legend">
+          <li><span><span class="legend-swatch" style="background:var(--brand-gold)"></span>Email &amp; Inbox Triage</span><span>30%</span></li>
+          <li><span><span class="legend-swatch" style="background:var(--brand-purple)"></span>Meetings</span><span>25%</span></li>
+          <li><span><span class="legend-swatch" style="background:#8a6d3b"></span>Automation Build</span><span>22%</span></li>
+          <li><span><span class="legend-swatch" style="background:var(--brand-muted)"></span>Vendor/Finance Ops</span><span>13%</span></li>
+          <li><span><span class="legend-swatch" style="background:var(--brand-gold-soft)"></span>Training &amp; Learning</span><span>10%</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>✉ Emails Needing a Reply</h2>
+      <ul class="row-list">
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://outlook.office.com/mail/deeplink/read/mock-msg-6010">
+          <div class="row-title">Rev. Lettie Carr, Esq. <span class="pill pill-high">High</span></div>
+          <div class="row-meta">RE: Budget memo — need your read by Friday · Yesterday, 4:10 PM</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://outlook.office.com/mail/deeplink/read/mock-msg-4471">
+          <div class="row-title">NextProcess Support <span class="pill pill-critical">Critical</span></div>
+          <div class="row-meta">PO #4471 — additional approval required · 2 days ago</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://outlook.office.com/mail/deeplink/read/mock-msg-5502">
+          <div class="row-title">Facilities Vendor — CleanCo <span class="pill pill-high">High</span></div>
+          <div class="row-meta">Inspection report renewal contract attached · Today, 7:45 AM</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://outlook.office.com/mail/deeplink/read/mock-msg-3387">
+          <div class="row-title">ADP Payroll Notifications <span class="pill pill-normal">Normal</span></div>
+          <div class="row-meta">Action needed: verify Q3 pay schedule · 3 days ago</div>
+        </a></li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       ROW (3-col): Long-Term Action Items | Training & Learning | OOF Radar
+       ============================================================ -->
+  <div class="grid-3">
+    <section class="card">
+      <h2>📌 Long-Term Action Items</h2>
+      <ul class="row-list">
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=41">
+          <div class="row-title">Decide AI middle tier: OpenRouter vs. credit top-up</div>
+          <div class="row-meta">Owner: Gina · No hard date</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=52">
+          <div class="row-title">Choose Copilot Q&amp;A layer: M365 vs. Copilot Studio</div>
+          <div class="row-meta">Owner: Gina · Before dashboard Copilot build</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=60">
+          <div class="row-title">Confirm transactions + meeting-summary sources</div>
+          <div class="row-meta">Owner: Gina · Future-phase planning</div>
+        </a></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>🎓 Training &amp; Learning</h2>
+      <ul class="row-list">
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://www.youtube.com/mock/nate-herk-newsletter-system">
+          <div class="row-title">Nate Herk — Multi-Agent Newsletter System (n8n)</div>
+          <div class="row-meta">Video · Not started</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://www.martellmethod.com/mock/ai-system">
+          <div class="row-title">Dan Martell — AI Operating System</div>
+          <div class="row-meta">Course module · In progress</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://learn.microsoft.com/mock/power-platform-alm">
+          <div class="row-title">Power Platform: Solutions &amp; Environment Variables</div>
+          <div class="row-meta">Microsoft Learn · Not started</div>
+        </a></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>🏖 OOF Radar</h2>
+      <ul class="row-list">
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="mailto:lcarr@fbcglenarden.example.org">
+          <div class="row-title">Rev. Lettie Carr, Esq.</div>
+          <div class="row-meta">Out July 14–18 · Route urgent approvals to backup</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="mailto:j.alvarez@netsuite-partner.example.com">
+          <div class="row-title">NetSuite Account Rep — J. Alvarez</div>
+          <div class="row-meta">Out July 8–9 · FYI only</div>
+        </a></li>
+      </ul>
+    </section>
+  </div>
+
+  <!-- ============================================================
+       ROW (3-col): People to Follow Up With | Unread Teams Chats | SharePoint Lists in Flight
+       ============================================================ -->
+  <div class="grid-3">
+    <section class="card">
+      <h2>👥 People to Follow Up With</h2>
+      <ul class="row-list">
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="mailto:lcarr@fbcglenarden.example.org">
+          <div class="row-title">Rev. Lettie Carr, Esq.</div>
+          <div class="row-meta">Budget memo response owed · Last contact: Yesterday</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="mailto:support@nextprocess.example.com">
+          <div class="row-title">NextProcess Support</div>
+          <div class="row-meta">PO #4471 approval blocked · Last contact: 2 days ago</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="mailto:accounts@cleanco.example.com">
+          <div class="row-title">CleanCo Facilities Vendor</div>
+          <div class="row-meta">Contract renewal signature needed · Last contact: Today</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="mailto:helpdesk@omegacorit.example.com">
+          <div class="row-title">IT — OmegaCor</div>
+          <div class="row-meta">Confirm AI Builder credit top-up ticket · Last contact: 3 days ago</div>
+        </a></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>💬 Unread Teams Chats</h2>
+      <ul class="row-list">
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://teams.microsoft.com/l/message/mock-channel-bssi/1001">
+          <div class="row-title">BSSI Hub Channel <span class="pill pill-critical">1</span></div>
+          <div class="row-meta">"Watchdog: 'PO #4471' is past its follow-up window…" · 1 hour ago</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://teams.microsoft.com/l/chat/mock-chat-lcarr/1002">
+          <div class="row-title">Rev. Lettie Carr, Esq. <span class="pill pill-high">2</span></div>
+          <div class="row-meta">"Did you get a chance to look at the budget memo?" · Yesterday</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://teams.microsoft.com/l/chat/mock-chat-it/1003">
+          <div class="row-title">IT Support <span class="pill pill-normal">1</span></div>
+          <div class="row-meta">"Following up on the AI Builder credit ticket #8842." · 2 days ago</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://teams.microsoft.com/l/chat/mock-chat-facilities/1004">
+          <div class="row-title">Facilities Team <span class="pill pill-normal">3</span></div>
+          <div class="row-meta">"Inspection report for Building C is ready for review." · 3 days ago</div>
+        </a></li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <h2>📋 SharePoint Lists in Flight</h2>
+      <ul class="row-list">
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=121">
+          <div class="row-title">Intake — CleanCo renewal contract</div>
+          <div class="row-meta">Inbox Action Register · Status: New · Priority: High</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=118">
+          <div class="row-title">Approval — Draft reply to Rev. Carr</div>
+          <div class="row-meta">Inbox Action Register · Draft Status: Draft Ready</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=97">
+          <div class="row-title">Escalation — PO #4471 blocked 3 days</div>
+          <div class="row-meta">Inbox Action Register · Priority: Critical · Flag: Today</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=102">
+          <div class="row-title">Overdue — Facilities inspection renewal</div>
+          <div class="row-meta">Inbox Action Register · Follow-Up Date: 2026-07-03</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/UserProfileRegister/AllItems.aspx">
+          <div class="row-title">Status change — Schema Version drift check</div>
+          <div class="row-meta">User Profile Register · 1 profile on v3</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=130">
+          <div class="row-title">Project tracker update — Sweep design in progress</div>
+          <div class="row-meta">Inbox Action Register · Pillar: Ops/Admin</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=133">
+          <div class="row-title">Recently modified — ADP payroll priority raised</div>
+          <div class="row-meta">Inbox Action Register · Last change: Today, 7:50 AM</div>
+        </a></li>
+        <li><a class="row-link" target="_blank" rel="noopener noreferrer" href="https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=140">
+          <div class="row-title">Due date approaching — Vendor master data cleanup</div>
+          <div class="row-meta">Inbox Action Register · Due: 2026-07-07</div>
+        </a></li>
+      </ul>
+    </section>
+  </div>
+
+</div>
+
+<footer>
+  Data shown is mock/sample content for prototype review only — nothing here reflects live mailbox, calendar, Teams, or SharePoint data. See docs/integration-notes.md for the live-connection plan.
+</footer>
+
+<!--
+  ============================================================
+  PROGRESSIVE ENHANCEMENT ONLY — dark mode toggle.
+  Everything above renders fully without this script running.
+  localStorage access is wrapped in try/catch because some
+  browser contexts (privacy mode, sandboxed file:// preview)
+  throw on access rather than just returning null.
+  ============================================================
+-->
+<script>
+  document.documentElement.classList.add('js-ready');
+
+  function getStoredTheme() {
+    try { return window.localStorage.getItem('fbcg-hub-theme'); }
+    catch (e) { return null; }
+  }
+  function setStoredTheme(value) {
+    try { window.localStorage.setItem('fbcg-hub-theme', value); }
+    catch (e) { /* storage unavailable — theme just won't persist */ }
+  }
+
+  (function initTheme() {
+    var saved = getStoredTheme();
+    if (saved === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+  })();
+
+  function toggleTheme() {
+    var isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+    if (isDark) {
+      document.documentElement.removeAttribute('data-theme');
+      setStoredTheme('light');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      setStoredTheme('dark');
+    }
+  }
+
+  /* ============================================================
+     PLACEHOLDER FUNCTIONS FOR FUTURE LIVE MICROSOFT GRAPH DATA
+     None of these are called. They exist purely as documented
+     hooks for the next build phase — see docs/integration-notes.md
+     for the full endpoint list, required scopes, and data-shape
+     mapping back to data/sample-dashboard.json.
+     ============================================================ */
+
+  // async function fetchCalendarEvents() {
+  //   // GET https://graph.microsoft.com/v1.0/me/calendarView?startDateTime=...&endDateTime=...
+  //   // Map response.value[] -> tomorrowSchedule[] shape in sample-dashboard.json
+  // }
+
+  // async function fetchUnreadEmails() {
+  //   // GET https://graph.microsoft.com/v1.0/me/messages?$filter=isRead eq false&$top=25
+  //   // Cross-reference Inbox Action Register (SharePoint) for Priority/Draft Status
+  // }
+
+  // async function fetchTeamsChats() {
+  //   // GET https://graph.microsoft.com/v1.0/me/chats/getAllMessages
+  //   // Requires Chat.Read or Chat.Read.All delegated/application permission
+  // }
+
+  // async function fetchSharePointListItems(siteId, listId) {
+  //   // GET https://graph.microsoft.com/v1.0/sites/{siteId}/lists/{listId}/items?expand=fields
+  //   // One call per list (Inbox Action Register / Subscription Register / User Profile Register)
+  // }
+</script>
+
+</body>
+</html>

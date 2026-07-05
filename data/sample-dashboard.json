@@ -1,0 +1,324 @@
+{
+  "meta": {
+    "user": "Gina Thomas",
+    "role": "Business Systems & Solutions Manager",
+    "greetingName": "Gina",
+    "currentDate": "Sunday, July 5, 2026",
+    "lastRefreshed": "2026-07-05T08:12:00-04:00",
+    "lastRefreshedDisplay": "Today at 8:12 AM",
+    "note": "MOCK DATA — for prototype/demo only. Replace via docs/integration-notes.md before connecting to live Microsoft 365 data."
+  },
+  "kpis": {
+    "overdueActions": 5,
+    "unreadEmails": 12,
+    "meetingsTomorrow": 4,
+    "teamsUnread": 7,
+    "activeProjects": 6,
+    "spListAttention": 9
+  },
+  "urgentItems": [
+    {
+      "title": "Vendor Setup escalation — NextProcess PO #4471 blocked 3 days",
+      "subtitle": "Digest Lane: System Exceptions / Workflow Breaks · Priority: Critical",
+      "url": "https://outlook.office.com/mail/deeplink/read/mock-msg-4471"
+    },
+    {
+      "title": "Contract review due today — Facilities inspection vendor renewal",
+      "subtitle": "Digest Lane: Action Required · Due Date Stated: Today",
+      "url": "https://outlook.office.com/mail/deeplink/read/mock-msg-5502"
+    },
+    {
+      "title": "Approval needed — Draft reply to Rev. Lettie Carr re: budget memo",
+      "subtitle": "Draft Status: Draft Ready · Waiting since yesterday 4:10 PM",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=118"
+    }
+  ],
+  "tomorrowSchedule": [
+    {
+      "time": "9:00 AM",
+      "title": "BSSI Weekly Ops Sync",
+      "location": "Teams",
+      "url": "https://teams.microsoft.com/l/meetup-join/mock-event-1"
+    },
+    {
+      "time": "11:00 AM",
+      "title": "NetSuite vendor master data review",
+      "location": "Conference Rm B",
+      "url": "https://teams.microsoft.com/l/meetup-join/mock-event-2"
+    },
+    {
+      "time": "1:30 PM",
+      "title": "1:1 with Rev. Lettie Carr, Esq.",
+      "location": "Her office",
+      "url": "https://teams.microsoft.com/l/meetup-join/mock-event-3"
+    },
+    {
+      "time": "3:00 PM",
+      "title": "Power Apps dashboard walkthrough (this prototype)",
+      "location": "Teams",
+      "url": "https://teams.microsoft.com/l/meetup-join/mock-event-4"
+    }
+  ],
+  "prepNotes": [
+    "Bring updated ROI numbers (Time Saved / Cost / Output Consistency) for the Ops Sync.",
+    "NetSuite review: confirm the 3 vendor records flagged by Sorter as duplicate Sender Domains.",
+    "1:1: raise the OpenRouter vs. AI Builder credit top-up decision."
+  ],
+  "topProjects": [
+    {
+      "name": "Sorter (Flow 1) — Email Classification",
+      "status": "Live / credit-resilient",
+      "percentComplete": 100,
+      "url": "https://make.powerautomate.com/mock/flows/sorter-flow1"
+    },
+    {
+      "name": "Tempo (Flow 5a) — Follow-Up SLA Windows",
+      "status": "Spec’d, pending build",
+      "percentComplete": 60,
+      "url": "https://make.powerautomate.com/mock/flows/tempo-flow5a"
+    },
+    {
+      "name": "Watchdog (Flow 6) — Twice-Daily Digest",
+      "status": "Spec’d, pending build",
+      "percentComplete": 55,
+      "url": "https://make.powerautomate.com/mock/flows/watchdog-flow6"
+    },
+    {
+      "name": "Sweep (Flow 8) — Disposition & Archive",
+      "status": "Design in progress",
+      "percentComplete": 20,
+      "url": "https://make.powerautomate.com/mock/flows/sweep-flow8"
+    },
+    {
+      "name": "Intelligence Hub Dashboard (Power Apps)",
+      "status": "Prototype (this build)",
+      "percentComplete": 15,
+      "url": "https://make.powerapps.com/mock/apps/intelligence-hub"
+    },
+    {
+      "name": "Courier (Flow 9) — Send-Only Approvals",
+      "status": "Not started",
+      "percentComplete": 0,
+      "url": "https://make.powerautomate.com/mock/flows/courier-flow9"
+    }
+  ],
+  "weekCalendarLoad": [
+    { "day": "Mon", "hoursBooked": 7.5, "percent": 94, "level": "heavy" },
+    { "day": "Tue", "hoursBooked": 5.0, "percent": 63, "level": "normal" },
+    { "day": "Wed", "hoursBooked": 8.0, "percent": 100, "level": "heavy" },
+    { "day": "Thu", "hoursBooked": 3.0, "percent": 38, "level": "light" },
+    { "day": "Fri", "hoursBooked": 4.5, "percent": 56, "level": "normal" }
+  ],
+  "timeAllocation": [
+    { "label": "Email & Inbox Triage", "percent": 30, "color": "#c9a227" },
+    { "label": "Meetings", "percent": 25, "color": "#2e1a47" },
+    { "label": "Automation Build (Flows/Hub)", "percent": 22, "color": "#8a6d3b" },
+    { "label": "Vendor/Finance Ops", "percent": 13, "color": "#6b7280" },
+    { "label": "Training & Learning", "percent": 10, "color": "#e8d9a0" }
+  ],
+  "emailsNeedingReply": [
+    {
+      "from": "Rev. Lettie Carr, Esq.",
+      "subject": "RE: Budget memo — need your read by Friday",
+      "receivedAgo": "Yesterday, 4:10 PM",
+      "priority": "High",
+      "url": "https://outlook.office.com/mail/deeplink/read/mock-msg-6010"
+    },
+    {
+      "from": "NextProcess Support",
+      "subject": "PO #4471 — additional approval required",
+      "receivedAgo": "2 days ago",
+      "priority": "Critical",
+      "url": "https://outlook.office.com/mail/deeplink/read/mock-msg-4471"
+    },
+    {
+      "from": "Facilities Vendor — CleanCo",
+      "subject": "Inspection report renewal contract attached",
+      "receivedAgo": "Today, 7:45 AM",
+      "priority": "High",
+      "url": "https://outlook.office.com/mail/deeplink/read/mock-msg-5502"
+    },
+    {
+      "from": "ADP Payroll Notifications",
+      "subject": "Action needed: verify Q3 pay schedule",
+      "receivedAgo": "3 days ago",
+      "priority": "Normal",
+      "url": "https://outlook.office.com/mail/deeplink/read/mock-msg-3387"
+    }
+  ],
+  "longTermActionItems": [
+    {
+      "title": "Decide AI middle tier: OpenRouter key vs. AI Builder credit top-up",
+      "owner": "Gina",
+      "dueWindow": "No hard date — before next credit exhaustion",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=41"
+    },
+    {
+      "title": "Choose Copilot Q&A layer: M365 Copilot vs. Copilot Studio agent",
+      "owner": "Gina",
+      "dueWindow": "Before dashboard Copilot layer build",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=52"
+    },
+    {
+      "title": "Confirm transactions source (NetSuite) and meeting-summary source (Teams/Zoom/Copilot)",
+      "owner": "Gina",
+      "dueWindow": "Future-phase planning",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=60"
+    }
+  ],
+  "trainingLearning": [
+    {
+      "title": "Nate Herk — Multi-Agent Newsletter System in n8n",
+      "type": "Video",
+      "progress": "Not started",
+      "url": "https://www.youtube.com/mock/nate-herk-newsletter-system"
+    },
+    {
+      "title": "Dan Martell — AI Operating System (Elite Coaching)",
+      "type": "Course module",
+      "progress": "In progress",
+      "url": "https://www.martellmethod.com/mock/ai-system"
+    },
+    {
+      "title": "Power Platform: Solutions & Environment Variables",
+      "type": "Microsoft Learn module",
+      "progress": "Not started",
+      "url": "https://learn.microsoft.com/mock/power-platform-alm"
+    }
+  ],
+  "oofRadar": [
+    {
+      "name": "Rev. Lettie Carr, Esq.",
+      "status": "Out July 14–18",
+      "note": "Route urgent approvals to backup approver",
+      "url": "mailto:lcarr@fbcglenarden.example.org"
+    },
+    {
+      "name": "NetSuite Account Rep — J. Alvarez",
+      "status": "Out July 8–9",
+      "note": "No action needed, FYI only",
+      "url": "mailto:j.alvarez@netsuite-partner.example.com"
+    }
+  ],
+  "peopleFollowUp": [
+    {
+      "name": "Rev. Lettie Carr, Esq.",
+      "reason": "Budget memo response owed",
+      "lastContact": "Yesterday",
+      "url": "mailto:lcarr@fbcglenarden.example.org"
+    },
+    {
+      "name": "NextProcess Support",
+      "reason": "PO #4471 approval blocked",
+      "lastContact": "2 days ago",
+      "url": "mailto:support@nextprocess.example.com"
+    },
+    {
+      "name": "CleanCo Facilities Vendor",
+      "reason": "Contract renewal signature needed",
+      "lastContact": "Today",
+      "url": "mailto:accounts@cleanco.example.com"
+    },
+    {
+      "name": "IT — OmegaCor",
+      "reason": "Confirm AI Builder credit top-up ticket",
+      "lastContact": "3 days ago",
+      "url": "mailto:helpdesk@omegacorit.example.com"
+    }
+  ],
+  "teamsChats": [
+    {
+      "from": "BSSI Hub Channel",
+      "preview": "Watchdog: 'PO #4471' is past its follow-up window — needs attention.",
+      "receivedAgo": "1 hour ago",
+      "unreadCount": 1,
+      "url": "https://teams.microsoft.com/l/message/mock-channel-bssi/1001"
+    },
+    {
+      "from": "Rev. Lettie Carr, Esq.",
+      "preview": "Did you get a chance to look at the budget memo?",
+      "receivedAgo": "Yesterday",
+      "unreadCount": 2,
+      "url": "https://teams.microsoft.com/l/chat/mock-chat-lcarr/1002"
+    },
+    {
+      "from": "IT Support",
+      "preview": "Following up on the AI Builder credit ticket #8842.",
+      "receivedAgo": "2 days ago",
+      "unreadCount": 1,
+      "url": "https://teams.microsoft.com/l/chat/mock-chat-it/1003"
+    },
+    {
+      "from": "Facilities Team",
+      "preview": "Inspection report for Building C is ready for your review.",
+      "receivedAgo": "3 days ago",
+      "unreadCount": 3,
+      "url": "https://teams.microsoft.com/l/chat/mock-chat-facilities/1004"
+    }
+  ],
+  "sharepointListsInFlight": [
+    {
+      "list": "Inbox Action Register",
+      "type": "Intake",
+      "item": "New vendor contract intake — CleanCo renewal",
+      "detail": "Status: New · Priority: High",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=121"
+    },
+    {
+      "list": "Inbox Action Register",
+      "type": "Approval",
+      "item": "Draft reply awaiting approval — Rev. Carr budget memo",
+      "detail": "Draft Status: Draft Ready",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=118"
+    },
+    {
+      "list": "Inbox Action Register",
+      "type": "Escalation",
+      "item": "PO #4471 blocked 3 business days — Watchdog escalated",
+      "detail": "Priority: Critical · Suggested Flag: Today",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=97"
+    },
+    {
+      "list": "Inbox Action Register",
+      "type": "Overdue",
+      "item": "Facilities inspection renewal — Follow-Up Date passed",
+      "detail": "Follow-Up Date: 2026-07-03",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=102"
+    },
+    {
+      "list": "User Profile Register",
+      "type": "Status change",
+      "item": "Schema Version drift check — 1 profile on v3",
+      "detail": "Group: Schema Version",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/UserProfileRegister/AllItems.aspx"
+    },
+    {
+      "list": "Inbox Action Register",
+      "type": "Project tracker update",
+      "item": "Sweep (Flow 8) design moved to In Progress",
+      "detail": "Pillar: Ops/Admin",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=130"
+    },
+    {
+      "list": "Inbox Action Register",
+      "type": "Recently modified priority item",
+      "item": "ADP payroll schedule verification — Priority raised to High",
+      "detail": "Last Status Change: Today, 7:50 AM",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=133"
+    },
+    {
+      "list": "Inbox Action Register",
+      "type": "Due date approaching",
+      "item": "Vendor master data cleanup — due in 2 days",
+      "detail": "Due Date Stated: 2026-07-07",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=140"
+    },
+    {
+      "list": "Inbox Action Register",
+      "type": "Task",
+      "item": "Prep Q&A doc for Copilot layer decision",
+      "detail": "Status: In Progress",
+      "url": "https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155/Lists/InboxActionRegister/DispForm.aspx?ID=142"
+    }
+  ]
+}

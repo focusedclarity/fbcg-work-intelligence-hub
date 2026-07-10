@@ -7,59 +7,49 @@
     --ink-2: #575061;
     --muted: #8b8494;
     --grid: #e8e4ee;
+    --track: #edeaf2;
     --baseline: #c9c3d2;
     --border: rgba(28, 22, 38, 0.10);
-    --purple: #5e35a1;      /* series: Building */
-    --gold: #b98500;        /* series: Env/Climate */
-    --purple-soft: #7b57c0; /* single-series measure (deficiencies) */
+    --purple: #5e35a1;      /* Building program */
+    --gold: #b98500;        /* Env/Climate program */
+    --purple-soft: #7b57c0; /* combined measures */
     --chip-bg: rgba(94, 53, 161, 0.08);
+    --gold-bg: rgba(185, 133, 0, 0.10);
     --dash: #a99fc0;
     --shadow: 0 1px 2px rgba(28, 22, 38, 0.05), 0 4px 16px rgba(28, 22, 38, 0.05);
   }
   @media (prefers-color-scheme: dark) {
     :root {
-      --page: #120e18;
-      --surface: #1c1722;
-      --ink: #f4f1f9;
-      --ink-2: #c2bcce;
-      --muted: #8b8494;
-      --grid: #322b3e;
-      --baseline: #453d55;
-      --border: rgba(244, 241, 249, 0.10);
-      --purple: #8f72d4;
-      --gold: #b8850a;
-      --purple-soft: #a48be0;
-      --chip-bg: rgba(143, 114, 212, 0.14);
-      --dash: #5d5372;
-      --shadow: none;
+      --page: #120e18; --surface: #1c1722; --ink: #f4f1f9; --ink-2: #c2bcce;
+      --muted: #8b8494; --grid: #322b3e; --track: #2a2435; --baseline: #453d55;
+      --border: rgba(244, 241, 249, 0.10); --purple: #8f72d4; --gold: #b8850a;
+      --purple-soft: #a48be0; --chip-bg: rgba(143, 114, 212, 0.14);
+      --gold-bg: rgba(184, 133, 10, 0.16); --dash: #5d5372; --shadow: none;
     }
   }
   :root[data-theme="dark"] {
     --page: #120e18; --surface: #1c1722; --ink: #f4f1f9; --ink-2: #c2bcce;
-    --muted: #8b8494; --grid: #322b3e; --baseline: #453d55;
+    --muted: #8b8494; --grid: #322b3e; --track: #2a2435; --baseline: #453d55;
     --border: rgba(244, 241, 249, 0.10); --purple: #8f72d4; --gold: #b8850a;
     --purple-soft: #a48be0; --chip-bg: rgba(143, 114, 212, 0.14);
-    --dash: #5d5372; --shadow: none;
+    --gold-bg: rgba(184, 133, 10, 0.16); --dash: #5d5372; --shadow: none;
   }
   :root[data-theme="light"] {
     --page: #f6f4f1; --surface: #fdfcfa; --ink: #1c1626; --ink-2: #575061;
-    --muted: #8b8494; --grid: #e8e4ee; --baseline: #c9c3d2;
+    --muted: #8b8494; --grid: #e8e4ee; --track: #edeaf2; --baseline: #c9c3d2;
     --border: rgba(28, 22, 38, 0.10); --purple: #5e35a1; --gold: #b98500;
     --purple-soft: #7b57c0; --chip-bg: rgba(94, 53, 161, 0.08);
-    --dash: #a99fc0;
+    --gold-bg: rgba(185, 133, 0, 0.10); --dash: #a99fc0;
     --shadow: 0 1px 2px rgba(28, 22, 38, 0.05), 0 4px 16px rgba(28, 22, 38, 0.05);
   }
 
   * { box-sizing: border-box; }
   body {
-    background: var(--page);
-    color: var(--ink);
+    background: var(--page); color: var(--ink);
     font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
-    margin: 0;
-    padding: 32px 20px 48px;
-    line-height: 1.45;
+    margin: 0; padding: 32px 20px 48px; line-height: 1.45;
   }
-  .wrap { max-width: 1060px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+  .wrap { max-width: 1060px; margin: 0 auto; display: flex; flex-direction: column; gap: 22px; }
 
   /* ---------- header ---------- */
   header .eyebrow {
@@ -67,29 +57,22 @@
     color: var(--purple); margin: 0 0 6px;
   }
   header h1 { font-size: 26px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; text-wrap: balance; }
-  header .sub { color: var(--ink-2); font-size: 14px; margin: 0 0 12px; }
-  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
-  .chip {
-    font-size: 12px; font-weight: 600; color: var(--ink);
-    background: var(--chip-bg); border: 1px solid var(--border);
-    padding: 4px 10px; border-radius: 999px;
-  }
-  .chip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+  header .sub { color: var(--ink-2); font-size: 14px; margin: 0; }
 
   /* ---------- KPI tiles ---------- */
-  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; }
   .kpi {
     background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
     padding: 14px 16px 12px; box-shadow: var(--shadow);
   }
   .kpi .label {
-    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
     color: var(--ink-2); margin-bottom: 6px;
   }
-  .kpi .value { font-size: 34px; font-weight: 700; line-height: 1.05; }
+  .kpi .value { font-size: 32px; font-weight: 700; line-height: 1.05; }
   .kpi .note { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
-  /* ---------- panels ---------- */
+  /* ---------- panels & sections ---------- */
   .panel {
     background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
     padding: 18px 20px 16px; box-shadow: var(--shadow);
@@ -97,25 +80,61 @@
   .panel h2 { font-size: 15px; font-weight: 700; margin: 0 0 2px; }
   .panel .panel-sub { font-size: 12.5px; color: var(--ink-2); margin: 0 0 14px; }
   .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-  @media (max-width: 760px) { .row2 { grid-template-columns: 1fr; } }
+  .row-insight { display: grid; grid-template-columns: 1.5fr 1fr; gap: 20px; }
+  @media (max-width: 780px) { .row2, .row-insight { grid-template-columns: 1fr; } }
 
+  .section-head { display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap; margin: 6px 0 -8px; }
+  .section-head .tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 4px 12px; border-radius: 999px;
+  }
+  .section-head .tag.bldg { color: var(--purple); background: var(--chip-bg); }
+  .section-head .tag.env { color: var(--gold); background: var(--gold-bg); }
+  .section-head .facts { font-size: 12.5px; color: var(--ink-2); }
+  .section-head .facts b { color: var(--ink); }
+  .section-head .rule { flex: 1; height: 1px; background: var(--grid); min-width: 40px; align-self: center; }
+
+  /* ---------- insights ---------- */
+  .insights { display: flex; flex-direction: column; gap: 10px; }
+  .insight { display: flex; gap: 12px; align-items: flex-start; }
+  .insight .n {
+    flex: none; width: 22px; height: 22px; border-radius: 50%;
+    background: var(--chip-bg); color: var(--purple);
+    font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    margin-top: 1px;
+  }
+  .insight p { margin: 0; font-size: 13px; color: var(--ink-2); }
+  .insight p b { color: var(--ink); }
+
+  /* ---------- charts ---------- */
   .legend { display: flex; gap: 16px; font-size: 12px; color: var(--ink-2); margin: 0 0 8px; }
   .legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
-
   .chart-box svg { width: 100%; height: auto; display: block; }
   .chart-box text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
 
   details.tableview { margin-top: 10px; font-size: 12.5px; }
   details.tableview summary { cursor: pointer; color: var(--ink-2); font-weight: 600; }
   details.tableview table { border-collapse: collapse; margin-top: 8px; width: 100%; font-variant-numeric: tabular-nums; }
-  details.tableview th, details.tableview td {
-    text-align: right; padding: 4px 10px; border-bottom: 1px solid var(--grid); color: var(--ink);
-  }
+  details.tableview th, details.tableview td { text-align: right; padding: 4px 10px; border-bottom: 1px solid var(--grid); color: var(--ink); }
   details.tableview th:first-child, details.tableview td:first-child { text-align: left; }
   details.tableview th { color: var(--ink-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
 
+  /* ---------- bar list (areas / inspectors) ---------- */
+  .barlist { display: flex; flex-direction: column; gap: 7px; font-size: 12.5px; }
+  .barrow { display: grid; grid-template-columns: 158px 1fr 34px; gap: 10px; align-items: center; }
+  .barrow .lbl { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .barrow .track { background: var(--track); border-radius: 4px; height: 12px; position: relative; }
+  .barrow .fill { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
+  .barrow .val { text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .sparkrow { display: grid; grid-template-columns: 158px 1fr; gap: 10px; align-items: center; margin: -2px 0 2px; }
+  .sparkrow .lbl { font-size: 11px; color: var(--muted); text-align: right; padding-right: 2px; }
+  .sparks { display: flex; gap: 6px; align-items: flex-end; height: 26px; }
+  .spark { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .spark .bar { width: 14px; border-radius: 2px 2px 0 0; background: var(--purple); opacity: 0.55; }
+  .spark .m { font-size: 9px; color: var(--muted); }
+
   /* ---------- campus strip ---------- */
-  .campuses { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .campuses { display: grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap: 12px; }
   .campus {
     border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
     display: flex; flex-direction: column; gap: 8px; background: var(--page);
@@ -130,9 +149,29 @@
   .campus .stats { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-2); }
   .campus .stats b { color: var(--ink); font-variant-numeric: tabular-nums; }
 
+  /* ---------- inspector table ---------- */
+  .iheader, .irow { display: grid; grid-template-columns: 150px 96px 1fr 92px 72px; gap: 10px; align-items: center; }
+  .iheader {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 6px; border-bottom: 1px solid var(--grid); margin-bottom: 2px;
+  }
+  .irows { display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; }
+  .irow .nm { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .irow .route { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .irow .track { background: var(--track); border-radius: 4px; height: 12px; position: relative; display: flex; gap: 2px; overflow: hidden; }
+  .irow .seg { height: 100%; }
+  .irow .cnt, .irow .fnd { text-align: right; font-variant-numeric: tabular-nums; }
+  .irow .cnt b { font-weight: 700; }
+  .irow .cnt small, .irow .fnd { color: var(--ink-2); }
+  @media (max-width: 700px) {
+    .iheader { display: none; }
+    .irow { grid-template-columns: 1fr 70px 60px; }
+    .irow .route, .irow .track { display: none; }
+  }
+
   /* ---------- closed loop ---------- */
   .loop { display: grid; grid-template-columns: 1fr 1.4fr; gap: 20px; align-items: start; }
-  @media (max-width: 760px) { .loop { grid-template-columns: 1fr; } }
+  @media (max-width: 780px) { .loop { grid-template-columns: 1fr; } }
   .flow { display: flex; flex-direction: column; gap: 6px; }
   .flow .step {
     display: flex; align-items: baseline; gap: 10px;
@@ -142,16 +181,12 @@
   .flow .step .t { font-size: 12.5px; color: var(--ink-2); }
   .flow .arrow { text-align: center; color: var(--muted); font-size: 12px; line-height: 0.8; }
   .pending { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
-  .pending .slot {
-    border: 1.5px dashed var(--dash); border-radius: 10px; padding: 12px 12px 10px; text-align: left;
-  }
+  .pending .slot { border: 1.5px dashed var(--dash); border-radius: 10px; padding: 12px 12px 10px; }
   .pending .slot .label {
     font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-2);
   }
   .pending .slot .value { font-size: 26px; font-weight: 700; color: var(--muted); margin-top: 4px; }
-  .await {
-    font-size: 12px; color: var(--ink-2); margin-top: 10px;
-  }
+  .await { font-size: 12px; color: var(--ink-2); margin-top: 10px; }
   .badge-pending {
     display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
     color: var(--gold); border: 1px solid var(--gold); border-radius: 999px; padding: 2px 9px; margin-left: 8px; vertical-align: 2px;
@@ -177,98 +212,178 @@
     <p class="eyebrow">First Baptist Church of Glenarden &middot; Business Services &middot; Facilities</p>
     <h1>Building Services Quality Inspection Program</h1>
     <p class="sub">Mid-Year Report &middot; January 1 &ndash; June 30, 2026</p>
-    <div class="chips">
-      <span class="chip"><span class="dot" style="background: var(--purple)"></span>Building inspections</span>
-      <span class="chip"><span class="dot" style="background: var(--gold)"></span>Environmental / Climate inspections</span>
-      <span class="chip">5 campuses</span>
-      <span class="chip">8-inspector team</span>
-    </div>
   </header>
 
   <section class="kpis" aria-label="Headline numbers">
     <div class="kpi"><div class="label">Inspections completed</div><div class="value">170</div><div class="note">111 building &middot; 59 env/climate</div></div>
-    <div class="kpi"><div class="label">Issues caught &amp; routed</div><div class="value">253</div><div class="note">documented deficiencies</div></div>
+    <div class="kpi"><div class="label">Findings documented</div><div class="value">253</div><div class="note">225 building &middot; 28 env/climate</div></div>
     <div class="kpi"><div class="label">Work orders initiated</div><div class="value">82</div><div class="note">48% of inspections</div></div>
-    <div class="kpi"><div class="label">Clean inspections</div><div class="value">50%</div><div class="note">85 of 170 found zero deficiencies</div></div>
+    <div class="kpi"><div class="label">Clean inspections</div><div class="value">50%</div><div class="note">39% building &middot; 71% env/climate</div></div>
+    <div class="kpi"><div class="label">Coverage</div><div class="value">8</div><div class="note">inspectors across 5 campuses</div></div>
   </section>
 
-  <section class="row2">
+  <section class="row-insight">
     <div class="panel">
-      <h2>Inspection cadence by month</h2>
-      <p class="panel-sub">Program reached full cadence in February and held it through June.</p>
-      <div class="legend">
-        <span><span class="swatch" style="background: var(--purple)"></span>Building</span>
-        <span><span class="swatch" style="background: var(--gold)"></span>Env / Climate</span>
+      <h2>What the data says</h2>
+      <p class="panel-sub">Five takeaways from 170 inspections and 253 documented findings.</p>
+      <div class="insights">
+        <div class="insight"><span class="n">1</span><p><b>Winter showed up in the pavement.</b> Parking lots and sidewalks were the single largest issue source (34 checkpoint failures). Exterior issues peaked in February (19) and were worked down to 3 by June.</p></div>
+        <div class="insight"><span class="n">2</span><p><b>The program is proving itself.</b> Findings per inspection fell from 2.2 in February to 1.1 in June at full cadence &mdash; catch, fix, and find less on the next pass.</p></div>
+        <div class="insight"><span class="n">3</span><p><b>Two programs, two profiles.</b> Building checks carry the workload (225 findings, 39% clean). Environmental checks show healthy equipment spaces (28 findings, 71% clean).</p></div>
+        <div class="insight"><span class="n">4</span><p><b>Interior wear tracks foot traffic.</b> After exterior, failures cluster in restrooms, the sanctuary, and stairwells (23 each) &mdash; the highest-traffic, most member-facing spaces.</p></div>
+        <div class="insight"><span class="n">5</span><p><b>Ministry Center got the deepest look.</b> 124 of 253 findings came from its 23 inspections. When the FMX export lands, the next question is how fast that pipeline clears.</p></div>
       </div>
-      <div class="chart-box" id="chart-cadence" role="img" aria-label="Stacked bar chart: inspections per month, January 8, February 27, March 32, April 40, May 37, June 26, split into building and environmental/climate"></div>
+    </div>
+    <div class="panel">
+      <h2>Findings by month</h2>
+      <p class="panel-sub">Both programs combined. Per-inspection rate: <b>2.2 (Feb) &rarr; 1.1 (Jun)</b>.</p>
+      <div class="chart-box" id="chart-findings" role="img" aria-label="Bar chart: findings documented per month, January 27, February 59, March 56, April 46, May 37, June 28"></div>
       <details class="tableview">
         <summary>View data table</summary>
         <table>
-          <thead><tr><th>Month</th><th>Building</th><th>Env/Climate</th><th>Total</th><th>Issues caught</th></tr></thead>
+          <thead><tr><th>Month</th><th>Building insp.</th><th>Env insp.</th><th>Findings</th></tr></thead>
           <tbody>
-            <tr><td>Jan</td><td>4</td><td>4</td><td>8</td><td>27</td></tr>
-            <tr><td>Feb</td><td>20</td><td>7</td><td>27</td><td>59</td></tr>
-            <tr><td>Mar</td><td>18</td><td>14</td><td>32</td><td>56</td></tr>
-            <tr><td>Apr</td><td>25</td><td>15</td><td>40</td><td>46</td></tr>
-            <tr><td>May</td><td>23</td><td>14</td><td>37</td><td>37</td></tr>
-            <tr><td>Jun</td><td>21</td><td>5</td><td>26</td><td>28</td></tr>
+            <tr><td>Jan</td><td>4</td><td>4</td><td>27</td></tr>
+            <tr><td>Feb</td><td>20</td><td>7</td><td>59</td></tr>
+            <tr><td>Mar</td><td>18</td><td>14</td><td>56</td></tr>
+            <tr><td>Apr</td><td>25</td><td>15</td><td>46</td></tr>
+            <tr><td>May</td><td>23</td><td>14</td><td>37</td></tr>
+            <tr><td>Jun</td><td>21</td><td>5</td><td>28</td></tr>
           </tbody>
         </table>
       </details>
     </div>
+  </section>
+
+  <div class="section-head">
+    <span class="tag bldg">Building inspection program</span>
+    <span class="facts"><b>111</b> inspections &middot; <b>225</b> findings &middot; <b>39%</b> clean</span>
+    <span class="rule"></span>
+  </div>
+
+  <section class="row2">
     <div class="panel">
-      <h2>Issues caught by month</h2>
-      <p class="panel-sub">Issues per inspection fell from <b>2.2 in February to 1.1 in June</b> while cadence held &mdash; inspections are catching problems and the campus condition is improving.</p>
-      <div class="chart-box" id="chart-issues" role="img" aria-label="Bar chart: deficiencies caught per month, January 27, February 59, March 56, April 46, May 37, June 28"></div>
+      <h2>Building inspections by month</h2>
+      <p class="panel-sub">Full checklist walks of each campus &mdash; exterior to storage rooms.</p>
+      <div class="chart-box" id="chart-bldg" role="img" aria-label="Bar chart: building inspections per month, January 4, February 20, March 18, April 25, May 23, June 21"></div>
+    </div>
+    <div class="panel">
+      <h2>Where checkpoints fail</h2>
+      <p class="panel-sub">201 checkpoint failures across building inspections, grouped by area.</p>
+      <div class="barlist">
+        <div class="barrow"><span class="lbl">Exterior &amp; grounds</span><span class="track"><span class="fill" style="width:100%;background:var(--purple)"></span></span><span class="val">59</span></div>
+        <div class="sparkrow"><span class="lbl">by month &rarr;</span><span class="sparks" aria-label="Exterior failures by month: January 2, February 19, March 14, April 14, May 7, June 3">
+          <span class="spark"><span class="bar" style="height:3px"></span><span class="m">J</span></span>
+          <span class="spark"><span class="bar" style="height:22px"></span><span class="m">F</span></span>
+          <span class="spark"><span class="bar" style="height:16px"></span><span class="m">M</span></span>
+          <span class="spark"><span class="bar" style="height:16px"></span><span class="m">A</span></span>
+          <span class="spark"><span class="bar" style="height:8px"></span><span class="m">M</span></span>
+          <span class="spark"><span class="bar" style="height:4px"></span><span class="m">J</span></span>
+        </span></div>
+        <div class="barrow"><span class="lbl">Restrooms</span><span class="track"><span class="fill" style="width:39%;background:var(--purple)"></span></span><span class="val">23</span></div>
+        <div class="barrow"><span class="lbl">Sanctuary</span><span class="track"><span class="fill" style="width:39%;background:var(--purple)"></span></span><span class="val">23</span></div>
+        <div class="barrow"><span class="lbl">Stairwells</span><span class="track"><span class="fill" style="width:39%;background:var(--purple)"></span></span><span class="val">23</span></div>
+        <div class="barrow"><span class="lbl">Lobby &amp; halls</span><span class="track"><span class="fill" style="width:32%;background:var(--purple)"></span></span><span class="val">19</span></div>
+        <div class="barrow"><span class="lbl">Class &amp; conference rooms</span><span class="track"><span class="fill" style="width:29%;background:var(--purple)"></span></span><span class="val">17</span></div>
+        <div class="barrow"><span class="lbl">Elevators</span><span class="track"><span class="fill" style="width:14%;background:var(--purple)"></span></span><span class="val">8</span></div>
+        <div class="barrow"><span class="lbl">Entrance areas</span><span class="track"><span class="fill" style="width:14%;background:var(--purple)"></span></span><span class="val">8</span></div>
+        <div class="barrow"><span class="lbl">All other areas (6)</span><span class="track"><span class="fill" style="width:36%;background:var(--baseline)"></span></span><span class="val">21</span></div>
+      </div>
+      <p class="panel-sub" style="margin: 10px 0 0;">Top single checkpoints: parking lots &amp; paved surfaces (22), sidewalks (12), sanctuary carpet (10), stairwell walls (10).</p>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <span class="tag env">Environmental / climate program</span>
+    <span class="facts"><b>59</b> checks &middot; <b>28</b> findings &middot; <b>71%</b> clean</span>
+    <span class="rule"></span>
+  </div>
+
+  <section class="row2">
+    <div class="panel">
+      <h2>Environmental checks by month</h2>
+      <p class="panel-sub">Pass/fail sweeps of equipment and climate-sensitive spaces &mdash; server rooms, IT closets, kitchens, meeting spaces.</p>
+      <div class="chart-box" id="chart-env" role="img" aria-label="Bar chart: environmental checks per month, January 4, February 7, March 14, April 15, May 14, June 5"></div>
+    </div>
+    <div class="panel">
+      <h2>Where environmental checks flag</h2>
+      <p class="panel-sub">22 checkpoint failures across 59 checks &mdash; 42 of 59 came back fully clean.</p>
+      <div class="barlist">
+        <div class="barrow"><span class="lbl">Meeting rooms</span><span class="track"><span class="fill" style="width:100%;background:var(--gold)"></span></span><span class="val">10</span></div>
+        <div class="barrow"><span class="lbl">Sanctuary / warehouse</span><span class="track"><span class="fill" style="width:60%;background:var(--gold)"></span></span><span class="val">6</span></div>
+        <div class="barrow"><span class="lbl">Offices</span><span class="track"><span class="fill" style="width:30%;background:var(--gold)"></span></span><span class="val">3</span></div>
+        <div class="barrow"><span class="lbl">CLC / courts</span><span class="track"><span class="fill" style="width:20%;background:var(--gold)"></span></span><span class="val">2</span></div>
+        <div class="barrow"><span class="lbl">Kitchen / health clinic</span><span class="track"><span class="fill" style="width:10%;background:var(--gold)"></span></span><span class="val">1</span></div>
+      </div>
+      <p class="panel-sub" style="margin: 10px 0 0;">Server rooms, IT closets, telecom closets, storage rooms, and first-aid stations recorded <b>zero failures</b> all period. Community Life Center anchors the cadence (43 of 59 checks, 36 clean).</p>
     </div>
   </section>
 
   <section class="panel">
     <h2>By campus</h2>
-    <p class="panel-sub">Inspection mixes differ by campus &mdash; Community Life Center runs mostly pass/fail environmental checks, so raw issue counts are not comparable across campuses.</p>
+    <p class="panel-sub">Inspection mixes differ by campus &mdash; Community Life Center runs mostly pass/fail environmental checks, so raw finding counts are not comparable across campuses.</p>
     <div class="campuses">
       <div class="campus">
         <span class="code">WC</span><span class="name">Worship Center</span>
         <span class="big">53 <small>inspections</small></span>
         <div class="mixbar" title="39 building / 14 env-climate"><span class="b" style="flex: 39"></span><span class="e" style="flex: 14"></span></div>
-        <div class="stats"><span>Issues caught <b>90</b></span><span>Clean <b>30%</b></span></div>
+        <div class="stats"><span>Findings <b>90</b></span><span>Clean <b>30%</b></span></div>
       </div>
       <div class="campus">
         <span class="code">CL</span><span class="name">Community Life Center</span>
         <span class="big">52 <small>inspections</small></span>
         <div class="mixbar" title="9 building / 43 env-climate"><span class="b" style="flex: 9"></span><span class="e" style="flex: 43"></span></div>
-        <div class="stats"><span>Issues caught <b>10</b></span><span>Clean <b>87%</b></span></div>
+        <div class="stats"><span>Findings <b>10</b></span><span>Clean <b>87%</b></span></div>
       </div>
       <div class="campus">
         <span class="code">EC</span><span class="name">Empowerment Center</span>
         <span class="big">40 <small>inspections</small></span>
         <div class="mixbar" title="40 building / 0 env-climate"><span class="b" style="flex: 40"></span></div>
-        <div class="stats"><span>Issues caught <b>28</b></span><span>Clean <b>58%</b></span></div>
+        <div class="stats"><span>Findings <b>28</b></span><span>Clean <b>58%</b></span></div>
       </div>
       <div class="campus">
         <span class="code">MC</span><span class="name">Ministry Center</span>
         <span class="big">23 <small>inspections</small></span>
         <div class="mixbar" title="22 building / 1 env-climate"><span class="b" style="flex: 22"></span><span class="e" style="flex: 1"></span></div>
-        <div class="stats"><span>Issues caught <b>124</b></span><span>Clean <b>0%</b></span></div>
+        <div class="stats"><span>Findings <b>124</b></span><span>Clean <b>0%</b></span></div>
       </div>
       <div class="campus">
         <span class="code">SB</span><span class="name">Service Building</span>
         <span class="big">2 <small>inspections</small></span>
         <div class="mixbar" title="1 building / 1 env-climate"><span class="b" style="flex: 1"></span><span class="e" style="flex: 1"></span></div>
-        <div class="stats"><span>Issues caught <b>1</b></span><span>Clean <b>1 of 2</b></span></div>
+        <div class="stats"><span>Findings <b>1</b></span><span>Clean <b>1 of 2</b></span></div>
       </div>
     </div>
-    <p class="panel-sub" style="margin: 12px 0 0;">Ministry Center was this period's deepest-dive campus &mdash; its inspections surfaced 124 of the 253 issues now in the work-order pipeline. Service Building entered the rotation late in the period.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Coverage by inspector</h2>
+    <p class="panel-sub">Routes are campus-anchored &mdash; each inspector primarily covers assigned buildings. Finding counts reflect the condition and depth of the route covered, not inspector performance.</p>
+    <div class="legend">
+      <span><span class="swatch" style="background: var(--purple)"></span>Building</span>
+      <span><span class="swatch" style="background: var(--gold)"></span>Env / Climate</span>
+    </div>
+    <div class="iheader"><span>Inspector</span><span>Route</span><span>Inspections</span><span style="text-align:right">Bldg / Env</span><span style="text-align:right">Findings</span></div>
+    <div class="irows">
+      <div class="irow"><span class="nm">Armando Lopez</span><span class="route">CL</span><span class="track"><span class="seg" style="width:9.3%;background:var(--purple)"></span><span class="seg" style="width:90.7%;background:var(--gold)"></span></span><span class="cnt"><b>43</b> <small>&middot; 4 / 39</small></span><span class="fnd">10</span></div>
+      <div class="irow"><span class="nm">Harold Rogers</span><span class="route">EC</span><span class="track" style="width:93%"><span class="seg" style="width:100%;background:var(--purple)"></span></span><span class="cnt"><b>40</b> <small>&middot; 40 / 0</small></span><span class="fnd">28</span></div>
+      <div class="irow"><span class="nm">Kenneth Carr</span><span class="route">CL &middot; WC</span><span class="track" style="width:67%"><span class="seg" style="width:51.7%;background:var(--purple)"></span><span class="seg" style="width:48.3%;background:var(--gold)"></span></span><span class="cnt"><b>29</b> <small>&middot; 15 / 14</small></span><span class="fnd">56</span></div>
+      <div class="irow"><span class="nm">Von Brown</span><span class="route">WC &middot; SB</span><span class="track" style="width:53%"><span class="seg" style="width:91.3%;background:var(--purple)"></span><span class="seg" style="width:8.7%;background:var(--gold)"></span></span><span class="cnt"><b>23</b> <small>&middot; 21 / 2</small></span><span class="fnd">19</span></div>
+      <div class="irow"><span class="nm">Chaun Coleman</span><span class="route">MC</span><span class="track" style="width:44%"><span class="seg" style="width:94.7%;background:var(--purple)"></span><span class="seg" style="width:5.3%;background:var(--gold)"></span></span><span class="cnt"><b>19</b> <small>&middot; 18 / 1</small></span><span class="fnd">93</span></div>
+      <div class="irow"><span class="nm">Misael Gonzalez</span><span class="route">WC</span><span class="track" style="width:23%"><span class="seg" style="width:70%;background:var(--purple)"></span><span class="seg" style="width:30%;background:var(--gold)"></span></span><span class="cnt"><b>10</b> <small>&middot; 7 / 3</small></span><span class="fnd">1</span></div>
+      <div class="irow"><span class="nm">Brandon McRae</span><span class="route">MC</span><span class="track" style="width:9.3%"><span class="seg" style="width:100%;background:var(--purple)"></span></span><span class="cnt"><b>4</b> <small>&middot; 4 / 0</small></span><span class="fnd">31</span></div>
+      <div class="irow"><span class="nm">Luther Jones</span><span class="route">WC</span><span class="track" style="width:4.7%"><span class="seg" style="width:100%;background:var(--purple)"></span></span><span class="cnt"><b>2</b> <small>&middot; 2 / 0</small></span><span class="fnd">15</span></div>
+    </div>
   </section>
 
   <section class="panel">
     <h2>Closing the loop: from inspection to fix<span class="badge-pending">FMX export pending</span></h2>
-    <p class="panel-sub">Every issue caught is routed into the FMX work-order pipeline. The right panel completes when the FMX work-order export arrives from Facilities.</p>
+    <p class="panel-sub">Every finding is routed into the FMX work-order pipeline. The right panel completes when the FMX work-order export arrives from Facilities.</p>
     <div class="loop">
       <div class="flow">
         <div class="step"><span class="n">170</span><span class="t">inspections completed, Jan&ndash;Jun</span></div>
         <div class="arrow">&#9660;</div>
-        <div class="step"><span class="n">253</span><span class="t">deficiencies documented</span></div>
+        <div class="step"><span class="n">253</span><span class="t">findings documented</span></div>
         <div class="arrow">&#9660;</div>
         <div class="step"><span class="n">82</span><span class="t">inspection reports initiated FMX work orders</span></div>
       </div>
@@ -280,13 +395,13 @@
           <div class="slot"><div class="label">Median days to close</div><div class="value">&mdash;</div></div>
           <div class="slot"><div class="label">Open backlog, Jun 30</div><div class="value">&mdash;</div></div>
         </div>
-        <p class="await">Awaiting raw FMX work-order export (Jan 1 &ndash; Jun 30 created or closed). Inspection deficiencies and FMX tickets are related but distinct measures &mdash; some issues are fixed on the spot without a ticket; some tickets originate outside inspections. They will be aligned by campus and month, not ticket-by-ticket.</p>
+        <p class="await">Awaiting raw FMX work-order export (Jan 1 &ndash; Jun 30 created or closed). Inspection findings and FMX tickets are related but distinct measures &mdash; some issues are fixed on the spot without a ticket; some tickets originate outside inspections. They will be aligned by campus and month, not ticket-by-ticket.</p>
       </div>
     </div>
   </section>
 
   <footer>
-    <b>Method:</b> Source is the Building Services Quality Inspection Checklist (Smartsheet), pulled July 10, 2026. Of 237 raw rows, 183 are actual inspection reports (54 scaffold/divider rows excluded); 170 fall inside the Jan 1 &ndash; Jun 30, 2026 window (7 Dec-2025 and 6 Jul-2026 reports excluded). "Issues caught" counts documented deficiencies; a clean inspection recorded zero. Inspector performance is tracked internally and reported at team level here.<br>
+    <b>Method:</b> Source is the Building Services Quality Inspection Checklist (Smartsheet), pulled July 10, 2026. Of 237 raw rows, 183 are actual inspection reports (54 scaffold/divider rows excluded); 170 fall inside the Jan 1 &ndash; Jun 30, 2026 window (7 Dec-2025 and 6 Jul-2026 reports excluded). Two units appear above: <b>findings</b> (253) are individual documented deficiency line items; <b>checkpoint failures</b> (223 in period: 201 building, 22 environmental) count checklist areas marked "Deficiency" &mdash; one area can carry several findings. A clean inspection recorded zero findings. Campus and area cross-checks reconcile exactly (225 + 28 = 253 findings; Ministry Center 93 + 31 = 124).<br>
     Prepared by Business Services &middot; Business Systems &amp; Solutions &middot; July 2026
   </footer>
 </div>
@@ -313,7 +428,6 @@
   }
   function hideTip() { tip.style.display = 'none'; }
 
-  // rounded-top rect path (4px radius at data end, square at baseline)
   function topRoundedRect(x, y, w, h, r) {
     r = Math.min(r, h, w / 2);
     return 'M' + x + ' ' + (y + h) + 'V' + (y + r) + 'Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y +
@@ -324,14 +438,13 @@
 
   function barChart(mountId, opts) {
     var mount = document.getElementById(mountId);
-    var W = 500, H = 232, mL = 30, mR = 6, mT = 14, mB = 24;
+    var W = 500, H = 210, mL = 30, mR = 6, mT = 14, mB = 24;
     var plotW = W - mL - mR, plotH = H - mT - mB, baseY = mT + plotH;
     var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H }, mount);
     var scale = plotH / opts.max;
-    var n = opts.series[0].values.length;
+    var n = opts.values.length;
     var slot = plotW / n, barW = Math.min(52, slot * 0.62);
 
-    // gridlines + y ticks
     opts.ticks.forEach(function (t) {
       var y = baseY - t * scale;
       el('line', { x1: mL, x2: W - mR, y1: y, y2: y, stroke: t === 0 ? css('--baseline') : css('--grid'), 'stroke-width': 1 }, svg);
@@ -339,54 +452,29 @@
     });
 
     for (var i = 0; i < n; i++) {
+      var v = opts.values[i];
       var x = mL + i * slot + (slot - barW) / 2;
-      var yCursor = baseY, total = 0, parts = [];
-      for (var s = 0; s < opts.series.length; s++) {
-        var v = opts.series[s].values[i];
-        total += v;
-        if (v <= 0) continue;
-        var h = v * scale;
-        var isTop = (s === opts.series.length - 1) || opts.series.slice(s + 1).every(function (sr) { return sr.values[i] <= 0; });
-        var gap = (yCursor !== baseY) ? 2 : 0;
-        var y = yCursor - gap - h;
-        var shape;
-        if (isTop) shape = el('path', { d: topRoundedRect(x, y, barW, yCursor - gap - y, 4), fill: css(opts.series[s].color) }, svg);
-        else shape = el('rect', { x: x, y: y, width: barW, height: yCursor - gap - y, fill: css(opts.series[s].color) }, svg);
-        (function (label, val) {
-          shape.addEventListener('mousemove', function (evt) { showTip(evt, label + ': ' + val); });
-          shape.addEventListener('mouseleave', hideTip);
-        })(MONTHS[i] + ' · ' + opts.series[s].name, opts.series[s].values[i]);
-        yCursor = y;
-        parts.push(v);
-      }
-      // total label above stack (selective: all stacks get totals only, no per-segment numbers)
-      if (opts.totalLabels) {
-        el('text', { x: x + barW / 2, y: yCursor - 5, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 600, fill: css('--ink') }, svg).textContent = total;
-      } else if (opts.labelIdx && opts.labelIdx.indexOf(i) !== -1) {
-        el('text', { x: x + barW / 2, y: yCursor - 5, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 600, fill: css('--ink') }, svg).textContent = total;
+      var h = v * scale, y = baseY - h;
+      var shape = el('path', { d: topRoundedRect(x, y, barW, h, 4), fill: css(opts.color) }, svg);
+      (function (label, val) {
+        shape.addEventListener('mousemove', function (evt) { showTip(evt, label + ': ' + val); });
+        shape.addEventListener('mouseleave', hideTip);
+      })(MONTHS[i] + ' · ' + opts.name, v);
+      if (opts.labelIdx.indexOf(i) !== -1) {
+        el('text', { x: x + barW / 2, y: y - 5, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 600, fill: css('--ink') }, svg).textContent = v;
       }
       el('text', { x: mL + i * slot + slot / 2, y: baseY + 15, 'text-anchor': 'middle', 'font-size': 11, fill: css('--ink-2') }, svg).textContent = MONTHS[i];
     }
   }
 
   function render() {
-    document.getElementById('chart-cadence').innerHTML = '';
-    document.getElementById('chart-issues').innerHTML = '';
-    barChart('chart-cadence', {
-      max: 44, ticks: [0, 10, 20, 30, 40], totalLabels: true,
-      series: [
-        { name: 'Building', color: '--purple', values: [4, 20, 18, 25, 23, 21] },
-        { name: 'Env/Climate', color: '--gold', values: [4, 7, 14, 15, 14, 5] }
-      ]
-    });
-    barChart('chart-issues', {
-      max: 64, ticks: [0, 20, 40, 60], labelIdx: [1, 5],
-      series: [{ name: 'Issues caught', color: '--purple-soft', values: [27, 59, 56, 46, 37, 28] }]
-    });
+    ['chart-findings', 'chart-bldg', 'chart-env'].forEach(function (id) { document.getElementById(id).innerHTML = ''; });
+    barChart('chart-findings', { name: 'Findings', color: '--purple-soft', max: 64, ticks: [0, 20, 40, 60], labelIdx: [1, 5], values: [27, 59, 56, 46, 37, 28] });
+    barChart('chart-bldg', { name: 'Building inspections', color: '--purple', max: 28, ticks: [0, 10, 20], labelIdx: [0, 3], values: [4, 20, 18, 25, 23, 21] });
+    barChart('chart-env', { name: 'Env checks', color: '--gold', max: 18, ticks: [0, 5, 10, 15], labelIdx: [0, 3], values: [4, 7, 14, 15, 14, 5] });
   }
   render();
 
-  // re-render on theme change so SVG picks up new token values
   new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
   if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
 })();

@@ -61,6 +61,39 @@ Submitted 85 · Work Order Initiated 82 · Complete 3. Ticket closure comes from
 
 All 170 in-period rows have non-empty "FMX Ticket Numbers" text, but only **56** contain ticket-like numbers — confirms the free-text field cannot support row-level joins to FMX. Join plan remains campus + month alignment.
 
-## Inspector-level (backup only — NOT on the public dashboard)
+## Inspector coverage (on the dashboard as of v2, per Gina 2026-07-10)
 
-Armando Lopez 43 · Harold Rogers 40 · Kenneth Carr 29 · Von Brown 23 · Chaun Coleman 19 · Misael Gonzalez 10 · Brandon McRae 4 · Luther Jones 2
+Framing on the dashboard: routes are campus-anchored; finding counts reflect route condition/depth, not performance.
+
+| Inspector | Route | Inspections | Bldg / Env | Findings documented |
+|---|---|---|---|---|
+| Armando Lopez | CL | 43 | 4 / 39 | 10 |
+| Harold Rogers | EC | 40 | 40 / 0 | 28 |
+| Kenneth Carr | CL·WC | 29 | 15 / 14 | 56 |
+| Von Brown | WC·SB | 23 | 21 / 2 | 19 |
+| Chaun Coleman | MC | 19 | 18 / 1 | 93 |
+| Misael Gonzalez | WC | 10 | 7 / 3 | 1 |
+| Brandon McRae | MC | 4 | 4 / 0 | 31 |
+| Luther Jones | WC | 2 | 2 / 0 | 15 |
+
+Cross-check: MC = Chaun 93 + Brandon 31 = 124 findings ✓.
+
+## Checkpoint failures by area (v2 addition)
+
+Unit distinction: **findings** (253) = deficiency line items in the Deficiencies column; **checkpoint failures** = checklist area columns marked "Deficiency" (one area can carry several findings). Sourced by searching all 98 "Satisfactory | Deficiency" picklist columns: 234 flagged cells sheet-wide, all validated to real inspection rows, **223 in period** (201 on Building reports, 22 on Env reports — zero type/area mismatches). Raw rows: `checkpoint-failures-2026H1.csv`.
+
+**Building areas (201):** Exterior & grounds 59 · Restrooms 23 · Sanctuary 23 · Stairwells 23 · Lobby & halls 19 · Class & conference 17 · Elevators 8 · Entrance areas 8 · Fire & safety 5 · Warehouse 5 · Electrical/mechanical 4 · Cafeteria 3 · Storage 3 · Offices 1.
+Top single checkpoints: Parking lots/paved surfaces 22, Sidewalks 12, Sanctuary carpet 10, Stairwell walls 10.
+**Exterior seasonality:** Jan 2 → Feb 19 → Mar 14 → Apr 14 → May 7 → Jun 3 (winter damage caught and worked down).
+
+**Env areas (22):** Meeting rooms 10 · Sanctuary/warehouse 6 · Offices 3 · CLC/courts 2 · Kitchen/health clinic 1. Server rooms, IT closets, telecom closets, storage rooms, first-aid stations: zero failures all period.
+
+**Per-program profile:** Building — 111 inspections, 39% clean, 225 findings. Env/Climate — 59 checks, 71% clean, 28 findings (225 + 28 = 253 ✓).
+
+## Dashboard v2 insights (as shown on the artifact)
+
+1. Winter showed up in the pavement — parking lots + sidewalks = 34 failures, Feb peak 19 → Jun 3.
+2. Findings per inspection fell 2.2 (Feb) → 1.1 (Jun) at full cadence.
+3. Two programs, two profiles — building carries the workload; env spaces are healthy.
+4. Interior wear tracks foot traffic — restrooms/sanctuary/stairwells 23 each.
+5. MC deep-dives produced 124 of 253 findings; FMX export will show closure speed.

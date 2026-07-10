@@ -1,0 +1,393 @@
+<title>FBCG Facilities Inspections &mdash; Jan&ndash;Jun 2026</title>
+<style>
+  :root {
+    --page: #f6f4f1;
+    --surface: #fdfcfa;
+    --ink: #1c1626;
+    --ink-2: #575061;
+    --muted: #8b8494;
+    --grid: #e8e4ee;
+    --baseline: #c9c3d2;
+    --border: rgba(28, 22, 38, 0.10);
+    --purple: #5e35a1;      /* series: Building */
+    --gold: #b98500;        /* series: Env/Climate */
+    --purple-soft: #7b57c0; /* single-series measure (deficiencies) */
+    --chip-bg: rgba(94, 53, 161, 0.08);
+    --dash: #a99fc0;
+    --shadow: 0 1px 2px rgba(28, 22, 38, 0.05), 0 4px 16px rgba(28, 22, 38, 0.05);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --page: #120e18;
+      --surface: #1c1722;
+      --ink: #f4f1f9;
+      --ink-2: #c2bcce;
+      --muted: #8b8494;
+      --grid: #322b3e;
+      --baseline: #453d55;
+      --border: rgba(244, 241, 249, 0.10);
+      --purple: #8f72d4;
+      --gold: #b8850a;
+      --purple-soft: #a48be0;
+      --chip-bg: rgba(143, 114, 212, 0.14);
+      --dash: #5d5372;
+      --shadow: none;
+    }
+  }
+  :root[data-theme="dark"] {
+    --page: #120e18; --surface: #1c1722; --ink: #f4f1f9; --ink-2: #c2bcce;
+    --muted: #8b8494; --grid: #322b3e; --baseline: #453d55;
+    --border: rgba(244, 241, 249, 0.10); --purple: #8f72d4; --gold: #b8850a;
+    --purple-soft: #a48be0; --chip-bg: rgba(143, 114, 212, 0.14);
+    --dash: #5d5372; --shadow: none;
+  }
+  :root[data-theme="light"] {
+    --page: #f6f4f1; --surface: #fdfcfa; --ink: #1c1626; --ink-2: #575061;
+    --muted: #8b8494; --grid: #e8e4ee; --baseline: #c9c3d2;
+    --border: rgba(28, 22, 38, 0.10); --purple: #5e35a1; --gold: #b98500;
+    --purple-soft: #7b57c0; --chip-bg: rgba(94, 53, 161, 0.08);
+    --dash: #a99fc0;
+    --shadow: 0 1px 2px rgba(28, 22, 38, 0.05), 0 4px 16px rgba(28, 22, 38, 0.05);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 32px 20px 48px;
+    line-height: 1.45;
+  }
+  .wrap { max-width: 1060px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+
+  /* ---------- header ---------- */
+  header .eyebrow {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase;
+    color: var(--purple); margin: 0 0 6px;
+  }
+  header h1 { font-size: 26px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.01em; text-wrap: balance; }
+  header .sub { color: var(--ink-2); font-size: 14px; margin: 0 0 12px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    font-size: 12px; font-weight: 600; color: var(--ink);
+    background: var(--chip-bg); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .chip .dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: 1px; }
+
+  /* ---------- KPI tiles ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 12px; }
+  .kpi {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 10px;
+    padding: 14px 16px 12px; box-shadow: var(--shadow);
+  }
+  .kpi .label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-2); margin-bottom: 6px;
+  }
+  .kpi .value { font-size: 34px; font-weight: 700; line-height: 1.05; }
+  .kpi .note { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* ---------- panels ---------- */
+  .panel {
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+    padding: 18px 20px 16px; box-shadow: var(--shadow);
+  }
+  .panel h2 { font-size: 15px; font-weight: 700; margin: 0 0 2px; }
+  .panel .panel-sub { font-size: 12.5px; color: var(--ink-2); margin: 0 0 14px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  @media (max-width: 760px) { .row2 { grid-template-columns: 1fr; } }
+
+  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--ink-2); margin: 0 0 8px; }
+  .legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 5px; vertical-align: -1px; }
+
+  .chart-box svg { width: 100%; height: auto; display: block; }
+  .chart-box text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+
+  details.tableview { margin-top: 10px; font-size: 12.5px; }
+  details.tableview summary { cursor: pointer; color: var(--ink-2); font-weight: 600; }
+  details.tableview table { border-collapse: collapse; margin-top: 8px; width: 100%; font-variant-numeric: tabular-nums; }
+  details.tableview th, details.tableview td {
+    text-align: right; padding: 4px 10px; border-bottom: 1px solid var(--grid); color: var(--ink);
+  }
+  details.tableview th:first-child, details.tableview td:first-child { text-align: left; }
+  details.tableview th { color: var(--ink-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  /* ---------- campus strip ---------- */
+  .campuses { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
+  .campus {
+    border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px;
+    display: flex; flex-direction: column; gap: 8px; background: var(--page);
+  }
+  .campus .code { font-size: 11px; font-weight: 700; letter-spacing: 0.1em; color: var(--purple); }
+  .campus .name { font-size: 13px; font-weight: 700; margin-top: -6px; }
+  .campus .big { font-size: 24px; font-weight: 700; line-height: 1; }
+  .campus .big small { font-size: 12px; font-weight: 500; color: var(--muted); }
+  .mixbar { display: flex; gap: 2px; height: 8px; border-radius: 4px; overflow: hidden; }
+  .mixbar .b { background: var(--purple); }
+  .mixbar .e { background: var(--gold); }
+  .campus .stats { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-2); }
+  .campus .stats b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* ---------- closed loop ---------- */
+  .loop { display: grid; grid-template-columns: 1fr 1.4fr; gap: 20px; align-items: start; }
+  @media (max-width: 760px) { .loop { grid-template-columns: 1fr; } }
+  .flow { display: flex; flex-direction: column; gap: 6px; }
+  .flow .step {
+    display: flex; align-items: baseline; gap: 10px;
+    border: 1px solid var(--border); border-radius: 8px; padding: 9px 12px; background: var(--page);
+  }
+  .flow .step .n { font-size: 20px; font-weight: 700; min-width: 44px; text-align: right; font-variant-numeric: tabular-nums; }
+  .flow .step .t { font-size: 12.5px; color: var(--ink-2); }
+  .flow .arrow { text-align: center; color: var(--muted); font-size: 12px; line-height: 0.8; }
+  .pending { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; }
+  .pending .slot {
+    border: 1.5px dashed var(--dash); border-radius: 10px; padding: 12px 12px 10px; text-align: left;
+  }
+  .pending .slot .label {
+    font-size: 10.5px; font-weight: 600; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-2);
+  }
+  .pending .slot .value { font-size: 26px; font-weight: 700; color: var(--muted); margin-top: 4px; }
+  .await {
+    font-size: 12px; color: var(--ink-2); margin-top: 10px;
+  }
+  .badge-pending {
+    display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--gold); border: 1px solid var(--gold); border-radius: 999px; padding: 2px 9px; margin-left: 8px; vertical-align: 2px;
+  }
+
+  footer { font-size: 11.5px; color: var(--muted); line-height: 1.6; border-top: 1px solid var(--grid); padding-top: 14px; }
+  footer b { color: var(--ink-2); }
+
+  #tip {
+    position: fixed; pointer-events: none; z-index: 10; display: none;
+    background: var(--ink); color: var(--page); font-size: 12px; font-weight: 600;
+    padding: 6px 9px; border-radius: 6px; white-space: nowrap;
+  }
+  @media print {
+    body { padding: 0; background: #fff; }
+    .panel, .kpi { box-shadow: none; }
+    details.tableview { display: none; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">First Baptist Church of Glenarden &middot; Business Services &middot; Facilities</p>
+    <h1>Building Services Quality Inspection Program</h1>
+    <p class="sub">Mid-Year Report &middot; January 1 &ndash; June 30, 2026</p>
+    <div class="chips">
+      <span class="chip"><span class="dot" style="background: var(--purple)"></span>Building inspections</span>
+      <span class="chip"><span class="dot" style="background: var(--gold)"></span>Environmental / Climate inspections</span>
+      <span class="chip">5 campuses</span>
+      <span class="chip">8-inspector team</span>
+    </div>
+  </header>
+
+  <section class="kpis" aria-label="Headline numbers">
+    <div class="kpi"><div class="label">Inspections completed</div><div class="value">170</div><div class="note">111 building &middot; 59 env/climate</div></div>
+    <div class="kpi"><div class="label">Issues caught &amp; routed</div><div class="value">253</div><div class="note">documented deficiencies</div></div>
+    <div class="kpi"><div class="label">Work orders initiated</div><div class="value">82</div><div class="note">48% of inspections</div></div>
+    <div class="kpi"><div class="label">Clean inspections</div><div class="value">50%</div><div class="note">85 of 170 found zero deficiencies</div></div>
+  </section>
+
+  <section class="row2">
+    <div class="panel">
+      <h2>Inspection cadence by month</h2>
+      <p class="panel-sub">Program reached full cadence in February and held it through June.</p>
+      <div class="legend">
+        <span><span class="swatch" style="background: var(--purple)"></span>Building</span>
+        <span><span class="swatch" style="background: var(--gold)"></span>Env / Climate</span>
+      </div>
+      <div class="chart-box" id="chart-cadence" role="img" aria-label="Stacked bar chart: inspections per month, January 8, February 27, March 32, April 40, May 37, June 26, split into building and environmental/climate"></div>
+      <details class="tableview">
+        <summary>View data table</summary>
+        <table>
+          <thead><tr><th>Month</th><th>Building</th><th>Env/Climate</th><th>Total</th><th>Issues caught</th></tr></thead>
+          <tbody>
+            <tr><td>Jan</td><td>4</td><td>4</td><td>8</td><td>27</td></tr>
+            <tr><td>Feb</td><td>20</td><td>7</td><td>27</td><td>59</td></tr>
+            <tr><td>Mar</td><td>18</td><td>14</td><td>32</td><td>56</td></tr>
+            <tr><td>Apr</td><td>25</td><td>15</td><td>40</td><td>46</td></tr>
+            <tr><td>May</td><td>23</td><td>14</td><td>37</td><td>37</td></tr>
+            <tr><td>Jun</td><td>21</td><td>5</td><td>26</td><td>28</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </div>
+    <div class="panel">
+      <h2>Issues caught by month</h2>
+      <p class="panel-sub">Issues per inspection fell from <b>2.2 in February to 1.1 in June</b> while cadence held &mdash; inspections are catching problems and the campus condition is improving.</p>
+      <div class="chart-box" id="chart-issues" role="img" aria-label="Bar chart: deficiencies caught per month, January 27, February 59, March 56, April 46, May 37, June 28"></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>By campus</h2>
+    <p class="panel-sub">Inspection mixes differ by campus &mdash; Community Life Center runs mostly pass/fail environmental checks, so raw issue counts are not comparable across campuses.</p>
+    <div class="campuses">
+      <div class="campus">
+        <span class="code">WC</span><span class="name">Worship Center</span>
+        <span class="big">53 <small>inspections</small></span>
+        <div class="mixbar" title="39 building / 14 env-climate"><span class="b" style="flex: 39"></span><span class="e" style="flex: 14"></span></div>
+        <div class="stats"><span>Issues caught <b>90</b></span><span>Clean <b>30%</b></span></div>
+      </div>
+      <div class="campus">
+        <span class="code">CL</span><span class="name">Community Life Center</span>
+        <span class="big">52 <small>inspections</small></span>
+        <div class="mixbar" title="9 building / 43 env-climate"><span class="b" style="flex: 9"></span><span class="e" style="flex: 43"></span></div>
+        <div class="stats"><span>Issues caught <b>10</b></span><span>Clean <b>87%</b></span></div>
+      </div>
+      <div class="campus">
+        <span class="code">EC</span><span class="name">Empowerment Center</span>
+        <span class="big">40 <small>inspections</small></span>
+        <div class="mixbar" title="40 building / 0 env-climate"><span class="b" style="flex: 40"></span></div>
+        <div class="stats"><span>Issues caught <b>28</b></span><span>Clean <b>58%</b></span></div>
+      </div>
+      <div class="campus">
+        <span class="code">MC</span><span class="name">Ministry Center</span>
+        <span class="big">23 <small>inspections</small></span>
+        <div class="mixbar" title="22 building / 1 env-climate"><span class="b" style="flex: 22"></span><span class="e" style="flex: 1"></span></div>
+        <div class="stats"><span>Issues caught <b>124</b></span><span>Clean <b>0%</b></span></div>
+      </div>
+      <div class="campus">
+        <span class="code">SB</span><span class="name">Service Building</span>
+        <span class="big">2 <small>inspections</small></span>
+        <div class="mixbar" title="1 building / 1 env-climate"><span class="b" style="flex: 1"></span><span class="e" style="flex: 1"></span></div>
+        <div class="stats"><span>Issues caught <b>1</b></span><span>Clean <b>1 of 2</b></span></div>
+      </div>
+    </div>
+    <p class="panel-sub" style="margin: 12px 0 0;">Ministry Center was this period's deepest-dive campus &mdash; its inspections surfaced 124 of the 253 issues now in the work-order pipeline. Service Building entered the rotation late in the period.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Closing the loop: from inspection to fix<span class="badge-pending">FMX export pending</span></h2>
+    <p class="panel-sub">Every issue caught is routed into the FMX work-order pipeline. The right panel completes when the FMX work-order export arrives from Facilities.</p>
+    <div class="loop">
+      <div class="flow">
+        <div class="step"><span class="n">170</span><span class="t">inspections completed, Jan&ndash;Jun</span></div>
+        <div class="arrow">&#9660;</div>
+        <div class="step"><span class="n">253</span><span class="t">deficiencies documented</span></div>
+        <div class="arrow">&#9660;</div>
+        <div class="step"><span class="n">82</span><span class="t">inspection reports initiated FMX work orders</span></div>
+      </div>
+      <div>
+        <div class="pending">
+          <div class="slot"><div class="label">Tickets created</div><div class="value">&mdash;</div></div>
+          <div class="slot"><div class="label">Tickets closed</div><div class="value">&mdash;</div></div>
+          <div class="slot"><div class="label">Closure rate</div><div class="value">&mdash;</div></div>
+          <div class="slot"><div class="label">Median days to close</div><div class="value">&mdash;</div></div>
+          <div class="slot"><div class="label">Open backlog, Jun 30</div><div class="value">&mdash;</div></div>
+        </div>
+        <p class="await">Awaiting raw FMX work-order export (Jan 1 &ndash; Jun 30 created or closed). Inspection deficiencies and FMX tickets are related but distinct measures &mdash; some issues are fixed on the spot without a ticket; some tickets originate outside inspections. They will be aligned by campus and month, not ticket-by-ticket.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <b>Method:</b> Source is the Building Services Quality Inspection Checklist (Smartsheet), pulled July 10, 2026. Of 237 raw rows, 183 are actual inspection reports (54 scaffold/divider rows excluded); 170 fall inside the Jan 1 &ndash; Jun 30, 2026 window (7 Dec-2025 and 6 Jul-2026 reports excluded). "Issues caught" counts documented deficiencies; a clean inspection recorded zero. Inspector performance is tracked internally and reported at team level here.<br>
+    Prepared by Business Services &middot; Business Systems &amp; Solutions &middot; July 2026
+  </footer>
+</div>
+
+<div id="tip"></div>
+
+<script>
+(function () {
+  var css = function (name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); };
+  var tip = document.getElementById('tip');
+  var NS = 'http://www.w3.org/2000/svg';
+
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function showTip(evt, text) {
+    tip.textContent = text;
+    tip.style.display = 'block';
+    tip.style.left = (evt.clientX + 12) + 'px';
+    tip.style.top = (evt.clientY - 30) + 'px';
+  }
+  function hideTip() { tip.style.display = 'none'; }
+
+  // rounded-top rect path (4px radius at data end, square at baseline)
+  function topRoundedRect(x, y, w, h, r) {
+    r = Math.min(r, h, w / 2);
+    return 'M' + x + ' ' + (y + h) + 'V' + (y + r) + 'Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y +
+           'H' + (x + w - r) + 'Q' + (x + w) + ' ' + y + ' ' + (x + w) + ' ' + (y + r) + 'V' + (y + h) + 'Z';
+  }
+
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'];
+
+  function barChart(mountId, opts) {
+    var mount = document.getElementById(mountId);
+    var W = 500, H = 232, mL = 30, mR = 6, mT = 14, mB = 24;
+    var plotW = W - mL - mR, plotH = H - mT - mB, baseY = mT + plotH;
+    var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H }, mount);
+    var scale = plotH / opts.max;
+    var n = opts.series[0].values.length;
+    var slot = plotW / n, barW = Math.min(52, slot * 0.62);
+
+    // gridlines + y ticks
+    opts.ticks.forEach(function (t) {
+      var y = baseY - t * scale;
+      el('line', { x1: mL, x2: W - mR, y1: y, y2: y, stroke: t === 0 ? css('--baseline') : css('--grid'), 'stroke-width': 1 }, svg);
+      el('text', { x: mL - 6, y: y + 3.5, 'text-anchor': 'end', 'font-size': 10, fill: css('--muted') }, svg).textContent = t;
+    });
+
+    for (var i = 0; i < n; i++) {
+      var x = mL + i * slot + (slot - barW) / 2;
+      var yCursor = baseY, total = 0, parts = [];
+      for (var s = 0; s < opts.series.length; s++) {
+        var v = opts.series[s].values[i];
+        total += v;
+        if (v <= 0) continue;
+        var h = v * scale;
+        var isTop = (s === opts.series.length - 1) || opts.series.slice(s + 1).every(function (sr) { return sr.values[i] <= 0; });
+        var gap = (yCursor !== baseY) ? 2 : 0;
+        var y = yCursor - gap - h;
+        var shape;
+        if (isTop) shape = el('path', { d: topRoundedRect(x, y, barW, yCursor - gap - y, 4), fill: css(opts.series[s].color) }, svg);
+        else shape = el('rect', { x: x, y: y, width: barW, height: yCursor - gap - y, fill: css(opts.series[s].color) }, svg);
+        (function (label, val) {
+          shape.addEventListener('mousemove', function (evt) { showTip(evt, label + ': ' + val); });
+          shape.addEventListener('mouseleave', hideTip);
+        })(MONTHS[i] + ' · ' + opts.series[s].name, opts.series[s].values[i]);
+        yCursor = y;
+        parts.push(v);
+      }
+      // total label above stack (selective: all stacks get totals only, no per-segment numbers)
+      if (opts.totalLabels) {
+        el('text', { x: x + barW / 2, y: yCursor - 5, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 600, fill: css('--ink') }, svg).textContent = total;
+      } else if (opts.labelIdx && opts.labelIdx.indexOf(i) !== -1) {
+        el('text', { x: x + barW / 2, y: yCursor - 5, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 600, fill: css('--ink') }, svg).textContent = total;
+      }
+      el('text', { x: mL + i * slot + slot / 2, y: baseY + 15, 'text-anchor': 'middle', 'font-size': 11, fill: css('--ink-2') }, svg).textContent = MONTHS[i];
+    }
+  }
+
+  function render() {
+    document.getElementById('chart-cadence').innerHTML = '';
+    document.getElementById('chart-issues').innerHTML = '';
+    barChart('chart-cadence', {
+      max: 44, ticks: [0, 10, 20, 30, 40], totalLabels: true,
+      series: [
+        { name: 'Building', color: '--purple', values: [4, 20, 18, 25, 23, 21] },
+        { name: 'Env/Climate', color: '--gold', values: [4, 7, 14, 15, 14, 5] }
+      ]
+    });
+    barChart('chart-issues', {
+      max: 64, ticks: [0, 20, 40, 60], labelIdx: [1, 5],
+      series: [{ name: 'Issues caught', color: '--purple-soft', values: [27, 59, 56, 46, 37, 28] }]
+    });
+  }
+  render();
+
+  // re-render on theme change so SVG picks up new token values
+  new MutationObserver(render).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', render);
+})();
+</script>

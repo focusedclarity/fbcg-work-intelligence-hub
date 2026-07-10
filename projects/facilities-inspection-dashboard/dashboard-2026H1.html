@@ -16,6 +16,7 @@
     --chip-bg: rgba(94, 53, 161, 0.08);
     --gold-bg: rgba(185, 133, 0, 0.10);
     --dash: #a99fc0;
+    --good: #006300;
     --shadow: 0 1px 2px rgba(28, 22, 38, 0.05), 0 4px 16px rgba(28, 22, 38, 0.05);
   }
   @media (prefers-color-scheme: dark) {
@@ -24,7 +25,7 @@
       --muted: #8b8494; --grid: #322b3e; --track: #2a2435; --baseline: #453d55;
       --border: rgba(244, 241, 249, 0.10); --purple: #8f72d4; --gold: #b8850a;
       --purple-soft: #a48be0; --chip-bg: rgba(143, 114, 212, 0.14);
-      --gold-bg: rgba(184, 133, 10, 0.16); --dash: #5d5372; --shadow: none;
+      --gold-bg: rgba(184, 133, 10, 0.16); --dash: #5d5372; --good: #0ca30c; --shadow: none;
     }
   }
   :root[data-theme="dark"] {
@@ -32,7 +33,7 @@
     --muted: #8b8494; --grid: #322b3e; --track: #2a2435; --baseline: #453d55;
     --border: rgba(244, 241, 249, 0.10); --purple: #8f72d4; --gold: #b8850a;
     --purple-soft: #a48be0; --chip-bg: rgba(143, 114, 212, 0.14);
-    --gold-bg: rgba(184, 133, 10, 0.16); --dash: #5d5372; --shadow: none;
+    --gold-bg: rgba(184, 133, 10, 0.16); --dash: #5d5372; --good: #0ca30c; --shadow: none;
   }
   :root[data-theme="light"] {
     --page: #f6f4f1; --surface: #fdfcfa; --ink: #1c1626; --ink-2: #575061;
@@ -118,6 +119,10 @@
   details.tableview th, details.tableview td { text-align: right; padding: 4px 10px; border-bottom: 1px solid var(--grid); color: var(--ink); }
   details.tableview th:first-child, details.tableview td:first-child { text-align: left; }
   details.tableview th { color: var(--ink-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .ratehead { font-size: 13px; color: var(--ink-2); margin: 14px 0 2px; padding-top: 12px; border-top: 1px solid var(--grid); }
+  .ratehead .delta { color: var(--good); font-weight: 700; font-size: 15px; margin-right: 4px; }
+  .footnote { font-size: 11px; color: var(--muted); margin: 6px 0 0; }
 
   /* ---------- bar list (areas / inspectors) ---------- */
   .barlist { display: flex; flex-direction: column; gap: 7px; font-size: 12.5px; }
@@ -228,27 +233,30 @@
       <p class="panel-sub">Five takeaways from 170 inspections and 253 documented findings.</p>
       <div class="insights">
         <div class="insight"><span class="n">1</span><p><b>Winter showed up in the pavement.</b> Parking lots and sidewalks were the single largest issue source (34 checkpoint failures). Exterior issues peaked in February (19) and were worked down to 3 by June.</p></div>
-        <div class="insight"><span class="n">2</span><p><b>The program is proving itself.</b> Findings per inspection fell from 2.2 in February to 1.1 in June at full cadence &mdash; catch, fix, and find less on the next pass.</p></div>
-        <div class="insight"><span class="n">3</span><p><b>Two programs, two profiles.</b> Building checks carry the workload (225 findings, 39% clean). Environmental checks show healthy equipment spaces (28 findings, 71% clean).</p></div>
+        <div class="insight"><span class="n">2</span><p><b>The program is proving itself.</b> Findings per inspection are down <b>51%</b> since February (2.2 &rarr; 1.8 &rarr; 1.2 &rarr; 1.0), holding near 1.1 in June at full cadence &mdash; catch, fix, and find less on the next pass.</p></div>
+        <div class="insight"><span class="n">3</span><p><b>Two programs, two profiles.</b> Building checks carry the workload (225 findings, 39% clean). Environmental checks &mdash; temperature and climate conditions in equipment spaces &mdash; came back healthy (28 findings, 71% clean).</p></div>
         <div class="insight"><span class="n">4</span><p><b>Interior wear tracks foot traffic.</b> After exterior, failures cluster in restrooms, the sanctuary, and stairwells (23 each) &mdash; the highest-traffic, most member-facing spaces.</p></div>
         <div class="insight"><span class="n">5</span><p><b>Ministry Center got the deepest look.</b> 124 of 253 findings came from its 23 inspections. When the FMX export lands, the next question is how fast that pipeline clears.</p></div>
       </div>
     </div>
     <div class="panel">
       <h2>Findings by month</h2>
-      <p class="panel-sub">Both programs combined. Per-inspection rate: <b>2.2 (Feb) &rarr; 1.1 (Jun)</b>.</p>
+      <p class="panel-sub"><b>All campuses</b> &mdash; both programs combined.</p>
       <div class="chart-box" id="chart-findings" role="img" aria-label="Bar chart: findings documented per month, January 27, February 59, March 56, April 46, May 37, June 28"></div>
+      <div class="ratehead"><span class="delta">&#9660; 51%</span> findings per inspection since February</div>
+      <div class="chart-box" id="chart-rate" role="img" aria-label="Line chart: findings per inspection by month, February 2.2, March 1.8, April 1.2, May 1.0, June 1.1"></div>
+      <p class="footnote">Trend starts at February, the first full-cadence month (January was ramp-up: 8 inspections).</p>
       <details class="tableview">
         <summary>View data table</summary>
         <table>
-          <thead><tr><th>Month</th><th>Building insp.</th><th>Env insp.</th><th>Findings</th></tr></thead>
+          <thead><tr><th>Month</th><th>Building insp.</th><th>Env insp.</th><th>Findings</th><th>Per inspection</th></tr></thead>
           <tbody>
-            <tr><td>Jan</td><td>4</td><td>4</td><td>27</td></tr>
-            <tr><td>Feb</td><td>20</td><td>7</td><td>59</td></tr>
-            <tr><td>Mar</td><td>18</td><td>14</td><td>56</td></tr>
-            <tr><td>Apr</td><td>25</td><td>15</td><td>46</td></tr>
-            <tr><td>May</td><td>23</td><td>14</td><td>37</td></tr>
-            <tr><td>Jun</td><td>21</td><td>5</td><td>28</td></tr>
+            <tr><td>Jan</td><td>4</td><td>4</td><td>27</td><td>3.4 (ramp-up)</td></tr>
+            <tr><td>Feb</td><td>20</td><td>7</td><td>59</td><td>2.2</td></tr>
+            <tr><td>Mar</td><td>18</td><td>14</td><td>56</td><td>1.8</td></tr>
+            <tr><td>Apr</td><td>25</td><td>15</td><td>46</td><td>1.2</td></tr>
+            <tr><td>May</td><td>23</td><td>14</td><td>37</td><td>1.0</td></tr>
+            <tr><td>Jun</td><td>21</td><td>5</td><td>28</td><td>1.1</td></tr>
           </tbody>
         </table>
       </details>
@@ -264,12 +272,12 @@
   <section class="row2">
     <div class="panel">
       <h2>Building inspections by month</h2>
-      <p class="panel-sub">Full checklist walks of each campus &mdash; exterior to storage rooms.</p>
+      <p class="panel-sub"><b>All campuses</b> &mdash; full checklist walks, exterior to storage rooms.</p>
       <div class="chart-box" id="chart-bldg" role="img" aria-label="Bar chart: building inspections per month, January 4, February 20, March 18, April 25, May 23, June 21"></div>
     </div>
     <div class="panel">
       <h2>Where checkpoints fail</h2>
-      <p class="panel-sub">201 checkpoint failures across building inspections, grouped by area.</p>
+      <p class="panel-sub"><b>All campuses</b> &mdash; 201 checkpoint failures across building inspections, grouped by area.</p>
       <div class="barlist">
         <div class="barrow"><span class="lbl">Exterior &amp; grounds</span><span class="track"><span class="fill" style="width:100%;background:var(--purple)"></span></span><span class="val">59</span></div>
         <div class="sparkrow"><span class="lbl">by month &rarr;</span><span class="sparks" aria-label="Exterior failures by month: January 2, February 19, March 14, April 14, May 7, June 3">
@@ -302,12 +310,12 @@
   <section class="row2">
     <div class="panel">
       <h2>Environmental checks by month</h2>
-      <p class="panel-sub">Pass/fail sweeps of equipment and climate-sensitive spaces &mdash; server rooms, IT closets, kitchens, meeting spaces.</p>
+      <p class="panel-sub"><b>All campuses</b> &mdash; pass/fail temperature &amp; climate checks of equipment rooms and climate-sensitive spaces (server rooms, IT closets, kitchens, meeting spaces).</p>
       <div class="chart-box" id="chart-env" role="img" aria-label="Bar chart: environmental checks per month, January 4, February 7, March 14, April 15, May 14, June 5"></div>
     </div>
     <div class="panel">
       <h2>Where environmental checks flag</h2>
-      <p class="panel-sub">22 checkpoint failures across 59 checks &mdash; 42 of 59 came back fully clean.</p>
+      <p class="panel-sub"><b>All campuses</b> &mdash; 22 temperature/climate checkpoint failures across 59 checks; 42 of 59 came back fully clean.</p>
       <div class="barlist">
         <div class="barrow"><span class="lbl">Meeting rooms</span><span class="track"><span class="fill" style="width:100%;background:var(--gold)"></span></span><span class="val">10</span></div>
         <div class="barrow"><span class="lbl">Sanctuary / warehouse</span><span class="track"><span class="fill" style="width:60%;background:var(--gold)"></span></span><span class="val">6</span></div>
@@ -358,7 +366,7 @@
 
   <section class="panel">
     <h2>Coverage by inspector</h2>
-    <p class="panel-sub">Routes are campus-anchored &mdash; each inspector primarily covers assigned buildings. Finding counts reflect the condition and depth of the route covered, not inspector performance.</p>
+    <p class="panel-sub"><b>By inspector, by campus route</b> &mdash; each inspector primarily covers assigned buildings. Finding counts reflect the condition and depth of the route covered, not inspector performance.</p>
     <div class="legend">
       <span><span class="swatch" style="background: var(--purple)"></span>Building</span>
       <span><span class="swatch" style="background: var(--gold)"></span>Env / Climate</span>
@@ -401,7 +409,7 @@
   </section>
 
   <footer>
-    <b>Method:</b> Source is the Building Services Quality Inspection Checklist (Smartsheet), pulled July 10, 2026. Of 237 raw rows, 183 are actual inspection reports (54 scaffold/divider rows excluded); 170 fall inside the Jan 1 &ndash; Jun 30, 2026 window (7 Dec-2025 and 6 Jul-2026 reports excluded). Two units appear above: <b>findings</b> (253) are individual documented deficiency line items; <b>checkpoint failures</b> (223 in period: 201 building, 22 environmental) count checklist areas marked "Deficiency" &mdash; one area can carry several findings. A clean inspection recorded zero findings. Campus and area cross-checks reconcile exactly (225 + 28 = 253 findings; Ministry Center 93 + 31 = 124).<br>
+    <b>Method:</b> Source is the Building Services Quality Inspection Checklist (Smartsheet), pulled July 10, 2026 &mdash; 170 inspection reports inside the Jan 1 &ndash; Jun 30, 2026 window. Two units appear above: <b>findings</b> (253) are individual documented deficiency line items; <b>checkpoint failures</b> (223 in period: 201 building, 22 environmental) count checklist areas marked "Deficiency" &mdash; one area can carry several findings. A clean inspection recorded zero findings. Environmental/climate checks verify temperature and climate conditions in equipment and climate-sensitive spaces. Campus and area cross-checks reconcile exactly (225 + 28 = 253 findings; Ministry Center 93 + 31 = 124).<br>
     Prepared by Business Services &middot; Business Systems &amp; Solutions &middot; July 2026
   </footer>
 </div>
@@ -467,9 +475,44 @@
     }
   }
 
+  function lineChart(mountId, opts) {
+    var mount = document.getElementById(mountId);
+    var W = 500, H = 132, mL = 30, mR = 14, mT = 16, mB = 22;
+    var plotW = W - mL - mR, plotH = H - mT - mB, baseY = mT + plotH;
+    var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H }, mount);
+    var scale = plotH / opts.max;
+    var n = opts.values.length;
+    var step = plotW / (n - 1);
+
+    opts.ticks.forEach(function (t) {
+      var y = baseY - t * scale;
+      el('line', { x1: mL, x2: W - mR, y1: y, y2: y, stroke: t === 0 ? css('--baseline') : css('--grid'), 'stroke-width': 1 }, svg);
+      el('text', { x: mL - 6, y: y + 3.5, 'text-anchor': 'end', 'font-size': 10, fill: css('--muted') }, svg).textContent = t;
+    });
+
+    var pts = opts.values.map(function (v, i) { return [mL + i * step, baseY - v * scale]; });
+    el('polyline', {
+      points: pts.map(function (p) { return p.join(','); }).join(' '),
+      fill: 'none', stroke: css(opts.color), 'stroke-width': 2, 'stroke-linejoin': 'round', 'stroke-linecap': 'round'
+    }, svg);
+    pts.forEach(function (p, i) {
+      var dot = el('circle', { cx: p[0], cy: p[1], r: 4, fill: css(opts.color), stroke: css('--surface'), 'stroke-width': 2 }, svg);
+      var hit = el('circle', { cx: p[0], cy: p[1], r: 12, fill: 'transparent' }, svg);
+      (function (label, val) {
+        hit.addEventListener('mousemove', function (evt) { showTip(evt, label + ': ' + val); });
+        hit.addEventListener('mouseleave', hideTip);
+      })(opts.labels[i] + ' · ' + opts.name, opts.values[i].toFixed(1));
+      if (i === 0 || i === n - 1) {
+        el('text', { x: p[0], y: p[1] - 9, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 600, fill: css('--ink') }, svg).textContent = opts.values[i].toFixed(1);
+      }
+      el('text', { x: p[0], y: baseY + 15, 'text-anchor': 'middle', 'font-size': 11, fill: css('--ink-2') }, svg).textContent = opts.labels[i];
+    });
+  }
+
   function render() {
-    ['chart-findings', 'chart-bldg', 'chart-env'].forEach(function (id) { document.getElementById(id).innerHTML = ''; });
+    ['chart-findings', 'chart-bldg', 'chart-env', 'chart-rate'].forEach(function (id) { document.getElementById(id).innerHTML = ''; });
     barChart('chart-findings', { name: 'Findings', color: '--purple-soft', max: 64, ticks: [0, 20, 40, 60], labelIdx: [1, 5], values: [27, 59, 56, 46, 37, 28] });
+    lineChart('chart-rate', { name: 'Findings per inspection', color: '--good', max: 2.6, ticks: [0, 1, 2], labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun'], values: [2.2, 1.8, 1.2, 1.0, 1.1] });
     barChart('chart-bldg', { name: 'Building inspections', color: '--purple', max: 28, ticks: [0, 10, 20], labelIdx: [0, 3], values: [4, 20, 18, 25, 23, 21] });
     barChart('chart-env', { name: 'Env checks', color: '--gold', max: 18, ticks: [0, 5, 10, 15], labelIdx: [0, 3], values: [4, 7, 14, 15, 14, 5] });
   }

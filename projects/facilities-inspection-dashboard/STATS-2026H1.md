@@ -90,10 +90,37 @@ Top single checkpoints: Parking lots/paved surfaces 22, Sidewalks 12, Sanctuary 
 
 **Per-program profile:** Building — 111 inspections, 39% clean, 225 findings. Env/Climate — 59 checks, 71% clean, 28 findings (225 + 28 = 253 ✓).
 
-## Dashboard v2 insights (as shown on the artifact)
+## Findings-per-inspection trend (v2.1 addition — the headline improvement stat)
+
+| Month | Findings | Inspections | Per inspection |
+|---|---|---|---|
+| Jan | 27 | 8 | 3.4 (ramp-up; excluded from trend) |
+| Feb | 59 | 27 | 2.19 |
+| Mar | 56 | 32 | 1.75 |
+| Apr | 46 | 40 | 1.15 |
+| May | 37 | 37 | 1.00 |
+| Jun | 28 | 26 | 1.08 |
+
+**Headline: down 51% since February** ((2.19 − 1.08) / 2.19 = 50.7%). Shown on the dashboard as a
+green ▼ 51% delta + a Feb–Jun line chart. Trend starts at February (first full-cadence month);
+June ticks up slightly from May (1.0 → 1.1) — copy says "holding near 1.1," not "fell every month."
+
+## Dashboard v2/v2.1 insights (as shown on the artifact)
 
 1. Winter showed up in the pavement — parking lots + sidewalks = 34 failures, Feb peak 19 → Jun 3.
-2. Findings per inspection fell 2.2 (Feb) → 1.1 (Jun) at full cadence.
-3. Two programs, two profiles — building carries the workload; env spaces are healthy.
+2. Findings per inspection down 51% since February (2.2 → 1.8 → 1.2 → 1.0, ~1.1 in June).
+3. Two programs, two profiles — building carries the workload; env (temperature/climate) spaces healthy.
 4. Interior wear tracks foot traffic — restrooms/sanctuary/stairwells 23 each.
 5. MC deep-dives produced 124 of 253 findings; FMX export will show closure speed.
+
+## Language & framing decisions (Gina, 2026-07-10)
+
+- **Environmental/Climate inspections = temperature checks.** They verify temperature and climate
+  conditions in equipment and climate-sensitive spaces (server rooms, IT closets, kitchens, meeting
+  rooms). Dashboard copy says "temperature & climate checks" — never describe them as cleanliness sweeps.
+- **No internal data-cleaning mechanics on the audience-facing footer.** Scaffold/divider-row
+  detail removed from the dashboard method note (kept here, where it belongs).
+- **Inspectors named on the dashboard** (reversed earlier team-level-only call), framed as
+  campus-anchored routes, not performance.
+- **Every chart states its scope explicitly.** Church-wide charts are prefixed "All campuses";
+  campus- or inspector-scoped views are labeled as such ("By inspector, by campus route").

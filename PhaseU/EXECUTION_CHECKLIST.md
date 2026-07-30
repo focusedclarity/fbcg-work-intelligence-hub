@@ -46,7 +46,7 @@
 
 | ✔ | Phase | Flow / artifact | Trigger | Spec | Done when… |
 |---|---|---|---|---|---|
-| [~] | 1 | **Tempo** — Follow-Up dates | Recurrence hourly | phase0-3 | ~60% BUILT (see resume note below) — a New/owned row with no FollowUpDate gets a weekday date per priority |
+| [x] | 1 | **Tempo** — Follow-Up dates | Recurrence hourly | phase0-3 | ✅ **DONE & TEST-SUCCEEDED 2026-07-30** — a New/owned row with no FollowUpDate gets a weekday date per priority. (See "Phase 1 COMPLETE" note below for the self-reference design fix.) |
 | [ ] | 2 | **Planner forward-sync** | SP item created/modified (loop-safe) | phase0-3 | setting `Reviewed=Yes` on an eligible row creates a Planner task + writes `PlannerTaskId` |
 | [ ] | 3 | **Planner reverse-sync** | Planner task completed | phase0-3 | completing the task flips the row to `Status=Done` |
 | [ ] | 4 | **Watchdog** + Teams digest | Recurrence 10:00 & 17:00 ET | phase4-6 | overdue/blocked rows escalate; a digest card posts with correct counts |
@@ -75,6 +75,7 @@
 - 2026-07-29 — **Phase 0 SharePoint side COMPLETE.** All 7 List A columns created & REST-verified; both libraries (`Meeting Intake`, `Daily Digest`) live; `Status` internal name confirmed. **Next:** Planner plan + 7 buckets (Account B) → build Phase 1 (Tempo).
 - 2026-07-29 — **Planner plan `BSSI Work Actions` created (Gina group).** Buckets 2/7 done (System Exceptions / Workflow Breaks, Action Required).
 - 2026-07-29 — **All 7 Planner buckets now committed** (added the final 5). Phase 0 fully complete.
+- 2026-07-30 — **Phase 1 (Tempo) COMPLETE & Test-succeeded.** Reworked the business-day loop to avoid Power Automate's Set-variable self-reference ban: added `vDayOffset` (int) + Increment, `vCursor=addDays(vBase,vDayOffset)`, weekday Condition, Update item FollowUpDate. Manual test run = "Test succeeded" (1:03, no errors). **Next: Phases 2 & 3 (Planner sync).**
 - **▶ RESUME HERE (safe to /clear context first — everything below is captured):**
   1. ✅ DONE — all 7 buckets committed.
   2. Build **Phase 1 (Tempo)** + **Phase 2/3 (Planner sync)** per `PhaseU/BUILD_SPEC_phase0-3.md` in full `make.powerautomate.com`.
@@ -103,6 +104,17 @@
   - Set variable 3 `vAdded` = `0`
   - **Do until** — Loop until (advanced expr) `@greaterOrEquals(variables('vAdded'),variables('vN'))` (renders in basic mode as `vAdded` **is greater or equal to** `vN`). Count 60 / Timeout PT1H = fine (safety bounds).
 
+### ✅ PHASE 1 (Tempo) COMPLETE — 2026-07-30 (session 3). Saved + **Test succeeded** (1:03, no errors).
+**IMPORTANT design fix vs the original plan:** Power Automate **forbids Set-variable self-reference** ("Self reference is not supported when updating the variable 'vCursor'"), so `vCursor = addDays(vCursor,1)` is illegal. Reworked the Do-until body to use an integer offset counter instead:
+- **Added a new top-level `Initialize variable` → `vDayOffset` (Integer, 0)** (sits between Initialize variable 3 and Get items).
+- **Do-until body (in order):** (1) **Increment variable** `vDayOffset` by `1`; (2) **Set variable** `vCursor` = `addDays(variables('vBase'),variables('vDayOffset'))` (no self-ref); (3) **Condition 1** `formatDateTime(variables('vCursor'),'ddd')` ≠ `Sat` **And** ≠ `Sun` → True: **Increment** `vAdded` by `1`.
+- **After Do-until (False branch):** **Update item** — Site=Inbox Intelligence App, List=Inbox Action Register (GUID `8be53de2-780e-46e6-a288-c8dc1f984c32`), Id=`@items('Apply_to_each')?['ID']`, advanced field **Follow-Up Date** (`item/FollowUpDate`) = `@formatDateTime(variables('vCursor'),'yyyy-MM-dd')`. (Removed auto-added Has Attachments.)
+- Verified in Code view; PatchItem runs after `Do_until` Succeeded. Flow Status = On.
+- **Gotcha reconfirmed:** in the Condition row builder, click the operator's **text label** ("is equal to") to open its dropdown — clicking the chevron area adds a phantom row instead. The trailing empty phantom row is ignored on compile.
+- **Next:** Phases 2 & 3 (Planner forward/reverse sync) — full spec in `PhaseU/BUILD_SPEC_phase0-3.md`.
+
+<details><summary>Historical: session-2 build notes (superseded by the completion note above)</summary>
+
 **PROGRESS UPDATE 2026-07-30 (session 2) — steps 1a & 1b BUILT; step 2 blocked by a Microsoft backend outage mid-build:**
 - ✅ **1a DONE** — INSIDE the Do until, **Set variable 4**: Name `vCursor`, Value expression `addDays(variables('vCursor'),1)` (tooltip-verified).
 - ✅ **1b DONE** — INSIDE the Do until, after Set variable 4, **Condition 1** built via the row builder (top op = **And**):
@@ -117,6 +129,8 @@
 2. **AFTER the Do until, still in the False branch** — the correct insert is the "+" **directly below the "Do until" footer, on the loop's vertical axis** (hover shows *"Insert a new action after Do until"*). ⚠️ Do NOT use the "+" lower/left of it — that one lands *after the whole Condition at the Apply-to-each level*, which is WRONG (it would run for True-branch items too, overwriting FollowUpDate with a stale `vCursor`). Add **Update item**: Site=Inbox Intelligence App, List=Inbox Action Register, Id=`items('Apply_to_each')?['ID']` (or ID dynamic content), add advanced field **Follow-Up Date** = expression `formatDateTime(variables('vCursor'),'yyyy-MM-dd')`. Remove the auto-added "Has Attachments" field.
 3. **Save.** Phase 1 (Tempo) complete. Test per BUILD_SPEC_phase0-3 §TEST (create a row ActionOwner=Me, DigestLane=Action Required, Status=New, no FollowUpDate → run flow → FollowUpDate gets a weekday date).
 - **Then Phases 2 & 3** (Planner forward/reverse sync) — not started; full spec in `PhaseU/BUILD_SPEC_phase0-3.md`.
+
+</details>
 
 **Tip for finding branch insert points:** the small on-canvas "+" glyphs are unreliable to click; instead use `read_page` (filter:interactive) and click the button labeled "Insert a new action in <scope>" / "...after <action>". Empty condition branches start COLLAPSED — expand the branch first (its Expand/Collapse button) to reveal the insert "+".
 

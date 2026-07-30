@@ -103,11 +103,18 @@
   - Set variable 3 `vAdded` = `0`
   - **Do until** — Loop until (advanced expr) `@greaterOrEquals(variables('vAdded'),variables('vN'))` (renders in basic mode as `vAdded` **is greater or equal to** `vN`). Count 60 / Timeout PT1H = fine (safety bounds).
 
-**◀ RESUME EXACTLY HERE — 3 actions left in Phase 1, then it's done:**
-1. **INSIDE the Do until** (use the "Insert a new action in Do until" button — it was `ref_98`; the loop is expanded), add:
-   a. **Set variable** `vCursor` = expression `addDays(variables('vCursor'),1)`  *(enter via `/` → Insert expression; click the bottom "Add" button, NOT a function-list row)*
-   b. **Condition** (C2, weekday) — build in the 3-part builder OR advanced. Advanced expression: `@and(not(equals(formatDateTime(variables('vCursor'),'ddd'),'Sat')),not(equals(formatDateTime(variables('vCursor'),'ddd'),'Sun')))`. In its **True** branch add **Increment variable** → Name `vAdded`, Value `1`. (False branch: leave empty.)
-2. **AFTER the Do until, still in the False branch** (use "Insert a new action after Do until" = `ref_94`), add **Update item**: Site=Inbox Intelligence App, List=Inbox Action Register, Id=`items('Apply_to_each')?['ID']` (or ID dynamic content), add advanced field **Follow-Up Date** = expression `formatDateTime(variables('vCursor'),'yyyy-MM-dd')`. Remove the auto-added "Has Attachments" field.
+**PROGRESS UPDATE 2026-07-30 (session 2) — steps 1a & 1b BUILT; step 2 blocked by a Microsoft backend outage mid-build:**
+- ✅ **1a DONE** — INSIDE the Do until, **Set variable 4**: Name `vCursor`, Value expression `addDays(variables('vCursor'),1)` (tooltip-verified).
+- ✅ **1b DONE** — INSIDE the Do until, after Set variable 4, **Condition 1** built via the row builder (top op = **And**):
+  - Row 1: `formatDateTime(variables('vCursor'),'ddd')` **is not equal to** `Sat`
+  - Row 2: `formatDateTime(variables('vCursor'),'ddd')` **is not equal to** `Sun`
+  - (a 3rd auto-added empty phantom row is present — ignored on compile)
+  - **True** branch → **Increment variable**: Name `vAdded`, Value `1`. False branch = empty ("No Actions").
+- ⚠️ **BACKEND OUTAGE HIT.** While adding step 2's Update item, the designer's action-catalog service (ECS) started returning no response (console: repeated "ECS - Service request failed to return a response"). The "Add an action" panel hangs on a spinner; a subsequent **Save** also hung on "Saving…" indefinitely. **Unknown whether 1a/1b persisted server-side.**
+- **▶▶ NEXT RESUME — do this first:** reopen the flow fresh (make.powerautomate.com → My flows → *Tempo - Follow-Up Dates*) and **verify** Set variable 4, Condition 1 (2 rows, And, Sat/Sun ≠), and the True-branch Increment variable `vAdded=1` are all present INSIDE the Do until. Rebuild any that didn't persist (all specs above).
+
+**◀ THEN FINISH — 2 actions left in Phase 1:**
+2. **AFTER the Do until, still in the False branch** — the correct insert is the "+" **directly below the "Do until" footer, on the loop's vertical axis** (hover shows *"Insert a new action after Do until"*). ⚠️ Do NOT use the "+" lower/left of it — that one lands *after the whole Condition at the Apply-to-each level*, which is WRONG (it would run for True-branch items too, overwriting FollowUpDate with a stale `vCursor`). Add **Update item**: Site=Inbox Intelligence App, List=Inbox Action Register, Id=`items('Apply_to_each')?['ID']` (or ID dynamic content), add advanced field **Follow-Up Date** = expression `formatDateTime(variables('vCursor'),'yyyy-MM-dd')`. Remove the auto-added "Has Attachments" field.
 3. **Save.** Phase 1 (Tempo) complete. Test per BUILD_SPEC_phase0-3 §TEST (create a row ActionOwner=Me, DigestLane=Action Required, Status=New, no FollowUpDate → run flow → FollowUpDate gets a weekday date).
 - **Then Phases 2 & 3** (Planner forward/reverse sync) — not started; full spec in `PhaseU/BUILD_SPEC_phase0-3.md`.
 

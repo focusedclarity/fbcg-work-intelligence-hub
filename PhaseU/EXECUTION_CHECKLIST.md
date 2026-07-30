@@ -30,7 +30,7 @@
 
 ### 0.4 Planner
 - [x] Plan **`BSSI Work Actions`** created ✅ 2026-07-29 — hosted in the **Gina** M365 group (user's choice; personal-group, noted vs group-ownership default).
-- [~] Buckets: **2 of 7 done** (`System Exceptions / Workflow Breaks`, `Action Required`). **Remaining 5:** `Waiting On Others` · `Leadership / Reporting` · `Ministry / Community` · `FYI / Learning Reference` · `Promotions / Subscriptions / Misc`. Add via Planner → BSSI Work Actions → Board → "Add a new bucket" → type name → **Enter** (Enter commits reliably).
+- [x] Buckets: **7 of 7 done** ✅ 2026-07-29 — `System Exceptions / Workflow Breaks`, `Action Required`, `Waiting On Others`, `Leadership / Reporting`, `Ministry / Community`, `FYI / Learning Reference`, `Promotions / Subscriptions / Misc`. *(Note: in the new planner.cloud.microsoft board, "Add a new bucket" → type → **click a blank board area to commit** was more reliable than Enter; verify each via read_page before moving on.)*
 
 ### 0.5 Outlook folders
 - [ ] `BSSI Hub/Done`
@@ -46,7 +46,7 @@
 
 | ✔ | Phase | Flow / artifact | Trigger | Spec | Done when… |
 |---|---|---|---|---|---|
-| [ ] | 1 | **Tempo** — Follow-Up dates | Recurrence hourly | phase0-3 | a New/owned row with no FollowUpDate gets a weekday date per priority |
+| [~] | 1 | **Tempo** — Follow-Up dates | Recurrence hourly | phase0-3 | ~60% BUILT (see resume note below) — a New/owned row with no FollowUpDate gets a weekday date per priority |
 | [ ] | 2 | **Planner forward-sync** | SP item created/modified (loop-safe) | phase0-3 | setting `Reviewed=Yes` on an eligible row creates a Planner task + writes `PlannerTaskId` |
 | [ ] | 3 | **Planner reverse-sync** | Planner task completed | phase0-3 | completing the task flips the row to `Status=Done` |
 | [ ] | 4 | **Watchdog** + Teams digest | Recurrence 10:00 & 17:00 ET | phase4-6 | overdue/blocked rows escalate; a digest card posts with correct counts |
@@ -74,8 +74,46 @@
 - 2026-07-29 — **Live build begun (Account A, SharePoint).** Verified internal name = `Status` (both lists; not HubStatus). Created columns `PlannerTaskId`, `SweptDate`. Created libraries `Meeting Intake`, `Daily Digest`. Specs patched HubStatus/SubStatus→Status. **Next:** confirm Planner plan+buckets (Account B), then build Phase 1 (Tempo) + Phase 2 (Planner sync). Deferred: 5 Phase 8–10 marker columns.
 - 2026-07-29 — **Phase 0 SharePoint side COMPLETE.** All 7 List A columns created & REST-verified; both libraries (`Meeting Intake`, `Daily Digest`) live; `Status` internal name confirmed. **Next:** Planner plan + 7 buckets (Account B) → build Phase 1 (Tempo).
 - 2026-07-29 — **Planner plan `BSSI Work Actions` created (Gina group).** Buckets 2/7 done (System Exceptions / Workflow Breaks, Action Required).
+- 2026-07-29 — **All 7 Planner buckets now committed** (added the final 5). Phase 0 fully complete.
 - **▶ RESUME HERE (safe to /clear context first — everything below is captured):**
-  1. Planner → **BSSI Work Actions** (Gina group) → Board → add the **5 remaining buckets**: Waiting On Others, Leadership / Reporting, Ministry / Community, FYI / Learning Reference, Promotions / Subscriptions / Misc (Add a new bucket → type → Enter).
-  2. Then build **Phase 1 (Tempo)** + **Phase 2/3 (Planner sync)** per `PhaseU/BUILD_SPEC_phase0-3.md`.
-  - Key facts: List A = `Inbox Action Register`, GUID `{8be53de2-780e-46e6-a288-c8dc1f984c32}`, site `https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155`. **Filters use `Status`** (not HubStatus). All 7 List A columns + both libraries (`Meeting Intake`, `Daily Digest`) already exist. Browser create-column form: `.../_layouts/15/FldNew.aspx?List=%7B8be53de2-...%7D`.
-- _(add: date — what you built/tested — next step)_
+  1. ✅ DONE — all 7 buckets committed.
+  2. Build **Phase 1 (Tempo)** + **Phase 2/3 (Planner sync)** per `PhaseU/BUILD_SPEC_phase0-3.md` in full `make.powerautomate.com`.
+  - Key facts: List A = `Inbox Action Register`, GUID `{8be53de2-780e-46e6-a288-c8dc1f984c32}`, site `https://fbcglenarden.sharepoint.com/sites/m365appbuilder-app-3155`. **Filters use `Status`** (not HubStatus). All 7 List A columns + both libraries (`Meeting Intake`, `Daily Digest`) already exist. Planner plan `BSSI Work Actions` (Gina group) has all 7 buckets matching the Digest Lane names. Browser create-column form: `.../_layouts/15/FldNew.aspx?List=%7B8be53de2-...%7D`.
+- 2026-07-29 — **Phase 0 fully done (all 7 buckets).** Then began **Phase 1 (Tempo) live build in make.powerautomate.com** (new designer). Flow is **saved server-side in the FBCG tenant** (env `Default-7980b399-a235-46a9-85e4-294f51bdba15`) — open it from ANY computer at make.powerautomate.com → My flows → **"Tempo - Follow-Up Dates"**. Nothing about the flow lives in git; this note is the only handoff needed.
+
+### ▶▶ RESUME HERE — Tempo flow (Phase 1), what's already built & what's left
+**Flow name:** `Tempo - Follow-Up Dates` (Scheduled cloud flow, Recurrence = every **1 hour**). Already SAVED.
+**Built & verified so far (top → bottom):**
+1. **Recurrence** trigger — every 1 hour. ✅
+2. **Initialize variable** `vN` = Integer, 0. ✅
+3. **Initialize variable 1** `vBase` = String, (empty). ✅
+4. **Initialize variable 2** `vCursor` = String, (empty). ✅
+5. **Initialize variable 3** `vAdded` = Integer, 0. ✅
+6. **Get items** (SharePoint) ✅ — Site = **Inbox Intelligence App** (`.../sites/m365appbuilder-app-3155`), List = **Inbox Action Register**, **Filter Query** =
+   `FollowUpDate eq null and Status ne 'Done' and Status ne 'Reference' and DigestLane ne 'FYI / Learning Reference' and DigestLane ne 'Promotions / Subscriptions / Misc' and DigestLane ne 'Leadership / Reporting'`
+7. **Apply to each** over `Get items → body/value`. ✅
+8. Inside it: **Condition** (C1) ✅ — compiled (verified in Code view) to `equals( empty(items('Apply_to_each')?['DueDateStated']), false )`. So **True branch = DueDateStated IS present**, False branch = absent.
+
+**STILL TO BUILD (both Condition branches are empty "0 Actions"):**
+- **True branch** → SharePoint **Update item**: Id = `items('Apply_to_each')?['ID']`, `FollowUpDate` = `items('Apply_to_each')?['DueDateStated']`. (Site/List same as Get items.)
+- **False branch** (the business-day SLA walk), in order:
+  - **Set variable** `vN` (expression):
+    `if(equals(items('Apply_to_each')?['DigestLane']?['Value'],'System Exceptions / Workflow Breaks'),1,if(equals(items('Apply_to_each')?['DigestLane']?['Value'],'Waiting On Others'),5,if(equals(items('Apply_to_each')?['Priority']?['Value'],'Critical'),1,if(equals(items('Apply_to_each')?['Priority']?['Value'],'High'),2,if(equals(items('Apply_to_each')?['Priority']?['Value'],'Low'),10,5)))))`
+  - **Set variable** `vBase` (expression):
+    `if(equals(items('Apply_to_each')?['DigestLane']?['Value'],'Waiting On Others'),items('Apply_to_each')?['LastStatusChange'],items('Apply_to_each')?['ReceivedDate'])`
+  - **Set variable** `vCursor` = `variables('vBase')`
+  - **Set variable** `vAdded` = `0`
+  - **Do Until** — condition (advanced): `@greaterOrEquals(variables('vAdded'),variables('vN'))`. Inside:
+    - **Set variable** `vCursor` = `addDays(variables('vCursor'),1)`
+    - **Condition** (C2, weekday): `@and(not(equals(formatDateTime(variables('vCursor'),'ddd'),'Sat')),not(equals(formatDateTime(variables('vCursor'),'ddd'),'Sun')))` → **If yes**: **Increment variable** `vAdded` by 1. (If no: nothing.)
+  - **Update item**: Id = `items('Apply_to_each')?['ID']`, `FollowUpDate` = `formatDateTime(variables('vCursor'),'yyyy-MM-dd')`.
+- Then **Save** (user clicks). Test per BUILD_SPEC_phase0-3 §TEST.
+- **Then Phases 2 & 3** (Planner forward/reverse sync) — not started; full spec in `PhaseU/BUILD_SPEC_phase0-3.md`.
+
+### Designer gotchas learned this session (save yourself the pain)
+- **Code view is READ-ONLY** in BOTH new and classic web designer ("Cannot edit in read-only editor"). No paste-JSON path in-browser; would need a solution export/import or the CLI. Build via the visual UI.
+- Inside Apply to each, reference the current item as **`items('Apply_to_each')?['Field']`** — the validator flags `item()` as "has a problem".
+- Choice columns come back as objects → use `?['DigestLane']?['Value']`, `?['Priority']?['Value']`, `?['Status']?['Value']`.
+- To enter an expression in a field: click it → type **`/`** → **Insert expression** → type → **Add**. The expression box is Monaco and **Ctrl+A does NOT select-all** (it appends garbage). To redo an expression, click the popup **X** to discard, then reopen fresh.
+- For a boolean compare in the Condition builder, type **`false`** as a **plain value** in the right box (NOT via the expression editor — bare `false` there errors). It compiles to a real boolean. The builder also shows a phantom empty 2nd row; it's ignored on compile (confirmed in Code view).
+- Planner buckets: type the name then **click a blank board area to commit** (more reliable than Enter).

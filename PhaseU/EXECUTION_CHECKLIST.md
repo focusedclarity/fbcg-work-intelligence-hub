@@ -47,8 +47,8 @@
 | ✔ | Phase | Flow / artifact | Trigger | Spec | Done when… |
 |---|---|---|---|---|---|
 | [x] | 1 | **Tempo** — Follow-Up dates | Recurrence hourly | phase0-3 | ✅ **DONE & TEST-SUCCEEDED 2026-07-30** — a New/owned row with no FollowUpDate gets a weekday date per priority. (See "Phase 1 COMPLETE" note below for the self-reference design fix.) |
-| [x] | 2 | **Planner forward-sync** | SP item created/modified (loop-safe) | phase0-3 | ✅ **BUILT & SAVED 2026-07-30** (flow "Planner Forward-Sync"). Untested (needs a live Reviewed=Yes). See Phase 2/3 note below. |
-| [x] | 3 | **Planner reverse-sync** | Planner task completed | phase0-3 | ✅ **BUILT & SAVED 2026-07-30** (flow "Planner Reverse-Sync"). Untested (needs a completed task). |
+| [x] | 2 | **Planner forward-sync** | SP item created/modified (loop-safe) | phase0-3 | ✅ **BUILT & LIVE-TESTED PASS 2026-07-30** (flow "Planner Forward-Sync"). Test row → task created in Action Required bucket + `PlannerTaskId` written back (run Succeeded, full True branch). |
+| [x] | 3 | **Planner reverse-sync** | Planner task completed | phase0-3 | ✅ **BUILT & LIVE-TESTED PASS 2026-07-30** (flow "Planner Reverse-Sync"). Completed the task → row flipped to `Status=Done` + `LastStatusChange` stamped (REST-verified). |
 | [ ] | 4 | **Watchdog** + Teams digest | Recurrence 10:00 & 17:00 ET | phase4-6 | overdue/blocked rows escalate; a digest card posts with correct counts |
 | [ ] | 5 | **Power App** command center | — (canvas app) | phase4-6 | app opens as a Teams tab, tiles + lane gallery render, `Patch` write-backs work; a non-premium teammate can use it |
 | [ ] | 6 | **Meeting pipeline** | SP file created on `Meeting Intake` | phase4-6 | a dropped JSON creates List A rows `Reviewed=No`; approving one flows it to Planner |
@@ -76,7 +76,8 @@
 - 2026-07-29 — **Planner plan `BSSI Work Actions` created (Gina group).** Buckets 2/7 done (System Exceptions / Workflow Breaks, Action Required).
 - 2026-07-29 — **All 7 Planner buckets now committed** (added the final 5). Phase 0 fully complete.
 - 2026-07-30 — **Phase 1 (Tempo) COMPLETE & Test-succeeded.** Reworked the business-day loop to avoid Power Automate's Set-variable self-reference ban: added `vDayOffset` (int) + Increment, `vCursor=addDays(vBase,vDayOffset)`, weekday Condition, Update item FollowUpDate. Manual test run = "Test succeeded" (1:03, no errors).
-- 2026-07-30 — **Phases 2 & 3 (Planner sync) BUILT & SAVED** (both untested — need live data to verify). See "Phase 2 & 3 build notes" below. **Next: TEST the full chain (see §TEST), then Phase 4 (Watchdog + Teams digest).**
+- 2026-07-30 — **Phases 2 & 3 (Planner sync) BUILT & SAVED.** See "Phase 2 & 3 build notes" below.
+- 2026-07-30 — **Phases 2 & 3 LIVE-TESTED — BOTH PASS.** Created a test row (Action Required / ActionOwner=Me / Reviewed=Yes) → forward-sync fired (~40s), Succeeded, full True branch (Create task ✓ Update details ✓ Update item ✓); task appeared in Action Required bucket; `PlannerTaskId=dO2Cf19j00O6Nns-lCtNSWQAPv6z` written back. Completed the task in Planner → reverse-sync fired (~10 min later; Planner trigger polls slowly), Succeeded (For each → 1 Update item); REST-verified the row: `Status=Done`, `LastStatusChange=2026-07-30T16:00:34Z`. Choice-field `/Value` convention confirmed correct. Test row "TEST - Planner sync (safe to delete)" left in the list (Status=Done) — safe to delete. **Next: Phase 4 (Watchdog + Teams digest).**
 
 ### Phase 2 & 3 build notes — 2026-07-30 (session 3)
 Both saved server-side in the FBCG tenant (env `Default-7980b399-a235-46a9-85e4-294f51bdba15`); open from make.powerautomate.com → My flows.

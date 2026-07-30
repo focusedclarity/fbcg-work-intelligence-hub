@@ -1,0 +1,172 @@
+<title>WAIH — Two-Brain Architecture</title>
+<style>
+  :root{
+    --font-ui:"Segoe UI","Segoe UI Variable",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    --font-mono:"Cascadia Code","Consolas",ui-monospace,monospace;
+    --bg:#ECE7F4; --surface:#FFFFFF; --surface-2:#F6F3FB; --surface-3:#EFEAF7;
+    --ink:#241B33; --muted:#6B6480; --line:#E3DCEF;
+    --brand:#5A2D8C; --brand-deep:#3C1E63; --on-brand:#FFFFFF;
+    --brand-soft:#EBE2F7; --gold:#B98A16; --gold-deep:#8A6710; --gold-soft:#F6ECCF;
+    --good:#2E7D5B; --info:#2B6CB0; --crit:#C0392B;
+    --shadow:0 1px 2px rgba(36,27,51,.06),0 6px 18px rgba(36,27,51,.09);
+    --radius:12px;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{
+      --bg:#151021; --surface:#201A2E; --surface-2:#281F39; --surface-3:#2F2542;
+      --ink:#EEE9F6; --muted:#A79FBB; --line:#372C4B;
+      --brand:#A883DC; --brand-deep:#8659C4; --on-brand:#1C1329;
+      --brand-soft:#2B2140; --gold:#E3C25A; --gold-deep:#C9A94A; --gold-soft:#37301C;
+      --good:#5FBF93; --info:#69A6E6; --crit:#EB6B5E;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 22px rgba(0,0,0,.4);
+    }
+  }
+  :root[data-theme="light"]{--bg:#ECE7F4;--surface:#FFFFFF;--surface-2:#F6F3FB;--surface-3:#EFEAF7;--ink:#241B33;--muted:#6B6480;--line:#E3DCEF;--brand:#5A2D8C;--brand-deep:#3C1E63;--on-brand:#FFFFFF;--brand-soft:#EBE2F7;--gold:#B98A16;--gold-deep:#8A6710;--gold-soft:#F6ECCF;--good:#2E7D5B;--info:#2B6CB0;--crit:#C0392B;}
+  :root[data-theme="dark"]{--bg:#151021;--surface:#201A2E;--surface-2:#281F39;--surface-3:#2F2542;--ink:#EEE9F6;--muted:#A79FBB;--line:#372C4B;--brand:#A883DC;--brand-deep:#8659C4;--on-brand:#1C1329;--brand-soft:#2B2140;--gold:#E3C25A;--gold-deep:#C9A94A;--gold-soft:#37301C;--good:#5FBF93;--info:#69A6E6;--crit:#EB6B5E;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font-ui);line-height:1.45;padding:20px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto}
+  h1{font-size:21px;margin:0 0 3px;font-weight:750;text-wrap:balance}
+  .lede{font-size:13px;color:var(--muted);margin:0 0 18px;max-width:70ch}
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:0 0 18px;font-size:12.5px}
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .sw{width:13px;height:13px;border-radius:4px;flex:none}
+  .sw.m365{background:var(--brand)} .sw.claude{background:var(--gold)} .sw.spine{background:var(--brand-deep)} .sw.human{background:var(--crit)}
+
+  .flow{display:flex;flex-direction:column;align-items:stretch;gap:0}
+  .band-cap{font-size:10.5px;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);font-weight:700;margin:0 0 8px;text-align:center}
+  .row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .node{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 14px;box-shadow:var(--shadow);min-width:150px;max-width:230px}
+  .node .t{font-size:13px;font-weight:650;margin:0 0 2px}
+  .node .d{font-size:11.5px;color:var(--muted);line-height:1.35}
+  .node.io{background:var(--surface-2)}
+  .node.claude{border-top:3px solid var(--gold)}
+  .node.m365{border-top:3px solid var(--brand)}
+
+  .conn{display:flex;justify-content:center;align-items:center;color:var(--muted);height:26px;font-size:16px}
+  .conn.two::before{content:"↕";font-size:18px}
+  .conn::before{content:"↓"}
+
+  /* spine */
+  .spine{background:linear-gradient(120deg,var(--brand-deep),var(--brand));color:var(--on-brand);border-radius:12px;
+    padding:14px 18px;box-shadow:var(--shadow);text-align:center;border:none}
+  .spine .t{font-size:14px;font-weight:750;margin:0}
+  .spine .d{font-size:12px;opacity:.9;margin:3px 0 0}
+  .spine .lists{display:flex;gap:8px;justify-content:center;margin-top:9px;flex-wrap:wrap}
+  .spine .lists span{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);border-radius:7px;padding:3px 9px;font-size:11px;font-weight:600}
+
+  /* two brains */
+  .brains{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .brain{border-radius:12px;padding:13px 15px;border:1px solid var(--line)}
+  .brain.m365{background:var(--brand-soft)} .brain.claude{background:var(--gold-soft)}
+  .brain h3{font-size:12.5px;margin:0 0 2px;display:flex;align-items:center;gap:8px;font-weight:750}
+  .brain .role{font-size:11px;color:var(--muted);margin:0 0 10px}
+  .brain h3 .tag{margin-left:auto;font-size:9.5px;text-transform:uppercase;letter-spacing:.05em;font-weight:700;padding:2px 7px;border-radius:999px}
+  .brain.m365 h3 .tag{background:var(--brand);color:var(--on-brand)}
+  .brain.claude h3 .tag{background:var(--gold);color:#2a1f04}
+  .items{display:flex;flex-direction:column;gap:6px}
+  .item{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:12px}
+  .item b{font-weight:650} .item small{color:var(--muted);display:block;font-size:11px;margin-top:1px}
+
+  .human{background:var(--surface);border:1.5px dashed var(--crit);border-radius:10px;padding:10px 14px;text-align:center;max-width:560px;margin:0 auto}
+  .human .t{font-size:12.5px;font-weight:700;color:var(--crit)}
+  .human .d{font-size:11.5px;color:var(--muted);margin-top:2px}
+
+  .foot{margin-top:20px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+  .fcard{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+  .fcard .h{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:700;margin-bottom:3px}
+  .fcard .b{font-size:12.5px;line-height:1.4}
+  .fcard .b b{font-weight:650}
+
+  @media (max-width:760px){
+    .brains{grid-template-columns:1fr}
+    .foot{grid-template-columns:1fr}
+  }
+</style>
+
+<div class="wrap">
+  <h1>Work Action Intelligence Hub — the two-brain architecture</h1>
+  <p class="lede">Every input lands in one SharePoint system of record. Two engines act on it: <b>Microsoft 365</b> does the
+  deterministic plumbing on standard connectors (no per-use cost), and <b>Claude</b> does the judgment work (the AI you
+  already pay for). No AI Builder or Copilot Studio credits anywhere.</p>
+
+  <div class="legend">
+    <span><i class="sw m365"></i> Microsoft 365 — “the hands”</span>
+    <span><i class="sw claude"></i> Claude — “the brain”</span>
+    <span><i class="sw spine"></i> System of record</span>
+    <span><i class="sw human"></i> Human-in-the-loop gate</span>
+  </div>
+
+  <div class="flow">
+    <p class="band-cap">Inputs</p>
+    <div class="row">
+      <div class="node io"><p class="t">📨 New email arrives</p><p class="d">Outlook — the live action surface</p></div>
+      <div class="node io"><p class="t">🎙️ Meeting transcript</p><p class="d">Teams · Zoom · in-person — always a transcript</p></div>
+    </div>
+
+    <div class="conn"></div>
+
+    <p class="band-cap">Classify</p>
+    <div class="row">
+      <div class="node m365"><p class="t">Sorter — rules</p><p class="d">Keyword/trigger classifier → 18 categories, 7 lanes. Zero credits.</p></div>
+      <div class="node claude"><p class="t">Recap → Claude</p><p class="d">Reads the transcript, extracts classified action items.</p></div>
+    </div>
+
+    <div class="conn"></div>
+
+    <div class="spine">
+      <p class="t">🗄️ SharePoint — System of Record</p>
+      <p class="d">One row per email / action • everything reads &amp; writes here</p>
+      <div class="lists"><span>Inbox Action Register</span><span>Subscription Register</span><span>User Profile Register</span></div>
+    </div>
+
+    <div class="conn two" title="both engines read and write the record"></div>
+
+    <p class="band-cap">Two engines act on the record</p>
+    <div class="brains">
+      <div class="brain m365">
+        <h3>Microsoft 365 <span class="tag">standard connectors</span></h3>
+        <p class="role">Deterministic — keywords, dates, thresholds. Free, runs forever.</p>
+        <div class="items">
+          <div class="item"><b>Tempo</b><small>sets follow-up dates from SLA windows</small></div>
+          <div class="item"><b>Watchdog</b><small>ages, escalates, posts the twice-daily digest</small></div>
+          <div class="item"><b>Planner sync</b><small>actionable rows ⇄ tasks (two-way)</small></div>
+          <div class="item"><b>Courier · Sweep · Steward</b><small>send approved replies · file mail · reversible cleanup</small></div>
+        </div>
+      </div>
+      <div class="brain claude">
+        <h3>Claude <span class="tag">your subscription</span></h3>
+        <p class="role">Judgment — reading comprehension &amp; writing.</p>
+        <div class="items">
+          <div class="item"><b>Re-classify ambiguous</b><small>the “Needs Review” queue → you confirm</small></div>
+          <div class="item"><b>Meeting extraction</b><small>transcript → structured action rows</small></div>
+          <div class="item"><b>Draft writing</b><small>replies in your voice (or Copilot in Outlook)</small></div>
+          <div class="item"><b>Daily brief · monthly report</b><small>Chief &amp; Reporter synthesize the record</small></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="conn"></div>
+
+    <div class="human">
+      <p class="t">⚑ You confirm</p>
+      <p class="d">Nothing becomes a task or an outbound email until you flip <b>Reviewed → Yes</b> or <b>Approve draft</b>.</p>
+    </div>
+
+    <div class="conn"></div>
+
+    <p class="band-cap">Act &amp; see</p>
+    <div class="row">
+      <div class="node"><p class="t">🧭 Command Center</p><p class="d">Power App, pinned in Teams — the single pane of glass</p></div>
+      <div class="node"><p class="t">📋 Planner + To Do + Teams Tasks</p><p class="d">where the work actually gets done</p></div>
+      <div class="node"><p class="t">💬 Teams digest</p><p class="d">twice-daily card of what needs attention</p></div>
+      <div class="node"><p class="t">🤖 Copilot Q&amp;A</p><p class="d">grounded on the daily brief document</p></div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="fcard"><div class="h">Why it's free</div><div class="b">The core uses only <b>standard connectors</b>. No AI Builder, no Copilot Studio credits — the AI work runs on <b>Claude</b>, which you already have.</div></div>
+    <div class="fcard"><div class="h">Why it's resilient</div><div class="b">Nothing depends on the Power Apps Premium <b>trial</b>. If it lapses, the whole hub keeps running and every teammate can still use it.</div></div>
+    <div class="fcard"><div class="h">Why you stay in control</div><div class="b">A <b>human gate</b> is enforced by the data, not by discipline — tasks and replies wait for your explicit OK.</div></div>
+  </div>
+</div>

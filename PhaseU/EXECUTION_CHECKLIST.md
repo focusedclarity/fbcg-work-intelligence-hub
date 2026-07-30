@@ -94,25 +94,31 @@
 7. **Apply to each** over `Get items → body/value`. ✅
 8. Inside it: **Condition** (C1) ✅ — compiled (verified in Code view) to `equals( empty(items('Apply_to_each')?['DueDateStated']), false )`. So **True branch = DueDateStated IS present**, False branch = absent.
 
-**STILL TO BUILD (both Condition branches are empty "0 Actions"):**
-- **True branch** → SharePoint **Update item**: Id = `items('Apply_to_each')?['ID']`, `FollowUpDate` = `items('Apply_to_each')?['DueDateStated']`. (Site/List same as Get items.)
-- **False branch** (the business-day SLA walk), in order:
-  - **Set variable** `vN` (expression):
-    `if(equals(items('Apply_to_each')?['DigestLane']?['Value'],'System Exceptions / Workflow Breaks'),1,if(equals(items('Apply_to_each')?['DigestLane']?['Value'],'Waiting On Others'),5,if(equals(items('Apply_to_each')?['Priority']?['Value'],'Critical'),1,if(equals(items('Apply_to_each')?['Priority']?['Value'],'High'),2,if(equals(items('Apply_to_each')?['Priority']?['Value'],'Low'),10,5)))))`
-  - **Set variable** `vBase` (expression):
-    `if(equals(items('Apply_to_each')?['DigestLane']?['Value'],'Waiting On Others'),items('Apply_to_each')?['LastStatusChange'],items('Apply_to_each')?['ReceivedDate'])`
-  - **Set variable** `vCursor` = `variables('vBase')`
-  - **Set variable** `vAdded` = `0`
-  - **Do Until** — condition (advanced): `@greaterOrEquals(variables('vAdded'),variables('vN'))`. Inside:
-    - **Set variable** `vCursor` = `addDays(variables('vCursor'),1)`
-    - **Condition** (C2, weekday): `@and(not(equals(formatDateTime(variables('vCursor'),'ddd'),'Sat')),not(equals(formatDateTime(variables('vCursor'),'ddd'),'Sun')))` → **If yes**: **Increment variable** `vAdded` by 1. (If no: nothing.)
-  - **Update item**: Id = `items('Apply_to_each')?['ID']`, `FollowUpDate` = `formatDateTime(variables('vCursor'),'yyyy-MM-dd')`.
-- Then **Save** (user clicks). Test per BUILD_SPEC_phase0-3 §TEST.
+**PROGRESS UPDATE 2026-07-30 (paused mid-build; all below is SAVED server-side):**
+- ✅ **True branch DONE** → SharePoint **Update item**: Site=Inbox Intelligence App, List=Inbox Action Register, Id=`ID` (dynamic content from Get items), Follow-Up Date=`Due Date Stated` (dynamic content). (Removed the auto-added "Has Attachments" field.)
+- ✅ **False branch — 4 Set variables + Do until condition DONE:**
+  - Set variable `vN` = the nested-if `if(equals(...DigestLane...'System Exceptions / Workflow Breaks'),1, ...'Waiting On Others'),5, ...Priority 'Critical'),1,'High'),2,'Low'),10,5)` — **verified in Code view**.
+  - Set variable 1 `vBase` = `if(equals(items('Apply_to_each')?['DigestLane']?['Value'],'Waiting On Others'),items('Apply_to_each')?['LastStatusChange'],items('Apply_to_each')?['ReceivedDate'])`
+  - Set variable 2 `vCursor` = `vBase` (dynamic content)
+  - Set variable 3 `vAdded` = `0`
+  - **Do until** — Loop until (advanced expr) `@greaterOrEquals(variables('vAdded'),variables('vN'))` (renders in basic mode as `vAdded` **is greater or equal to** `vN`). Count 60 / Timeout PT1H = fine (safety bounds).
+
+**◀ RESUME EXACTLY HERE — 3 actions left in Phase 1, then it's done:**
+1. **INSIDE the Do until** (use the "Insert a new action in Do until" button — it was `ref_98`; the loop is expanded), add:
+   a. **Set variable** `vCursor` = expression `addDays(variables('vCursor'),1)`  *(enter via `/` → Insert expression; click the bottom "Add" button, NOT a function-list row)*
+   b. **Condition** (C2, weekday) — build in the 3-part builder OR advanced. Advanced expression: `@and(not(equals(formatDateTime(variables('vCursor'),'ddd'),'Sat')),not(equals(formatDateTime(variables('vCursor'),'ddd'),'Sun')))`. In its **True** branch add **Increment variable** → Name `vAdded`, Value `1`. (False branch: leave empty.)
+2. **AFTER the Do until, still in the False branch** (use "Insert a new action after Do until" = `ref_94`), add **Update item**: Site=Inbox Intelligence App, List=Inbox Action Register, Id=`items('Apply_to_each')?['ID']` (or ID dynamic content), add advanced field **Follow-Up Date** = expression `formatDateTime(variables('vCursor'),'yyyy-MM-dd')`. Remove the auto-added "Has Attachments" field.
+3. **Save.** Phase 1 (Tempo) complete. Test per BUILD_SPEC_phase0-3 §TEST (create a row ActionOwner=Me, DigestLane=Action Required, Status=New, no FollowUpDate → run flow → FollowUpDate gets a weekday date).
 - **Then Phases 2 & 3** (Planner forward/reverse sync) — not started; full spec in `PhaseU/BUILD_SPEC_phase0-3.md`.
+
+**Tip for finding branch insert points:** the small on-canvas "+" glyphs are unreliable to click; instead use `read_page` (filter:interactive) and click the button labeled "Insert a new action in <scope>" / "...after <action>". Empty condition branches start COLLAPSED — expand the branch first (its Expand/Collapse button) to reveal the insert "+".
 
 ### Designer gotchas learned this session (save yourself the pain)
 - **Code view is READ-ONLY** in BOTH new and classic web designer ("Cannot edit in read-only editor"). No paste-JSON path in-browser; would need a solution export/import or the CLI. Build via the visual UI.
 - Inside Apply to each, reference the current item as **`items('Apply_to_each')?['Field']`** — the validator flags `item()` as "has a problem".
+- **Expression-editor "Add" button is at the very BOTTOM of the popup.** Clicking mid-popup hits a function-list row (e.g. `substring()`) and appends garbage. If that happens, don't try to backspace (the Monaco box ignores Ctrl+A / Backspace when focus drifts) — click the popup **X** to discard and re-enter cleanly.
+- **Do until "Loop until" advanced field:** click **Edit in advanced mode**, then **triple-click** the field to select all before typing (Ctrl+A/Backspace don't work there either). After Save it auto-renders back into the 3-part basic builder — that's expected/correct.
+- Do until defaults **Count 60 / Timeout PT1H** are fine to leave.
 - Choice columns come back as objects → use `?['DigestLane']?['Value']`, `?['Priority']?['Value']`, `?['Status']?['Value']`.
 - To enter an expression in a field: click it → type **`/`** → **Insert expression** → type → **Add**. The expression box is Monaco and **Ctrl+A does NOT select-all** (it appends garbage). To redo an expression, click the popup **X** to discard, then reopen fresh.
 - For a boolean compare in the Condition builder, type **`false`** as a **plain value** in the right box (NOT via the expression editor — bare `false` there errors). It compiles to a real boolean. The builder also shows a phantom empty 2nd row; it's ignored on compile (confirmed in Code view).

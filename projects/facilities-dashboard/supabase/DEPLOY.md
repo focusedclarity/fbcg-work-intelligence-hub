@@ -42,12 +42,16 @@ supabase functions deploy facilities-metrics --no-verify-jwt --project-ref eitfg
 # <ANON_KEY> = Supabase → Project Settings → API → anon public key.
 curl -s "https://eitfgjuppfacpuywrror.supabase.co/functions/v1/facilities-metrics" \
   -H "apikey: <ANON_KEY>" -H "Authorization: Bearer <ANON_KEY>" \
-  | grep -o '"ticketsCreated":[0-9]*'
-# expected:  "ticketsCreated":1442
+  | grep -o '"ticketsLogged":[0-9]*'
+# expected:  "ticketsLogged":110
 ```
 
-If that prints `"ticketsCreated":1442`, the FMX numbers are live. (`dashboard-metrics`
-needs a signed-in user's token, so test it from the Lovable page after login, not curl.)
+If that prints `"ticketsLogged":110`, the inspection-originated FMX numbers are live.
+(The `loop` block now uses `ticketsLogged` / `ticketsClosed` / `closureRate` — the older
+`ticketsCreated` field is gone.) You can also confirm the reporting window rolled forward
+by checking `"asOf"` in the response (e.g. `"asOf":"2026-07-31"` during August). And
+`dashboard-metrics` needs a signed-in user's token, so test it from the Lovable page
+after login, not curl.
 
 ## Then, in Lovable
 Paste the updated build prompt (`lovable-build-prompt.md`) into the **fbcgistaffhub**

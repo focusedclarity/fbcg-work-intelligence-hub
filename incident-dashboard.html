@@ -14,8 +14,8 @@
   --good:#2f855a; --warn:#c87a16; --serious:#dd6b20; --critical:#c0392b;
   --good-bg:#e6f2ec; --warn-bg:#fbf0df; --serious-bg:#fbe9dc; --critical-bg:#f9e5e2;
   --shadow:0 1px 2px rgba(20,27,43,.04),0 4px 16px rgba(20,27,43,.05);
+  --ctrl:#ffffff; --ctrl-line:#d5dbe4;
 }
-:root:not([data-theme="light"]){}
 @media (prefers-color-scheme:dark){
   :root:not([data-theme="light"]){
     --ground:#0d1119; --surface:#151b26; --surface-2:#1b2230;
@@ -26,6 +26,7 @@
     --good:#48bb78; --warn:#d69e2e; --serious:#ed8936; --critical:#e06a5a;
     --good-bg:#16281f; --warn-bg:#2b2413; --serious-bg:#2c2013; --critical-bg:#2c1a17;
     --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 20px rgba(0,0,0,.35);
+    --ctrl:#1b2230; --ctrl-line:#323c4d;
   }
 }
 :root[data-theme="dark"]{
@@ -37,6 +38,7 @@
   --good:#48bb78; --warn:#d69e2e; --serious:#ed8936; --critical:#e06a5a;
   --good-bg:#16281f; --warn-bg:#2b2413; --serious-bg:#2c2013; --critical-bg:#2c1a17;
   --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 20px rgba(0,0,0,.35);
+  --ctrl:#1b2230; --ctrl-line:#323c4d;
 }
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%}
@@ -45,25 +47,40 @@ body{margin:0;background:var(--ground);color:var(--ink);
   -webkit-font-smoothing:antialiased}
 h1,h2,h3{font-family:"Archivo",system-ui,sans-serif;margin:0;line-height:1.15;text-wrap:balance}
 .tnum{font-variant-numeric:tabular-nums}
+button{font-family:inherit}
 
-/* Masthead */
-.masthead{background:var(--masthead);color:var(--masthead-ink);
-  border-bottom:3px solid var(--accent)}
-.masthead-in{max-width:1240px;margin:0 auto;padding:26px 24px 24px;
-  display:flex;flex-wrap:wrap;gap:20px 32px;align-items:flex-end;justify-content:space-between}
+.masthead{background:var(--masthead);color:var(--masthead-ink);border-bottom:3px solid var(--accent)}
+.masthead-in{max-width:1240px;margin:0 auto;padding:24px 24px 22px;
+  display:flex;flex-wrap:wrap;gap:18px 32px;align-items:flex-start;justify-content:space-between}
 .brand{display:flex;flex-direction:column;gap:7px}
-.eyebrow{font-family:"Archivo";font-weight:600;font-size:11.5px;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--masthead-ink-2)}
+.eyebrow{font-family:"Archivo";font-weight:600;font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--masthead-ink-2)}
 .masthead h1{font-size:clamp(25px,4.4vw,38px);font-weight:800;letter-spacing:-.02em;color:#fff}
 .brand-sub{color:var(--masthead-ink-2);font-size:14px;max-width:46ch}
-.meta-strip{display:flex;gap:26px;flex-wrap:wrap}
-.meta{display:flex;flex-direction:column;gap:2px}
+.top-right{display:flex;flex-direction:column;align-items:flex-end;gap:14px}
+.theme-tog{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:3px;gap:2px}
+.theme-tog button{background:none;border:0;color:var(--masthead-ink-2);cursor:pointer;
+  font-size:12px;font-weight:600;padding:5px 11px;border-radius:6px;display:flex;align-items:center;gap:5px}
+.theme-tog button.on{background:rgba(255,255,255,.14);color:#fff}
+.meta-strip{display:flex;gap:24px;flex-wrap:wrap;justify-content:flex-end}
+.meta{display:flex;flex-direction:column;gap:2px;text-align:right}
 .meta .k{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--masthead-ink-2);font-family:"Archivo";font-weight:600}
 .meta .v{font-size:15px;color:var(--masthead-ink);font-weight:500}
 
-/* Layout */
-.wrap{max-width:1240px;margin:0 auto;padding:24px 24px 56px}
-.section-label{display:flex;align-items:baseline;gap:12px;margin:30px 2px 14px}
+.wrap{max-width:1240px;margin:0 auto;padding:20px 24px 56px}
+
+/* filter bar */
+.filterbar{position:sticky;top:0;z-index:20;margin:0 -24px 4px;padding:12px 24px;
+  background:color-mix(in srgb,var(--ground) 88%,transparent);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px 18px;align-items:center;justify-content:space-between}
+.filt-lab{font-family:"Archivo";font-size:11.5px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);margin-right:2px}
+.seg{display:inline-flex;background:var(--ctrl);border:1px solid var(--ctrl-line);border-radius:10px;padding:3px;gap:2px}
+.seg button{background:none;border:0;color:var(--ink-2);cursor:pointer;font-size:13px;font-weight:600;
+  padding:6px 14px;border-radius:7px;transition:.12s;white-space:nowrap;font-variant-numeric:tabular-nums}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:var(--accent);color:#fff}
+.filt-group{display:flex;align-items:center;gap:9px}
+
+.section-label{display:flex;align-items:baseline;gap:12px;margin:26px 2px 14px}
 .section-label h2{font-size:14px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-2)}
 .section-label .rule{flex:1;height:1px;background:var(--line)}
 .section-label .count{font-size:12.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
@@ -73,20 +90,18 @@ h1,h2,h3{font-family:"Archivo",system-ui,sans-serif;margin:0;line-height:1.15;te
 .two{grid-template-columns:1fr 1fr}
 .resp{grid-template-columns:repeat(5,1fr)}
 @media(max-width:960px){.kpis{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:1fr}.resp{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}.resp{grid-template-columns:1fr 1fr}.meta-strip{gap:16px}}
+@media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}.resp{grid-template-columns:1fr 1fr}}
 
-.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;
-  padding:18px 18px 16px;box-shadow:var(--shadow)}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;box-shadow:var(--shadow)}
 .card.plot{padding:18px 18px 12px}
-.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:4px}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:4px;flex-wrap:wrap}
 .card-h h3{font-size:15.5px;font-weight:700;letter-spacing:-.01em}
-.card-h .sub,.card-sub{font-size:12.5px;color:var(--ink-3)}
-.card-sub{margin:2px 0 12px}
+.card-h .sub{font-size:12.5px;color:var(--ink-3)}
+.card-sub{font-size:12.5px;color:var(--ink-3);margin:2px 0 12px}
 
-/* KPI tile */
 .kpi{position:relative;overflow:hidden}
 .kpi .lab{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-family:"Archivo"}
-.kpi .num{font-family:"Archivo";font-weight:800;font-size:34px;letter-spacing:-.03em;line-height:1;margin:9px 0 5px;font-variant-numeric:tabular-nums}
+.kpi .num{font-family:"Archivo";font-weight:800;font-size:33px;letter-spacing:-.03em;line-height:1;margin:9px 0 5px;font-variant-numeric:tabular-nums}
 .kpi .foot{font-size:12px;color:var(--ink-2)}
 .kpi .stripe{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
 .kpi.s-critical .stripe{background:var(--critical)}.kpi.s-critical .num{color:var(--critical)}
@@ -95,58 +110,67 @@ h1,h2,h3{font-family:"Archivo",system-ui,sans-serif;margin:0;line-height:1.15;te
 .kpi.s-good .stripe{background:var(--good)}
 .kpi.s-accent .stripe{background:var(--accent)}.kpi.s-accent .num{color:var(--accent)}
 
-/* horizontal bar rows */
 .bars{display:flex;flex-direction:column;gap:9px;margin-top:4px}
-.bar-row{display:grid;grid-template-columns:132px 1fr 44px;align-items:center;gap:10px}
+.bar-row{display:grid;grid-template-columns:130px 1fr 40px;align-items:center;gap:10px}
 .bar-row .name{font-size:12.5px;color:var(--ink-2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar-track{position:relative;height:20px;background:var(--surface-2);border-radius:5px;overflow:hidden}
-.bar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;transition:width .8s cubic-bezier(.2,.7,.3,1)}
+.bar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;transition:width .7s cubic-bezier(.2,.7,.3,1)}
 .bar-row .val{font-size:13px;font-weight:600;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
 .bar-row.dim .name,.bar-row.dim .val{color:var(--ink-3)}
 
-/* legend */
 .legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px}
 .legend .it{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
 .legend .sw{width:11px;height:11px;border-radius:3px;flex:none}
 
-/* response meter */
 .meter{display:flex;flex-direction:column;gap:8px}
 .meter .top{display:flex;align-items:baseline;justify-content:space-between}
-.meter .big{font-family:"Archivo";font-weight:800;font-size:27px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.meter .big{font-family:"Archivo";font-weight:800;font-size:26px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
 .meter .lab{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-family:"Archivo"}
 .meter .track{height:7px;border-radius:4px;background:var(--surface-2);overflow:hidden}
-.meter .track>i{display:block;height:100%;border-radius:4px}
+.meter .track>i{display:block;height:100%;border-radius:4px;transition:width .7s cubic-bezier(.2,.7,.3,1)}
 .meter .note{font-size:11.5px;color:var(--ink-3)}
 
-/* pill */
-.pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:600;
-  padding:2px 8px;border-radius:20px;font-family:"Archivo";letter-spacing:.02em}
-.pill.good{background:var(--good-bg);color:var(--good)}
-.pill.warn{background:var(--warn-bg);color:var(--warn)}
-.pill.crit{background:var(--critical-bg);color:var(--critical)}
-
-/* tooltip */
 #tip{position:fixed;z-index:50;pointer-events:none;opacity:0;transition:opacity .12s;
-  background:var(--masthead);color:var(--masthead-ink);border:1px solid rgba(255,255,255,.1);
-  padding:7px 10px;border-radius:8px;font-size:12.5px;box-shadow:0 6px 24px rgba(0,0,0,.3);
-  max-width:230px;line-height:1.35}
+  background:var(--masthead);color:var(--masthead-ink);border:1px solid rgba(255,255,255,.12);
+  padding:7px 10px;border-radius:8px;font-size:12.5px;box-shadow:0 6px 24px rgba(0,0,0,.3);max-width:230px;line-height:1.35}
 #tip b{color:#fff;font-weight:600}
 svg{display:block;width:100%;height:auto;overflow:visible}
 .gridline{stroke:var(--line);stroke-width:1}
 .axis-txt{fill:var(--ink-3);font-size:11px;font-family:"Public Sans";font-variant-numeric:tabular-nums}
 
-/* footer / notes */
 .notes{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow)}
 .notes h3{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-2);margin-bottom:12px}
 .notes ul{margin:0;padding-left:0;list-style:none;display:grid;gap:9px}
 .notes li{display:flex;gap:10px;font-size:13px;color:var(--ink-2);line-height:1.45}
 .notes li .dot{flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:6px}
 .notes li.q .dot{background:var(--warn)}
-.footer{margin-top:26px;padding-top:18px;border-top:1px solid var(--line);
-  display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;
-  font-size:12px;color:var(--ink-3)}
+.footer{margin-top:24px;padding-top:18px;border-top:1px solid var(--line);
+  display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;font-size:12px;color:var(--ink-3)}
 .footer a{color:var(--accent);text-decoration:none}
 .split-note{font-size:12.5px;color:var(--ink-3);margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
+
+/* ===== password gate ===== */
+#gate{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;
+  background:var(--masthead);padding:24px}
+#gate[hidden]{display:none}
+#gate .box{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);
+  border-radius:16px;padding:30px 28px;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center}
+#gate .lock{width:46px;height:46px;border-radius:12px;background:var(--accent-soft);color:var(--accent);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px}
+#gate .eyebrow{font-family:"Archivo";font-weight:600;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3)}
+#gate h2{font-family:"Archivo";font-weight:800;font-size:21px;letter-spacing:-.02em;margin:6px 0 6px;color:var(--ink)}
+#gate p{font-size:13px;color:var(--ink-2);margin:0 0 18px}
+#gate form{display:flex;flex-direction:column;gap:10px}
+#gate input{font-family:inherit;font-size:15px;padding:11px 13px;border-radius:9px;border:1px solid var(--ctrl-line);
+  background:var(--surface-2);color:var(--ink);text-align:center;letter-spacing:.05em}
+#gate input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+#gate button{font-family:"Archivo";font-weight:700;font-size:14px;padding:11px;border-radius:9px;border:0;
+  background:var(--accent);color:#fff;cursor:pointer}
+#gate button:hover{filter:brightness(1.06)}
+#gate .err{font-size:12.5px;color:var(--critical);min-height:16px;font-weight:600}
+#gate .foot{font-size:11px;color:var(--ink-3);margin-top:14px;line-height:1.4}
+body.locked{overflow:hidden}
+body.locked .wrap,body.locked .masthead{filter:blur(7px);pointer-events:none;user-select:none}
 </style>
 
 <header class="masthead">
@@ -156,36 +180,64 @@ svg{display:block;width:100%;height:auto;overflow:visible}
       <h1>Incident Report Dashboard</h1>
       <div class="brand-sub">First Baptist Church of Glenarden — analysis of all reported safety &amp; security incidents across FBCG facilities.</div>
     </div>
-    <div class="meta-strip">
-      <div class="meta"><span class="k">Reporting Window</span><span class="v tnum">Jul 2023 – Aug 2026</span></div>
-      <div class="meta"><span class="k">Total Reports</span><span class="v tnum">489</span></div>
-      <div class="meta"><span class="k">Generated</span><span class="v tnum">Aug 17, 2026</span></div>
+    <div class="top-right">
+      <div class="theme-tog" id="themeTog" role="group" aria-label="Color theme">
+        <button data-th="light" title="Light">☀︎ Light</button>
+        <button data-th="system" title="Match system">◐ Auto</button>
+        <button data-th="dark" title="Dark">☾ Dark</button>
+      </div>
+      <div class="meta-strip">
+        <div class="meta"><span class="k">Reporting Window</span><span class="v tnum">Jul 2023 – Aug 2026</span></div>
+        <div class="meta"><span class="k">Total Reports</span><span class="v tnum">489</span></div>
+        <div class="meta"><span class="k">Last Updated</span><span class="v tnum">Aug 17, 2026</span></div>
+      </div>
     </div>
   </div>
 </header>
 
 <div class="wrap">
+  <div class="filterbar">
+    <div class="filt-group">
+      <span class="filt-lab">Year</span>
+      <div class="seg" id="yearSeg" role="group" aria-label="Filter by year">
+        <button data-y="all" class="on">All</button>
+        <button data-y="2023">2023</button>
+        <button data-y="2024">2024</button>
+        <button data-y="2025">2025</button>
+        <button data-y="2026">2026</button>
+      </div>
+    </div>
+    <div class="filt-group" id="scopeNote" style="font-size:12.5px;color:var(--ink-3)"></div>
+  </div>
 
-  <div class="section-label"><h2>At a Glance</h2><span class="rule"></span><span class="count">All 489 reports</span></div>
+  <div class="section-label"><h2>At a Glance</h2><span class="rule"></span><span class="count" id="glanceCount"></span></div>
   <div class="grid kpis" id="kpis"></div>
 
-  <div class="section-label"><h2>Reporting Trend</h2><span class="rule"></span><span class="count">by month of incident</span></div>
+  <div class="section-label"><h2>Reporting Trend</h2><span class="rule"></span><span class="count" id="trendCount"></span></div>
   <div class="card plot">
-    <div class="card-h"><h3>Incidents Reported per Month</h3><span class="sub">36 months · avg ≈ 13/mo</span></div>
-    <div class="card-sub">First and last months are partial. A clear upward drift through 2026 reflects both higher activity and improved reporting adoption.</div>
+    <div class="card-h">
+      <h3 id="trendTitle">Incidents Reported per Month</h3>
+      <div class="seg" id="modeSeg" role="group" aria-label="Trend view">
+        <button data-m="timeline" class="on">Timeline</button>
+        <button data-m="yoy">YoY</button>
+        <button data-m="mom">MoM Δ</button>
+      </div>
+    </div>
+    <div class="card-sub" id="trendSub"></div>
     <div id="trend"></div>
+    <div class="legend" id="trendLegend"></div>
   </div>
 
   <div class="section-label"><h2>What &amp; Where</h2><span class="rule"></span><span class="count">nature &amp; location</span></div>
   <div class="grid two">
     <div class="card plot">
-      <div class="card-h"><h3>Nature of Report</h3><span class="sub">top categories</span></div>
-      <div class="card-sub">Medical &amp; injury reports dominate — half of all incidents. Security-specific events are a smaller, lower-frequency tail.</div>
+      <div class="card-h"><h3>Nature of Report</h3><span class="sub" id="natSub"></span></div>
+      <div class="card-sub">Medical &amp; injury reports lead the mix; security-specific events form a lower-frequency tail.</div>
       <div class="bars" id="nature"></div>
     </div>
     <div class="card plot">
-      <div class="card-h"><h3>Location of Incident</h3><span class="sub">by facility</span></div>
-      <div class="card-sub">The Worship Center and Ministry Center together account for roughly 7 in 10 incidents.</div>
+      <div class="card-h"><h3>Location of Incident</h3><span class="sub" id="locSub"></span></div>
+      <div class="card-sub">The Worship Center and Ministry Center concentrate most incidents.</div>
       <div class="bars" id="location"></div>
     </div>
   </div>
@@ -193,15 +245,15 @@ svg{display:block;width:100%;height:auto;overflow:visible}
   <div class="section-label"><h2>Who &amp; How Severe</h2><span class="rule"></span><span class="count">affiliation &amp; injury severity</span></div>
   <div class="grid two">
     <div class="card plot">
-      <div class="card-h"><h3>Person Involved — FBCG Affiliation</h3><span class="sub">489 reports</span></div>
-      <div class="card-sub">Members are most frequently involved, but guests and non-affiliated visitors together make up 44%.</div>
+      <div class="card-h"><h3>Person Involved — FBCG Affiliation</h3><span class="sub" id="affSub"></span></div>
+      <div class="card-sub">Members lead; guests and non-affiliated visitors together are a large share.</div>
       <div id="affil"></div>
     </div>
     <div class="card plot">
-      <div class="card-h"><h3>Injury / Illness Severity</h3><span class="sub">203 medical reports with severity coded</span></div>
-      <div class="card-sub">Most medical calls are complaints with no visible injury; severe injuries are the critical minority to watch.</div>
+      <div class="card-h"><h3>Injury / Illness Severity</h3><span class="sub" id="sevSub"></span></div>
+      <div class="card-sub">Most medical calls are complaints with no visible injury; severe injuries are the critical minority.</div>
       <div class="bars" id="severity"></div>
-      <div class="split-note">67 incidents (13.7%) involved a <b>minor</b>. 287 incidents (59%) occurred in the <b>afternoon/evening (PM)</b>.</div>
+      <div class="split-note" id="splitNote"></div>
     </div>
   </div>
 
@@ -212,16 +264,31 @@ svg{display:block;width:100%;height:auto;overflow:visible}
   <div class="notes">
     <h3>Interpretation &amp; Data Quality Notes</h3>
     <ul>
-      <li><span class="dot"></span><span><b>Medical response is the core workload.</b> 247 reports (50.5%) are injury/illness/medical — this is as much a first-aid operation as a security one. 88 incidents triggered a 911 call and 50 ended in a hospital transport.</span></li>
-      <li><span class="dot"></span><span><b>Serious security events are rare but present:</b> 4 weapons-related, 2 violence/threat, 2 inappropriate-touching/sexual-assault, 4 mental-health, plus 14 unauthorized-entry reports over the period.</span></li>
-      <li><span class="dot"></span><span><b>Escalation is well-documented:</b> Safety &amp; Security was notified in 368 of 489 reports (75%) and police in 198 (41%).</span></li>
-      <li class="q"><span class="dot"></span><span><b>Data hygiene:</b> the <i>Department</i> field is blank on every row. "Nature" and "Location" contain free-text duplicates (e.g. "Suspicious Person" vs "Suspicious Individual"; several "sanctuary" spellings) that were merged for this view. One incident date (1963) is an obvious mis-entry and is excluded from the trend.</span></li>
-      <li class="q"><span class="dot"></span><span><b>Under-completion of follow-up fields:</b> "911 called" and "transported to hospital" are blank on more than half of reports, so response rates are shown against reports where the field was actually answered.</span></li>
+      <li><span class="dot"></span><span><b>Medical response is the core workload.</b> Injury/illness/medical is the single largest category every year — this is as much a first-aid operation as a security one.</span></li>
+      <li><span class="dot"></span><span><b>2026 shifts toward security events:</b> weapons (4), suspicious individuals (10), mental-health (4) and violence/threat reports concentrate in the current year — worth watching alongside the medical baseline.</span></li>
+      <li><span class="dot"></span><span><b>Escalation is well-documented:</b> Safety &amp; Security was notified in 75% of all reports and police in 41%.</span></li>
+      <li class="q"><span class="dot"></span><span><b>Data hygiene:</b> the <i>Department</i> field is blank on every row; "Nature" and "Location" contain free-text duplicates (merged for this view); one incident date (1963) is an obvious mis-entry excluded from the trend. 2023 (from July) and Aug 2026 are partial months.</span></li>
+      <li class="q"><span class="dot"></span><span><b>Under-completed follow-up fields:</b> "911 called" and "transported to hospital" are blank on more than half of reports, so response rates are shown against reports where the field was actually answered.</span></li>
     </ul>
     <div class="footer">
-      <span>Source: Smartsheet — <b>Incident Report</b> · 489 rows · live as of Aug 17, 2026</span>
+      <span>Source: Smartsheet — <b>Incident Report</b> · 489 rows · pulled Aug 17, 2026</span>
       <span><a href="https://app.smartsheet.com/sheets/M2Qq2rj2p65pp6QVX93WPfMx6ph4mf5j3Q5gCj31">Open source sheet ↗</a></span>
     </div>
+  </div>
+</div>
+
+<div id="gate" hidden>
+  <div class="box">
+    <div class="lock">🛡️</div>
+    <div class="eyebrow">Restricted · Safety &amp; Security</div>
+    <h2>Incident Dashboard</h2>
+    <p>This report contains sensitive incident data. Enter the access password to continue.</p>
+    <form id="gateForm">
+      <input id="gatePw" type="password" placeholder="Password" autocomplete="current-password" aria-label="Password" autofocus>
+      <button type="submit">Unlock</button>
+      <div class="err" id="gateErr" role="alert"></div>
+    </form>
+    <div class="foot">Client-side access control — a deterrent for casual viewing, not a substitute for hosting behind authentication.</div>
   </div>
 </div>
 
@@ -229,194 +296,321 @@ svg{display:block;width:100%;height:auto;overflow:visible}
 
 <script>
 "use strict";
+/* ===== password gate =====
+   To change the password: replace PW_HASH below with the SHA-256 hex of your new
+   password. Generate it in any console with:
+     crypto.subtle.digest('SHA-256', new TextEncoder().encode('yourpassword'))
+   or online. Current password hash corresponds to: barteec
+*/
+const PW_HASH="5585a7d96a4098b7325b9a88b2569702b4d289ad2f75323431b76a2a367e6951";
+(function gate(){
+  const g=document.getElementById("gate");
+  async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));
+    return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+  let ok=false;try{ok=sessionStorage.getItem("fbcg-gate")==="1";}catch(e){}
+  if(ok)return;
+  document.body.classList.add("locked");g.hidden=false;
+  const f=document.getElementById("gateForm"),pw=document.getElementById("gatePw"),err=document.getElementById("gateErr");
+  setTimeout(()=>pw.focus(),50);
+  f.addEventListener("submit",async e=>{e.preventDefault();
+    const h=await sha(pw.value);
+    if(h===PW_HASH){try{sessionStorage.setItem("fbcg-gate","1");}catch(e){}
+      g.hidden=true;document.body.classList.remove("locked");}
+    else{err.textContent="Incorrect password. Please try again.";pw.value="";pw.focus();
+      f.animate([{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"translateX(0)"}],{duration:220});}
+  });
+})();
 const $=s=>document.querySelector(s);
 const tip=$("#tip");
-function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity="1";
-  const w=tip.offsetWidth,h=tip.offsetHeight;
-  let nx=x+14,ny=y-h-12;
-  if(nx+w>innerWidth-8)nx=x-w-14; if(ny<8)ny=y+18;
-  tip.style.left=nx+"px";tip.style.top=ny+"px";}
-function hideTip(){tip.style.opacity="0";}
 const cvar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity="1";
+  const w=tip.offsetWidth,h=tip.offsetHeight;let nx=x+14,ny=y-h-12;
+  if(nx+w>innerWidth-8)nx=x-w-14;if(ny<8)ny=y+18;tip.style.left=nx+"px";tip.style.top=ny+"px";}
+function hideTip(){tip.style.opacity="0";}
+const mn=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
 
-/* ---------- KPI tiles ---------- */
-const kpis=[
-  {lab:"Total Reports",num:"489",foot:"Jul 2023 – Aug 2026",cls:"s-accent"},
-  {lab:"Medical / Injury",num:"50.5%",foot:"247 injury &amp; illness reports",cls:"s-warn"},
-  {lab:"Severe Injuries",num:"20",foot:"broken bones, head injury, deep cuts",cls:"s-critical"},
-  {lab:"911 Calls",num:"88",foot:"40% of reports where asked",cls:"s-serious"},
-  {lab:"Hospital Transports",num:"50",foot:"by ambulance",cls:"s-serious"},
-  {lab:"Minors Involved",num:"67",foot:"13.7% of all reports",cls:"s-warn"},
-];
-$("#kpis").innerHTML=kpis.map(k=>`
-  <div class="card kpi ${k.cls}"><span class="stripe"></span>
-    <div class="lab">${k.lab}</div><div class="num tnum">${k.num}</div><div class="foot">${k.foot}</div>
-  </div>`).join("");
+/* ============ DATA ============ */
+const D={
+ all:{total:489,med:247,severe:20,minor:[67,489],pm:[287,489],
+  nature:[["Injury / Illness / Medical",247],["Other / unspecified",113,1],["Property Damage",25],["Vehicle Accident",25],["Dispute / Domestic",19],["Unauthorized Entry",14],["Suspicious Individual",11],["Theft",8],["Suspicious Vehicle",5],["Weapons Related",4],["Mental Health",4],["Violence / Threat",2]],
+  location:[["Worship Center",232],["Ministry Center",123],["Family Life Center",67],["Other / free-text",33,1],["Empowerment Center",11],["Lower School (MC)",9],["Home School (Sports)",7],["FBCG Travel",5],["Upper School (HP)",1],["Service Building",1]],
+  affil:[["Member",201,"--cat-1"],["Other / none",122,"--cat-4"],["Guest",95,"--cat-2"],["Employee",71,"--cat-3"]],
+  sev:{Complaint:126,Minor:52,Severe:20,Other:5},
+  r:{ss:[368,489],police:[198,484],c911:[88,220],trans:[50,217],aid:[165,226]}},
+ "2023":{total:52,med:32,severe:3,minor:[11,52],pm:[30,52],
+  nature:[["Injury / Illness / Medical",32],["Other / unspecified",9,1],["Dispute / Domestic",4],["Property Damage",3],["Vehicle Accident",2],["Theft",1],["Inappropriate Touch / SA",1]],
+  location:[["Ministry Center",19],["Worship Center",15],["Family Life Center",12],["Other / free-text",3,1],["FBCG Travel",2],["Service Building",1]],
+  affil:[["Member",22,"--cat-1"],["Other / none",18,"--cat-4"],["Guest",7,"--cat-2"],["Employee",5,"--cat-3"]],
+  sev:{Complaint:14,Minor:9,Severe:3,Other:1},
+  r:{ss:[42,52],police:[17,50],c911:[14,28],trans:[8,27],aid:[26,35]}},
+ "2024":{total:166,med:71,severe:4,minor:[21,166],pm:[103,166],
+  nature:[["Injury / Illness / Medical",71],["Other / unspecified",49,1],["Unauthorized Entry",13],["Dispute / Domestic",10],["Vehicle Accident",8],["Property Damage",7],["Theft",3],["Suspicious Individual",1],["Suspicious Vehicle",1],["Parking Violation",1],["Elevator Entrapment",1],["Fire",1]],
+  location:[["Worship Center",85],["Ministry Center",35],["Family Life Center",18],["Other / free-text",12,1],["Empowerment Center",6],["Lower School (MC)",5],["Home School (Sports)",5]],
+  affil:[["Member",63,"--cat-1"],["Other / none",49,"--cat-4"],["Employee",29,"--cat-3"],["Guest",25,"--cat-2"]],
+  sev:{Complaint:41,Minor:15,Severe:4,Other:1},
+  r:{ss:[132,166],police:[71,166],c911:[24,66],trans:[16,65],aid:[45,66]}},
+ "2025":{total:134,med:80,severe:11,minor:[18,134],pm:[75,133],
+  nature:[["Injury / Illness / Medical",80],["Other / unspecified",32,1],["Property Damage",9],["Dispute / Domestic",5],["Theft",4],["Vehicle Accident",2],["Fire",1],["Unauthorized Entry",1]],
+  location:[["Worship Center",64],["Ministry Center",28],["Family Life Center",23],["Other / free-text",12,1],["Lower School (MC)",3],["Empowerment Center",2],["Home School (Sports)",2]],
+  affil:[["Member",60,"--cat-1"],["Guest",30,"--cat-2"],["Other / none",29,"--cat-4"],["Employee",15,"--cat-3"]],
+  sev:{Complaint:34,Minor:15,Severe:11,Other:3},
+  r:{ss:[92,134],police:[59,133],c911:[27,67],trans:[15,66],aid:[50,67]}},
+ "2026":{total:136,med:63,severe:2,minor:[17,136],pm:[78,135],
+  nature:[["Injury / Illness / Medical",63],["Other / unspecified",23,1],["Vehicle Accident",13],["Suspicious Individual",10],["Property Damage",6],["Weapons Related",4],["Mental Health",4],["Suspicious Vehicle",4],["False Alarm",3],["Violence / Threat",2],["Parking Violation",2],["Inappropriate Touch / SA",1]],
+  location:[["Worship Center",67],["Ministry Center",41],["Family Life Center",14],["Other / free-text",6,1],["FBCG Travel",3],["Empowerment Center",3],["Lower School (MC)",1],["Upper School (HP)",1]],
+  affil:[["Member",55,"--cat-1"],["Guest",33,"--cat-2"],["Other / none",26,"--cat-4"],["Employee",22,"--cat-3"]],
+  sev:{Complaint:36,Minor:13,Severe:2,Other:0},
+  r:{ss:[101,136],police:[50,134],c911:[23,58],trans:[11,58],aid:[43,57]}}
+};
+/* month arrays Jan..Dec, null = no data / future */
+const MONTHS={
+ "2023":[null,null,null,null,null,null,3,5,11,14,8,11],
+ "2024":[11,10,13,16,11,9,15,16,21,15,8,21],
+ "2025":[5,7,13,14,12,11,12,10,10,15,11,14],
+ "2026":[12,16,20,19,20,26,14,9,null,null,null,null]
+};
+const YEAR_KEYS=["2023","2024","2025","2026"];
+const YEAR_COL={"2023":"--cat-3","2024":"--cat-2","2025":"--cat-4","2026":"--cat-1"};
+const PARTIAL={"2023-6":1,"2026-7":1}; // Jul 2023, Aug 2026
 
-/* ---------- Monthly trend (area + line + crosshair) ---------- */
-const trend=[
- ["2023-07",3,1],["2023-08",5,0],["2023-09",11,0],["2023-10",14,0],["2023-11",8,0],["2023-12",11,0],
- ["2024-01",11,0],["2024-02",10,0],["2024-03",13,0],["2024-04",16,0],["2024-05",11,0],["2024-06",9,0],
- ["2024-07",15,0],["2024-08",16,0],["2024-09",21,0],["2024-10",15,0],["2024-11",8,0],["2024-12",21,0],
- ["2025-01",5,0],["2025-02",7,0],["2025-03",13,0],["2025-04",14,0],["2025-05",12,0],["2025-06",11,0],
- ["2025-07",12,0],["2025-08",10,0],["2025-09",10,0],["2025-10",15,0],["2025-11",11,0],["2025-12",14,0],
- ["2026-01",12,0],["2026-02",16,0],["2026-03",20,0],["2026-04",19,0],["2026-05",20,0],["2026-06",26,0],
- ["2026-07",14,0],["2026-08",9,1],
-];
-function drawTrend(){
-  const host=$("#trend");
-  const W=host.clientWidth||900, H=300;
-  const m={t:14,r:12,b:44,l:34};
-  const iw=W-m.l-m.r, ih=H-m.t-m.b;
-  const maxV=28, n=trend.length;
-  const X=i=>m.l+(iw*i/(n-1));
-  const Y=v=>m.t+ih-(ih*v/maxV);
-  const ac=cvar("--accent");
-  let grid="",xlab="";
-  [0,7,14,21,28].forEach(v=>{const y=Y(v);grid+=`<line class="gridline" x1="${m.l}" y1="${y}" x2="${W-m.r}" y2="${y}"/><text class="axis-txt" x="${m.l-8}" y="${y+4}" text-anchor="end">${v}</text>`;});
-  trend.forEach((d,i)=>{const[key]=d;if(key.slice(5)==="01"||i===0){xlab+=`<text class="axis-txt" x="${X(i)}" y="${H-24}" text-anchor="middle">${key.slice(0,4)}</text>`;}});
-  let line=trend.map((d,i)=>`${i?"L":"M"}${X(i).toFixed(1)},${Y(d[1]).toFixed(1)}`).join(" ");
-  let area=`M${X(0)},${Y(0)} `+trend.map((d,i)=>`L${X(i).toFixed(1)},${Y(d[1]).toFixed(1)}`).join(" ")+` L${X(n-1)},${Y(0)} Z`;
-  let dots=trend.map((d,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(d[1]).toFixed(1)}" r="3" fill="${ac}" stroke="var(--surface)" stroke-width="1.5"/>`).join("");
-  const mn=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
-  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly incident trend line chart">
-    <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="${ac}" stop-opacity="0.22"/><stop offset="1" stop-color="${ac}" stop-opacity="0"/>
-    </linearGradient></defs>
-    ${grid}${xlab}
-    <path d="${area}" fill="url(#tg)"/>
-    <path d="${line}" fill="none" stroke="${ac}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>
-    ${dots}
-    <line id="cx" x1="0" y1="${m.t}" x2="0" y2="${m.t+ih}" stroke="${ac}" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>
-    <rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" fill="transparent" id="thit"/>
-  </svg>`;
-  const svg=host.querySelector("svg"), cx=host.querySelector("#cx"), hit=host.querySelector("#thit");
-  hit.addEventListener("pointermove",e=>{
-    const r=svg.getBoundingClientRect(), sx=(e.clientX-r.left)*(W/r.width);
-    let i=Math.round((sx-m.l)/(iw/(n-1))); i=Math.max(0,Math.min(n-1,i));
-    const d=trend[i]; const px=X(i);
-    cx.setAttribute("x1",px);cx.setAttribute("x2",px);cx.setAttribute("opacity","1");
-    const[key,v,part]=d; const[y,mo]=key.split("-");
-    showTip(`<b>${mn[+mo-1]} ${y}</b>${part?' <span style="opacity:.7">(partial)</span>':''}<br>${v} incident${v===1?"":"s"} reported`,e.clientX,e.clientY);
-  });
-  hit.addEventListener("pointerleave",()=>{cx.setAttribute("opacity","0");hideTip();});
+let YEAR="all", MODE="timeline";
+
+/* ============ THEME ============ */
+function applyTheme(t){
+  const r=document.documentElement;
+  if(t==="system")r.removeAttribute("data-theme"); else r.setAttribute("data-theme",t);
+  try{localStorage.setItem("fbcg-theme",t);}catch(e){}
+  document.querySelectorAll("#themeTog button").forEach(b=>b.classList.toggle("on",b.dataset.th===t));
+}
+(function initTheme(){
+  let t="system";try{t=localStorage.getItem("fbcg-theme")||"system";}catch(e){}
+  applyTheme(t);
+  $("#themeTog").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+    applyTheme(b.dataset.th);renderAll();});
+})();
+
+/* ============ KPIs ============ */
+function renderKPIs(){
+  const d=D[YEAR], yl=YEAR==="all"?"Jul 2023 – Aug 2026":YEAR+(YEAR==="2023"?" (from Jul)":YEAR==="2026"?" (through Aug)":"");
+  const pct=(a,b)=>Math.round(a/b*1000)/10;
+  const k=[
+    {lab:"Total Reports",num:d.total,foot:yl,cls:"s-accent"},
+    {lab:"Medical / Injury",num:pct(d.med,d.total)+"%",foot:d.med+" injury &amp; illness reports",cls:"s-warn"},
+    {lab:"Severe Injuries",num:d.severe,foot:"fractures, head injury, deep cuts",cls:"s-critical"},
+    {lab:"911 Calls",num:d.r.c911[0],foot:Math.round(d.r.c911[0]/d.r.c911[1]*100)+"% of reports where asked",cls:"s-serious"},
+    {lab:"Hospital Transports",num:d.r.trans[0],foot:"by ambulance",cls:"s-serious"},
+    {lab:"Minors Involved",num:d.minor[0],foot:pct(d.minor[0],d.minor[1])+"% of reports",cls:"s-warn"},
+  ];
+  $("#kpis").innerHTML=k.map(x=>`<div class="card kpi ${x.cls}"><span class="stripe"></span>
+    <div class="lab">${x.lab}</div><div class="num tnum">${x.num}</div><div class="foot">${x.foot}</div></div>`).join("");
+  $("#glanceCount").textContent=(YEAR==="all"?"All "+d.total:d.total+" in "+YEAR)+" reports";
 }
 
-/* ---------- horizontal bars ---------- */
+/* ============ bars ============ */
 function drawBars(sel,data,color,total){
-  const max=Math.max(...data.map(d=>d[1]));
+  const max=Math.max(...data.map(d=>d[1]),1);
   $(sel).innerHTML=data.map(d=>{
-    const[name,val,dim]=d; const pct=(val/total*100);
-    return `<div class="bar-row${dim?' dim':''}" tabindex="0" data-t="<b>${name}</b><br>${val} report${val===1?"":"s"} · ${pct.toFixed(1)}% of 489">
+    const[name,val,dim]=d,p=(val/total*100);
+    return `<div class="bar-row${dim?' dim':''}" tabindex="0" data-t="<b>${name}</b><br>${val} report${val===1?"":"s"} · ${p.toFixed(1)}%">
       <span class="name" title="${name}">${name}</span>
       <span class="bar-track"><span class="bar-fill" style="width:0;background:${dim?'var(--ink-3)':color}"></span></span>
       <span class="val tnum">${val}</span></div>`;}).join("");
   requestAnimationFrame(()=>{$(sel).querySelectorAll(".bar-row").forEach((r,i)=>{
-    const d=data[i]; r.querySelector(".bar-fill").style.width=(d[1]/max*100)+"%";
-    const move=e=>{const p=(e.touches?e.touches[0]:e);showTip(r.dataset.t,p.clientX,p.clientY);};
-    r.addEventListener("pointermove",move);r.addEventListener("pointerleave",hideTip);
+    r.querySelector(".bar-fill").style.width=(data[i][1]/max*100)+"%";
+    const mv=e=>{const p=e.touches?e.touches[0]:e;showTip(r.dataset.t,p.clientX,p.clientY);};
+    r.addEventListener("pointermove",mv);r.addEventListener("pointerleave",hideTip);
     r.addEventListener("focus",()=>{const b=r.getBoundingClientRect();showTip(r.dataset.t,b.right-40,b.top);});
-    r.addEventListener("blur",hideTip);
-  });});
+    r.addEventListener("blur",hideTip);});});
 }
-const AC=cvar("--accent");
-drawBars("#nature",[
-  ["Injury / Illness / Medical",247],["Other / unspecified",113,1],["Property Damage",25],
-  ["Vehicle Accident",25],["Dispute / Domestic",19],["Unauthorized Entry",14],
-  ["Suspicious Individual",11],["Theft",8],["Suspicious Vehicle",5],
-  ["Weapons Related",4],["Mental Health",4],["Violence / Threat",2],
-],AC,489);
-drawBars("#location",[
-  ["Worship Center",232],["Ministry Center",123],["Family Life Center",67],
-  ["Other / free-text",33,1],["Empowerment Center",11],["Lower School (MC)",9],
-  ["Home School (Sports)",7],["FBCG Travel",5],["Upper School (HP)",1],["Service Building",1],
-],AC,489);
 
-/* ---------- severity (status colors) ---------- */
-(function(){
-  const sev=[
-    ["Complaint — no visible injury",126,"var(--good)"],
-    ["Minor injury (bruise, scratch)",52,"var(--warn)"],
-    ["Severe (fracture, head, deep cut)",20,"var(--critical)"],
-    ["Other described (free-text)",5,"var(--ink-3)"],
-  ];
-  const total=203, max=126;
-  $("#severity").innerHTML=sev.map(d=>{
-    const[name,val,col]=d,pct=(val/total*100);
-    return `<div class="bar-row" tabindex="0" data-t="<b>${name}</b><br>${val} of 203 coded medical reports · ${pct.toFixed(0)}%">
+/* ============ severity ============ */
+function renderSeverity(){
+  const d=D[YEAR],s=d.sev,coded=s.Complaint+s.Minor+s.Severe+s.Other;
+  const rows=[["Complaint — no visible injury",s.Complaint,"var(--good)"],
+    ["Minor injury (bruise, scratch)",s.Minor,"var(--warn)"],
+    ["Severe (fracture, head, deep cut)",s.Severe,"var(--critical)"],
+    ["Other described (free-text)",s.Other,"var(--ink-3)"]].filter(r=>r[1]>0);
+  const max=Math.max(...rows.map(r=>r[1]),1);
+  $("#severity").innerHTML=rows.map(d=>{const[name,val,col]=d,p=coded?(val/coded*100):0;
+    return `<div class="bar-row" tabindex="0" data-t="<b>${name}</b><br>${val} of ${coded} coded medical reports · ${p.toFixed(0)}%">
       <span class="name" title="${name}">${name}</span>
       <span class="bar-track"><span class="bar-fill" style="width:0;background:${col}"></span></span>
       <span class="val tnum">${val}</span></div>`;}).join("");
   requestAnimationFrame(()=>{$("#severity").querySelectorAll(".bar-row").forEach((r,i)=>{
-    r.querySelector(".bar-fill").style.width=(sev[i][1]/max*100)+"%";
-    const move=e=>{const p=(e.touches?e.touches[0]:e);showTip(r.dataset.t,p.clientX,p.clientY);};
-    r.addEventListener("pointermove",move);r.addEventListener("pointerleave",hideTip);
+    r.querySelector(".bar-fill").style.width=(rows[i][1]/max*100)+"%";
+    const mv=e=>{const p=e.touches?e.touches[0]:e;showTip(r.dataset.t,p.clientX,p.clientY);};
+    r.addEventListener("pointermove",mv);r.addEventListener("pointerleave",hideTip);
     r.addEventListener("focus",()=>{const b=r.getBoundingClientRect();showTip(r.dataset.t,b.right-40,b.top);});
-    r.addEventListener("blur",hideTip);
-  });});
-})();
+    r.addEventListener("blur",hideTip);});});
+  $("#sevSub").textContent=coded+" medical reports with severity coded";
+  const mp=v=>Math.round(v[0]/v[1]*100);
+  $("#splitNote").innerHTML=`${d.minor[0]} incidents (${(d.minor[0]/d.minor[1]*100).toFixed(1)}%) involved a <b>minor</b>. ${mp(d.pm)}% of incidents with a time logged occurred in the <b>afternoon/evening (PM)</b>.`;
+}
 
-/* ---------- affiliation donut ---------- */
-(function(){
-  const data=[["Member",201,"--cat-1"],["Other / none",122,"--cat-4"],["Guest",95,"--cat-2"],["Employee",71,"--cat-3"]];
-  const total=489, host=$("#affil");
-  const size=210, r=82, cxp=size/2, cyp=size/2, sw=30;
-  const C=2*Math.PI*r; let off=0;
-  let segs="";
-  data.forEach((d,i)=>{
-    const frac=d[1]/total, len=C*frac, gap=3;
-    const col=cvar(d[2]);
-    segs+=`<circle class="seg" data-i="${i}" cx="${cxp}" cy="${cyp}" r="${r}" fill="none"
-      stroke="${col}" stroke-width="${sw}" stroke-dasharray="${(len-gap).toFixed(2)} ${(C-len+gap).toFixed(2)}"
-      stroke-dashoffset="${(-off).toFixed(2)}" transform="rotate(-90 ${cxp} ${cyp})" style="cursor:pointer;transition:stroke-width .15s"/>`;
-    off+=len;
-  });
+/* ============ affiliation donut ============ */
+function renderAffil(){
+  const data=D[YEAR].affil,total=data.reduce((a,b)=>a+b[1],0),host=$("#affil");
+  const size=210,r=82,c=size/2,sw=30,C=2*Math.PI*r;let off=0,segs="";
+  data.forEach((d,i)=>{const frac=d[1]/total,len=C*frac,gap=Math.min(3,len*.5),col=cvar(d[2]);
+    segs+=`<circle class="seg" data-i="${i}" cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${col}" stroke-width="${sw}"
+      stroke-dasharray="${(len-gap).toFixed(2)} ${(C-len+gap).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"
+      transform="rotate(-90 ${c} ${c})" style="cursor:pointer;transition:stroke-width .15s"/>`;off+=len;});
   host.innerHTML=`<div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:center">
-    <svg viewBox="0 0 ${size} ${size}" style="width:200px;flex:none" role="img" aria-label="Affiliation donut chart">
-      ${segs}
-      <text x="${cxp}" y="${cyp-6}" text-anchor="middle" style="font-family:Archivo;font-weight:800;font-size:30px;fill:var(--ink)" class="tnum">489</text>
-      <text x="${cxp}" y="${cyp+14}" text-anchor="middle" style="font-size:11px;fill:var(--ink-3);letter-spacing:.05em">REPORTS</text>
-    </svg>
+    <svg viewBox="0 0 ${size} ${size}" style="width:200px;flex:none" role="img" aria-label="Affiliation donut chart">${segs}
+      <text x="${c}" y="${c-6}" text-anchor="middle" style="font-family:Archivo;font-weight:800;font-size:30px;fill:var(--ink)" class="tnum">${total}</text>
+      <text x="${c}" y="${c+14}" text-anchor="middle" style="font-size:11px;fill:var(--ink-3);letter-spacing:.05em">REPORTS</text></svg>
     <div class="legend" style="flex-direction:column;gap:10px">
-      ${data.map((d,i)=>`<div class="it" data-i="${i}" style="cursor:default"><span class="sw" style="background:${cvar(d[2])}"></span>
-        <span style="min-width:98px">${d[0]}</span>
-        <b class="tnum" style="color:var(--ink)">${d[1]}</b>
+      ${data.map(d=>`<div class="it"><span class="sw" style="background:${cvar(d[2])}"></span>
+        <span style="min-width:98px">${d[0]}</span><b class="tnum" style="color:var(--ink)">${d[1]}</b>
         <span style="color:var(--ink-3)" class="tnum">${(d[1]/total*100).toFixed(0)}%</span></div>`).join("")}
     </div></div>`;
-  host.querySelectorAll(".seg").forEach(s=>{
-    const d=data[s.dataset.i];
-    const move=e=>{const p=(e.touches?e.touches[0]:e);showTip(`<b>${d[0]}</b><br>${d[1]} reports · ${(d[1]/total*100).toFixed(1)}%`,p.clientX,p.clientY);};
-    s.addEventListener("pointermove",move);
+  host.querySelectorAll(".seg").forEach(s=>{const d=data[s.dataset.i];
+    s.addEventListener("pointermove",e=>{const p=e.touches?e.touches[0]:e;showTip(`<b>${d[0]}</b><br>${d[1]} reports · ${(d[1]/total*100).toFixed(1)}%`,p.clientX,p.clientY);});
     s.addEventListener("pointerenter",()=>s.setAttribute("stroke-width",sw+5));
-    s.addEventListener("pointerleave",()=>{s.setAttribute("stroke-width",sw);hideTip();});
-  });
-})();
+    s.addEventListener("pointerleave",()=>{s.setAttribute("stroke-width",sw);hideTip();});});
+  $("#affSub").textContent=total+" reports";
+}
 
-/* ---------- response meters ---------- */
-(function(){
-  const R=[
-    {lab:"S&S Notified",yes:368,base:489,col:"--good",note:"of all 489 reports"},
-    {lab:"Police Notified",yes:198,base:484,col:"--serious",note:"of 484 answered"},
-    {lab:"911 Called",yes:88,base:220,col:"--serious",note:"of 220 answered"},
-    {lab:"Hospital Transport",yes:50,base:217,col:"--critical",note:"of 217 answered"},
-    {lab:"First Aid Offered",yes:165,base:226,col:"--good",note:"of 226 answered"},
-  ];
-  $("#response").innerHTML=R.map(d=>{
-    const pct=Math.round(d.yes/d.base*100);
-    return `<div class="card meter" tabindex="0" data-t="<b>${d.lab}</b><br>Yes on ${d.yes} of ${d.base} reports (${pct}%)">
-      <div class="top"><span class="lab">${d.lab}</span><span class="big tnum" style="color:${cvar(d.col)}">${pct}%</span></div>
-      <div class="track"><i style="width:0;background:${cvar(d.col)}" data-w="${pct}"></i></div>
-      <div class="note"><b class="tnum" style="color:var(--ink-2)">${d.yes}</b> yes · ${d.note}</div>
-    </div>`;}).join("");
+/* ============ response meters ============ */
+function renderResponse(){
+  const d=D[YEAR].r;
+  const R=[["S&S Notified",d.ss,"--good","of all reports"],
+    ["Police Notified",d.police,"--serious","of answered"],
+    ["911 Called",d.c911,"--serious","of answered"],
+    ["Hospital Transport",d.trans,"--critical","of answered"],
+    ["First Aid Offered",d.aid,"--good","of answered"]];
+  $("#response").innerHTML=R.map(x=>{const[lab,v,col,note]=x,pct=Math.round(v[0]/v[1]*100);
+    return `<div class="card meter" tabindex="0" data-t="<b>${lab}</b><br>Yes on ${v[0]} of ${v[1]} reports (${pct}%)">
+      <div class="top"><span class="lab">${lab}</span><span class="big tnum" style="color:${cvar(col)}">${pct}%</span></div>
+      <div class="track"><i style="width:0;background:${cvar(col)}" data-w="${pct}"></i></div>
+      <div class="note"><b class="tnum" style="color:var(--ink-2)">${v[0]}</b> yes · ${v[1]} ${note}</div></div>`;}).join("");
   requestAnimationFrame(()=>{$("#response").querySelectorAll(".meter").forEach(m=>{
     const i=m.querySelector("i");i.style.width=i.dataset.w+"%";
-    const move=e=>{const p=(e.touches?e.touches[0]:e);showTip(m.dataset.t,p.clientX,p.clientY);};
-    m.addEventListener("pointermove",move);m.addEventListener("pointerleave",hideTip);
+    const mv=e=>{const p=e.touches?e.touches[0]:e;showTip(m.dataset.t,p.clientX,p.clientY);};
+    m.addEventListener("pointermove",mv);m.addEventListener("pointerleave",hideTip);
     m.addEventListener("focus",()=>{const b=m.getBoundingClientRect();showTip(m.dataset.t,b.left+b.width/2,b.top);});
-    m.addEventListener("blur",hideTip);
-  });});
-})();
+    m.addEventListener("blur",hideTip);});});
+}
 
-drawTrend();
+/* ============ TREND ============ */
+function timelineSeries(){
+  // returns {pts:[{lab,v,part}], } for active year (or all)
+  const yrs=YEAR==="all"?YEAR_KEYS:[YEAR];const pts=[];
+  yrs.forEach(y=>MONTHS[y].forEach((v,m)=>{if(v==null)return;
+    pts.push({y,m,v,part:!!PARTIAL[y+"-"+m],lab:mn[m]+" "+y.slice(2)});}));
+  return pts;
+}
+function drawTrend(){
+  const host=$("#trend"),leg=$("#trendLegend");
+  const W=host.clientWidth||900,H=300,m={t:16,r:14,b:44,l:36},iw=W-m.l-m.r,ih=H-m.t-m.b;
+  const ac=cvar("--accent");leg.innerHTML="";
+  const axisY=(maxV,step)=>{let g="";for(let v=0;v<=maxV;v+=step){const y=m.t+ih-ih*v/maxV;
+    g+=`<line class="gridline" x1="${m.l}" y1="${y}" x2="${W-m.r}" y2="${y}"/><text class="axis-txt" x="${m.l-8}" y="${y+4}" text-anchor="end">${v}</text>`;}return g;};
+
+  if(MODE==="yoy"){
+    const maxV=28,X=i=>m.l+iw*i/11,Y=v=>m.t+ih-ih*v/maxV;
+    let svg=axisY(28,7);
+    for(let i=0;i<12;i++)svg+=`<text class="axis-txt" x="${X(i)}" y="${H-24}" text-anchor="middle">${mn[i]}</text>`;
+    const focus=YEAR==="all"?null:YEAR;
+    const hitData=[];
+    YEAR_KEYS.forEach(y=>{const arr=MONTHS[y],col=cvar(YEAR_COL[y]);
+      const faded=focus&&focus!==y;const op=faded?0.28:1,wid=(focus===y)?2.6:1.8;
+      let path="",started=false;
+      arr.forEach((v,i)=>{if(v==null)return;path+=(started?"L":"M")+X(i).toFixed(1)+","+Y(v).toFixed(1)+" ";started=true;});
+      svg+=`<path d="${path}" fill="none" stroke="${col}" stroke-width="${wid}" stroke-linejoin="round" stroke-linecap="round" opacity="${op}"/>`;
+      arr.forEach((v,i)=>{if(v==null)return;svg+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${focus===y?3.2:2.4}" fill="${col}" opacity="${op}"/>`;
+        hitData.push({x:X(i),y:Y(v),year:y,mo:i,v,col});});});
+    host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Year-over-year monthly incidents">${svg}
+      <circle id="hi" r="5" fill="none" stroke-width="2" opacity="0"/>
+      <rect x="0" y="0" width="${W}" height="${H}" fill="transparent" id="thit"/></svg>`;
+    leg.innerHTML=YEAR_KEYS.map(y=>`<span class="it" style="${focus&&focus!==y?'opacity:.5':''}"><span class="sw" style="background:${cvar(YEAR_COL[y])}"></span>${y}${y==="2023"?" (Jul+)":y==="2026"?" (–Aug)":""}</span>`).join("");
+    const svgEl=host.querySelector("svg"),hi=host.querySelector("#hi"),hit=host.querySelector("#thit");
+    hit.addEventListener("pointermove",e=>{const r=svgEl.getBoundingClientRect(),sx=(e.clientX-r.left)*(W/r.width),sy=(e.clientY-r.top)*(H/r.height);
+      let best=null,bd=1e9;hitData.forEach(p=>{const dd=(p.x-sx)**2+(p.y-sy)**2;if(dd<bd){bd=dd;best=p;}});
+      if(best&&bd<900){hi.setAttribute("cx",best.x);hi.setAttribute("cy",best.y);hi.setAttribute("stroke",best.col);hi.setAttribute("opacity","1");
+        showTip(`<b>${mn[best.mo]} ${best.year}</b>${PARTIAL[best.year+"-"+best.mo]?' <span style="opacity:.7">(partial)</span>':''}<br>${best.v} incidents`,e.clientX,e.clientY);}
+      else{hi.setAttribute("opacity","0");hideTip();}});
+    hit.addEventListener("pointerleave",()=>{hi.setAttribute("opacity","0");hideTip();});
+    return;
+  }
+
+  const pts=timelineSeries();
+  const n=pts.length;
+  if(MODE==="mom"){
+    // month-over-month delta (signed), skip first
+    const deltas=[];for(let i=1;i<n;i++)deltas.push({...pts[i],d:pts[i].v-pts[i-1].v,prev:pts[i-1].v});
+    const maxAbs=Math.max(...deltas.map(x=>Math.abs(x.d)),1);
+    const X=i=>m.l+ (deltas.length>1? iw*i/(deltas.length-1):iw/2), zero=m.t+ih/2, sc=(ih/2)/maxAbs;
+    const bw=Math.max(3,Math.min(16,iw/deltas.length-3));
+    let svg=`<line class="gridline" x1="${m.l}" y1="${zero}" x2="${W-m.r}" y2="${zero}"/>`;
+    [maxAbs,-maxAbs].forEach(v=>{const y=zero-v*sc;svg+=`<text class="axis-txt" x="${m.l-8}" y="${y+4}" text-anchor="end">${v>0?'+':''}${v}</text>`;});
+    const up=cvar("--serious"),dn=cvar("--good");
+    deltas.forEach((x,i)=>{const h=Math.abs(x.d)*sc,y=x.d>=0?zero-h:zero;const col=x.d>0?up:x.d<0?dn:cvar("--ink-3");
+      svg+=`<rect class="mb" data-i="${i}" x="${(X(i)-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="2" fill="${col}"/>`;});
+    pts.forEach((p,i)=>{if(p.m===0||i===0){const xi=i===0?0:i-1;svg+=`<text class="axis-txt" x="${X(Math.max(0,i-1))}" y="${H-24}" text-anchor="middle">${p.lab.split(" ")[1]?"'"+p.lab.split(" ")[1]:""}</text>`;}});
+    host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Month-over-month change">${svg}
+      <rect x="0" y="0" width="${W}" height="${H}" fill="transparent" id="thit"/></svg>`;
+    leg.innerHTML=`<span class="it"><span class="sw" style="background:${up}"></span>More than prior month</span><span class="it"><span class="sw" style="background:${dn}"></span>Fewer than prior month</span>`;
+    const svgEl=host.querySelector("svg");
+    svgEl.querySelectorAll(".mb").forEach(b=>{const x=deltas[b.dataset.i];
+      b.addEventListener("pointermove",e=>showTip(`<b>${x.lab.replace("'"," '")}</b><br>${x.v} incidents · <b style="color:${x.d>0?up:dn}">${x.d>0?'+':''}${x.d}</b> vs prior month`,e.clientX,e.clientY));
+      b.addEventListener("pointerleave",hideTip);});
+    return;
+  }
+
+  // TIMELINE
+  const maxV=YEAR==="all"?28:28,X=i=>m.l+(n>1?iw*i/(n-1):iw/2),Y=v=>m.t+ih-ih*v/maxV;
+  let svg=axisY(28,7);
+  pts.forEach((p,i)=>{if(p.m===0||i===0){svg+=`<text class="axis-txt" x="${X(i)}" y="${H-24}" text-anchor="middle">${YEAR==="all"?("’"+p.y.slice(2)):mn[p.m]}</text>`;}
+    else if(YEAR!=="all"){svg+=`<text class="axis-txt" x="${X(i)}" y="${H-24}" text-anchor="middle">${mn[p.m]}</text>`;}});
+  let line=pts.map((p,i)=>(i?"L":"M")+X(i).toFixed(1)+","+Y(p.v).toFixed(1)).join(" ");
+  let area=`M${X(0)},${Y(0)} `+pts.map((p,i)=>"L"+X(i).toFixed(1)+","+Y(p.v).toFixed(1)).join(" ")+` L${X(n-1)},${Y(0)} Z`;
+  let dots=pts.map((p,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="${p.part?4:3}" fill="${p.part?'var(--surface)':ac}" stroke="${ac}" stroke-width="${p.part?2:1.5}"/>`).join("");
+  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly incident timeline">
+    <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ac}" stop-opacity="0.22"/><stop offset="1" stop-color="${ac}" stop-opacity="0"/></linearGradient></defs>
+    ${svg}<path d="${area}" fill="url(#tg)"/>
+    <path d="${line}" fill="none" stroke="${ac}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}
+    <line id="cx" x1="0" y1="${m.t}" x2="0" y2="${m.t+ih}" stroke="${ac}" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>
+    <rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" fill="transparent" id="thit"/></svg>`;
+  leg.innerHTML=`<span class="it" style="color:var(--ink-3)">○ hollow marker = partial month</span>`;
+  const svgEl=host.querySelector("svg"),cx=host.querySelector("#cx"),hit=host.querySelector("#thit");
+  hit.addEventListener("pointermove",e=>{const r=svgEl.getBoundingClientRect(),sx=(e.clientX-r.left)*(W/r.width);
+    let i=Math.round((sx-m.l)/(iw/Math.max(1,n-1)));i=Math.max(0,Math.min(n-1,i));const p=pts[i];
+    cx.setAttribute("x1",X(i));cx.setAttribute("x2",X(i));cx.setAttribute("opacity","1");
+    showTip(`<b>${mn[p.m]} 20${p.y.slice(2)}</b>${p.part?' <span style="opacity:.7">(partial)</span>':''}<br>${p.v} incident${p.v===1?"":"s"} reported`,e.clientX,e.clientY);});
+  hit.addEventListener("pointerleave",()=>{cx.setAttribute("opacity","0");hideTip();});
+}
+
+function updateTrendChrome(){
+  const yl=YEAR==="all"?"":" · "+YEAR;
+  const subs={
+    timeline:YEAR==="all"?"Continuous monthly counts across the full window. First and last months are partial; a clear upward drift runs through 2026.":`Monthly counts for ${YEAR}. Hollow markers denote partial months.`,
+    yoy:"Each year overlaid across calendar months (Jan–Dec)."+(YEAR!=="all"?` ${YEAR} is emphasized; other years faded for comparison.`:" Select a year to emphasize it."),
+    mom:"Change in incident count versus the previous month"+(YEAR==="all"?" across the full timeline.":` within ${YEAR}.`)+" Upward bars mean more incidents than the month before."
+  };
+  $("#trendTitle").textContent=MODE==="yoy"?"Year-over-Year by Month":MODE==="mom"?"Month-over-Month Change":"Incidents Reported per Month";
+  $("#trendSub").textContent=subs[MODE];
+  $("#trendCount").textContent=(MODE==="yoy"?"all years":YEAR==="all"?"36 months":YEAR)+(MODE==="mom"?" · Δ":"");
+}
+
+/* ============ orchestrate ============ */
+function renderAll(){
+  const AC=cvar("--accent");
+  renderKPIs();
+  drawBars("#nature",D[YEAR].nature,AC,D[YEAR].total);
+  drawBars("#location",D[YEAR].location,AC,D[YEAR].total);
+  renderAffil();renderSeverity();renderResponse();
+  $("#natSub").textContent=$("#locSub").textContent=(YEAR==="all"?"top categories":YEAR);
+  updateTrendChrome();drawTrend();
+  $("#scopeNote").innerHTML=YEAR==="all"?"Showing <b>all 489</b> reports":`Filtered to <b>${D[YEAR].total}</b> reports in <b>${YEAR}</b>`;
+}
+
+$("#yearSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  YEAR=b.dataset.y;document.querySelectorAll("#yearSeg button").forEach(x=>x.classList.toggle("on",x===b));renderAll();});
+$("#modeSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  MODE=b.dataset.m;document.querySelectorAll("#modeSeg button").forEach(x=>x.classList.toggle("on",x===b));
+  updateTrendChrome();drawTrend();});
+
+renderAll();
 let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(drawTrend,150);});
 </script>

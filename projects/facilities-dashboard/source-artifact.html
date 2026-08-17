@@ -1,0 +1,712 @@
+<title>FBCG Facilities Inspections &mdash; Jan&ndash;Jul 2026</title>
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f3f1f7;
+    --page-2: #e9e4f1;
+    --surface: #ffffff;
+    --surface-2: #faf8fc;
+    --ink: #1a1424;
+    --ink-2: #565061;
+    --muted: #8f8899;
+    --line: rgba(28, 22, 38, 0.08);
+    --grid: #e9e5f0;
+    --track: #ece8f3;
+    --baseline: #cdc7d8;
+    --purple: #5e35a1;      /* Building program */
+    --purple-deep: #45237e; /* display / masthead */
+    --gold: #b98500;        /* Env/Climate program */
+    --purple-soft: #7b57c0; /* combined measures */
+    --chip-bg: rgba(94, 53, 161, 0.07);
+    --gold-bg: rgba(185, 133, 0, 0.09);
+    --dash: #b3a9c8;
+    --good: #0d7a37;
+    --alert: #b4232a;
+    --alert-bg: rgba(180, 35, 42, 0.08);
+    --serif: Georgia, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --shadow-sm: 0 1px 2px rgba(28, 22, 38, 0.04), 0 1px 3px rgba(28, 22, 38, 0.05);
+    --shadow-md: 0 1px 2px rgba(28, 22, 38, 0.04), 0 8px 24px rgba(28, 22, 38, 0.07);
+    --shadow-lg: 0 4px 10px rgba(28, 22, 38, 0.06), 0 18px 44px rgba(28, 22, 38, 0.12);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    background:
+      radial-gradient(1100px 460px at 50% -160px, var(--page-2), transparent 70%),
+      var(--page);
+    background-attachment: fixed;
+    color: var(--ink);
+    font-family: var(--sans);
+    margin: 0; padding: 40px 22px 52px; line-height: 1.45;
+    -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility;
+  }
+  .wrap { max-width: 1080px; margin: 0 auto; display: flex; flex-direction: column; gap: 24px; }
+
+  /* ---------- masthead ---------- */
+  header { display: flex; flex-direction: column; }
+  header .eyebrow {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.16em; text-transform: uppercase;
+    color: var(--purple); margin: 0 0 10px;
+  }
+  header h1 {
+    font-family: var(--serif); font-size: 30px; font-weight: 600; line-height: 1.12;
+    margin: 0 0 6px; letter-spacing: -0.005em; color: var(--ink); text-wrap: balance;
+  }
+  header .sub { color: var(--ink-2); font-size: 14.5px; margin: 0; }
+  header .asof {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--muted); margin: 12px 0 0;
+  }
+  header .asof b { color: var(--ink-2); }
+  .brandrule {
+    height: 3px; border-radius: 3px; margin-top: 18px;
+    background: linear-gradient(90deg, var(--purple-deep), var(--purple) 42%, var(--gold));
+    opacity: 0.9;
+  }
+
+  /* ---------- KPI tiles ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(168px, 1fr)); gap: 14px; }
+  .kpi {
+    position: relative; background: var(--surface); border: 1px solid var(--line); border-radius: 14px;
+    padding: 18px 18px 15px; box-shadow: var(--shadow-sm); overflow: hidden;
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+  }
+  .kpi::before {
+    content: ""; position: absolute; inset: 0 0 auto 0; height: 3px;
+    background: linear-gradient(90deg, var(--purple), var(--purple-soft));
+  }
+  .kpi:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+  .kpi .label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase;
+    color: var(--ink-2); margin-bottom: 8px;
+  }
+  .kpi .value { font-size: 36px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .kpi .note { font-size: 12px; color: var(--muted); margin-top: 6px; }
+
+  /* ---------- panels & sections ---------- */
+  .panel {
+    background: var(--surface); border: 1px solid var(--line); border-radius: 16px;
+    padding: 22px 24px 20px; box-shadow: var(--shadow-md);
+  }
+  .panel h2 { font-family: var(--serif); font-size: 17px; font-weight: 600; margin: 0 0 3px; letter-spacing: -0.005em; }
+  .panel .panel-sub { font-size: 12.5px; color: var(--ink-2); margin: 0 0 16px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; }
+  .row-insight { display: grid; grid-template-columns: 1.5fr 1fr; gap: 22px; }
+  @media (max-width: 780px) { .row2, .row-insight { grid-template-columns: 1fr; } }
+
+  .section-head { display: flex; align-items: baseline; gap: 14px; flex-wrap: wrap; margin: 8px 2px -6px; }
+  .section-head .tag {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 5px 13px; border-radius: 999px; border: 1px solid transparent;
+  }
+  .section-head .tag.bldg { color: var(--purple); background: var(--chip-bg); border-color: rgba(94, 53, 161, 0.16); }
+  .section-head .tag.env { color: var(--gold); background: var(--gold-bg); border-color: rgba(185, 133, 0, 0.20); }
+  .section-head .facts { font-size: 12.5px; color: var(--ink-2); }
+  .section-head .facts b { color: var(--ink); }
+  .section-head .rule { flex: 1; height: 1px; background: linear-gradient(90deg, var(--grid), transparent); min-width: 40px; align-self: center; }
+
+  /* ---------- insights ---------- */
+  .insights { display: flex; flex-direction: column; gap: 13px; }
+  .insight { display: flex; gap: 13px; align-items: flex-start; }
+  .insight .n {
+    flex: none; width: 24px; height: 24px; border-radius: 50%;
+    background: var(--chip-bg); color: var(--purple); border: 1px solid rgba(94, 53, 161, 0.18);
+    font-family: var(--serif); font-size: 12px; font-weight: 700;
+    display: flex; align-items: center; justify-content: center; margin-top: 1px;
+  }
+  .insight p { margin: 0; font-size: 13px; color: var(--ink-2); max-width: 62ch; }
+  .insight p b { color: var(--ink); }
+
+  /* ---------- charts ---------- */
+  .legend { display: flex; gap: 16px; font-size: 12px; color: var(--ink-2); margin: 0 0 8px; }
+  .legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 5px; vertical-align: -1px; }
+  .chart-box svg { width: 100%; height: auto; display: block; }
+  .chart-box text { font-family: var(--sans); }
+
+  details.tableview { margin-top: 12px; font-size: 12.5px; }
+  details.tableview summary { cursor: pointer; color: var(--ink-2); font-weight: 600; }
+  details.tableview summary:hover { color: var(--purple); }
+  details.tableview table { border-collapse: collapse; margin-top: 10px; width: 100%; font-variant-numeric: tabular-nums; }
+  details.tableview th, details.tableview td { text-align: right; padding: 5px 10px; border-bottom: 1px solid var(--grid); color: var(--ink); }
+  details.tableview th:first-child, details.tableview td:first-child { text-align: left; }
+  details.tableview th { color: var(--ink-2); font-size: 11px; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .ratehead { font-size: 13px; color: var(--ink-2); margin: 16px 0 2px; padding-top: 14px; border-top: 1px solid var(--grid); }
+  .ratehead .delta { color: var(--good); font-weight: 700; font-size: 15px; margin-right: 4px; }
+  .footnote { font-size: 11px; color: var(--muted); margin: 8px 0 0; }
+
+  /* ---------- bar list (areas / inspectors) ---------- */
+  .barlist { display: flex; flex-direction: column; gap: 8px; font-size: 12.5px; }
+  .barrow { display: grid; grid-template-columns: 158px 1fr 34px; gap: 10px; align-items: center; }
+  .barrow .lbl { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .barrow .track { background: var(--track); border-radius: 5px; height: 13px; position: relative; overflow: hidden; }
+  .barrow .fill { position: absolute; inset: 0 auto 0 0; border-radius: 5px; }
+  .barrow .fill.p { background: linear-gradient(90deg, var(--purple), var(--purple-soft)); }
+  .barrow .fill.g { background: linear-gradient(90deg, var(--gold), #d3a021); }
+  .barrow .fill.base { background: var(--baseline); }
+  .barrow .val { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .sparkrow { display: grid; grid-template-columns: 158px 1fr; gap: 10px; align-items: center; margin: -3px 0 2px; }
+  .sparkrow .lbl { font-size: 11px; color: var(--muted); text-align: right; padding-right: 2px; }
+  .sparks { display: flex; gap: 6px; align-items: flex-end; height: 26px; }
+  .spark { display: flex; flex-direction: column; align-items: center; gap: 2px; }
+  .spark .bar { width: 12px; border-radius: 3px 3px 0 0; background: linear-gradient(180deg, var(--purple-soft), var(--purple)); opacity: 0.6; }
+  .spark .m { font-size: 9px; color: var(--muted); }
+
+  /* ---------- campus strip ---------- */
+  .campuses { display: grid; grid-template-columns: repeat(auto-fit, minmax(178px, 1fr)); gap: 14px; }
+  .campus {
+    border: 1px solid var(--line); border-radius: 13px; padding: 14px 15px;
+    display: flex; flex-direction: column; gap: 9px; background: var(--surface-2);
+    transition: transform 0.22s ease, box-shadow 0.22s ease;
+  }
+  .campus:hover { transform: translateY(-3px); box-shadow: var(--shadow-md); }
+  .campus .code { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: var(--purple); }
+  .campus .name { font-family: var(--serif); font-size: 13.5px; font-weight: 600; margin-top: -7px; }
+  .campus .big { font-size: 26px; font-weight: 700; line-height: 1; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+  .campus .big small { font-size: 12px; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+  .mixbar { display: flex; gap: 2px; height: 8px; border-radius: 5px; overflow: hidden; }
+  .mixbar .b { background: linear-gradient(90deg, var(--purple), var(--purple-soft)); }
+  .mixbar .e { background: linear-gradient(90deg, var(--gold), #d3a021); }
+  .campus .stats { display: flex; justify-content: space-between; font-size: 12px; color: var(--ink-2); }
+  .campus .stats b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  /* ---------- coverage freshness (when last walked) ---------- */
+  .fresh { display: flex; flex-direction: column; gap: 8px; }
+  .fresh .fr {
+    display: grid; grid-template-columns: 1fr 108px 96px; gap: 12px; align-items: center;
+    padding: 10px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface-2); font-size: 13px;
+  }
+  .fresh .fr .nm { font-weight: 600; }
+  .fresh .fr .nm small { color: var(--muted); font-weight: 500; letter-spacing: 0.06em; margin-right: 6px; }
+  .fresh .fr .dt { color: var(--ink-2); font-variant-numeric: tabular-nums; text-align: right; }
+  .fresh .fr .days { text-align: right; font-variant-numeric: tabular-nums; font-weight: 700; }
+  .fresh .fr .days span { font-size: 10.5px; font-weight: 600; color: var(--muted); }
+  .fresh .fr.stale { border-color: rgba(180, 35, 42, 0.28); background: var(--alert-bg); }
+  .fresh .fr.stale .days { color: var(--alert); }
+  .fresh .fr.stale .badge { display: inline-block; font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--alert); border: 1px solid var(--alert); border-radius: 999px; padding: 1px 7px; margin-left: 6px; vertical-align: 1px; }
+
+  /* ---------- inspector table ---------- */
+  .iheader, .irow { display: grid; grid-template-columns: 168px 96px 1fr 92px 72px; gap: 10px; align-items: center; }
+  .iheader {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--muted); padding-bottom: 8px; border-bottom: 1px solid var(--grid); margin-bottom: 4px;
+  }
+  .irows { display: flex; flex-direction: column; gap: 9px; font-size: 12.5px; }
+  .irow .nm { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .irow .nm .new { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; color: var(--gold); border: 1px solid var(--gold); border-radius: 999px; padding: 0 5px; margin-left: 5px; vertical-align: 1px; }
+  .irow .route { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .irow .track { background: var(--track); border-radius: 5px; height: 13px; position: relative; display: flex; gap: 2px; overflow: hidden; }
+  .irow .seg { height: 100%; }
+  .irow .seg.p { background: linear-gradient(90deg, var(--purple), var(--purple-soft)); }
+  .irow .seg.g { background: linear-gradient(90deg, var(--gold), #d3a021); }
+  .irow .cnt, .irow .fnd { text-align: right; font-variant-numeric: tabular-nums; }
+  .irow .cnt b { font-weight: 700; }
+  .irow .cnt small, .irow .fnd { color: var(--ink-2); }
+  @media (max-width: 700px) {
+    .iheader { display: none; }
+    .irow { grid-template-columns: 1fr 70px 60px; }
+    .irow .route, .irow .track { display: none; }
+  }
+
+  /* ---------- coverage by route (grouped) ---------- */
+  .routegrp { border: 1px solid var(--line); border-radius: 13px; overflow: hidden; margin-bottom: 12px; background: var(--surface); }
+  .routegrp.stale { border-color: rgba(180, 35, 42, 0.28); }
+  .rt-head { display: flex; align-items: baseline; gap: 10px; padding: 11px 15px; background: var(--surface-2); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
+  .routegrp.stale .rt-head { background: var(--alert-bg); }
+  .rt-head .rc { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; color: var(--purple); }
+  .rt-head .rn { font-family: var(--serif); font-size: 14.5px; font-weight: 600; }
+  .rt-head .rm { margin-left: auto; font-size: 11.5px; color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .rt-head .rm b { color: var(--ink); }
+  .rt-head .flag { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--alert); border: 1px solid var(--alert); border-radius: 999px; padding: 1px 7px; margin-left: 8px; vertical-align: 1px; }
+  .rt-head .solo { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold); border: 1px solid var(--gold); border-radius: 999px; padding: 1px 7px; margin-left: 8px; vertical-align: 1px; }
+  .rt-body { padding: 9px 15px 11px; display: flex; flex-direction: column; gap: 8px; }
+  .rt-row { display: grid; grid-template-columns: 172px 1fr 124px 78px; gap: 14px; align-items: center; font-size: 12.5px; }
+  .rt-row .nm { font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .rt-row .nm .new { font-size: 9px; font-weight: 700; letter-spacing: 0.06em; color: var(--gold); border: 1px solid var(--gold); border-radius: 999px; padding: 0 5px; margin-left: 5px; vertical-align: 1px; }
+  .rt-row .track { background: var(--track); border-radius: 5px; height: 12px; position: relative; display: flex; gap: 2px; overflow: hidden; }
+  .rt-row .seg { height: 100%; }
+  .rt-row .seg.p { background: linear-gradient(90deg, var(--purple), var(--purple-soft)); }
+  .rt-row .seg.g { background: linear-gradient(90deg, var(--gold), #d3a021); }
+  .rt-row .ins { display: flex; flex-direction: column; align-items: flex-end; line-height: 1.18; font-variant-numeric: tabular-nums; }
+  .rt-row .ins b { font-size: 15px; font-weight: 700; color: var(--ink); }
+  .rt-row .ins .split { font-size: 10.5px; color: var(--muted); margin-top: 1px; }
+  .rt-row .ins .split .pb { color: var(--purple); font-weight: 700; }
+  .rt-row .ins .split .gb { color: var(--gold); font-weight: 700; }
+  .rt-row .fnd { text-align: right; font-variant-numeric: tabular-nums; font-size: 15px; font-weight: 700; color: var(--ink); }
+  .rt-colhead { display: grid; grid-template-columns: 172px 1fr 124px 78px; gap: 14px; padding: 2px 16px 9px; font-size: 10px; font-weight: 700; letter-spacing: 0.07em; text-transform: uppercase; color: var(--muted); }
+  .rt-colhead .r { text-align: right; }
+  @media (max-width: 700px) {
+    .rt-row { grid-template-columns: 1fr 112px 62px; }
+    .rt-row .track { display: none; }
+    .rt-colhead { grid-template-columns: 1fr 112px 62px; }
+    .rt-colhead .cbar { display: none; }
+  }
+
+  /* ---------- closed loop ---------- */
+  .loop { display: grid; grid-template-columns: 1fr 1.4fr; gap: 22px; align-items: start; }
+  @media (max-width: 780px) { .loop { grid-template-columns: 1fr; } }
+  .flow { display: flex; flex-direction: column; gap: 6px; }
+  .flow .step {
+    display: flex; align-items: baseline; gap: 12px;
+    border: 1px solid var(--line); border-radius: 11px; padding: 11px 14px; background: var(--surface-2);
+  }
+  .flow .step .n { font-size: 22px; font-weight: 700; min-width: 52px; text-align: right; font-variant-numeric: tabular-nums; color: var(--purple-deep); letter-spacing: -0.02em; }
+  .flow .step .t { font-size: 12.5px; color: var(--ink-2); }
+  .flow .arrow { text-align: center; color: var(--baseline); font-size: 13px; line-height: 0.7; }
+  .pending { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 11px; }
+  .pending .slot { border: 1px solid var(--line); border-radius: 12px; padding: 13px 13px 11px; background: var(--surface); box-shadow: var(--shadow-sm); }
+  .pending .slot .label {
+    font-size: 10.5px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; color: var(--ink-2);
+  }
+  .pending .slot .value { font-size: 27px; font-weight: 700; color: var(--purple-deep); margin-top: 5px; font-variant-numeric: tabular-nums; }
+  .pending .slot .sub { font-size: 10.5px; color: var(--muted); margin-top: 4px; letter-spacing: 0.02em; }
+  .await { font-size: 12px; color: var(--ink-2); margin-top: 12px; max-width: 62ch; }
+  .loopbldg { display: flex; flex-direction: column; gap: 7px; font-size: 12px; margin-top: 14px; }
+  .loopbldg .lr { display: grid; grid-template-columns: 148px 1fr 96px; gap: 10px; align-items: center; }
+  .loopbldg .lr .lbl { color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .loopbldg .lr .track { background: var(--track); border-radius: 5px; height: 11px; position: relative; overflow: hidden; }
+  .loopbldg .lr .fill { position: absolute; inset: 0 auto 0 0; border-radius: 5px; background: linear-gradient(90deg, var(--purple), var(--purple-soft)); }
+  .loopbldg .lr .fill.zero { background: var(--alert); opacity: 0.5; }
+  .loopbldg .lr .v { text-align: right; font-variant-numeric: tabular-nums; color: var(--ink-2); }
+  .loopbldg .lr .v b { color: var(--ink); }
+  .badge-done {
+    display: inline-block; font-size: 10.5px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    color: var(--good); background: rgba(13, 122, 55, 0.08); border: 1px solid rgba(13, 122, 55, 0.28);
+    border-radius: 999px; padding: 3px 10px; margin-left: 10px; vertical-align: 3px;
+  }
+
+  footer { font-size: 11.5px; color: var(--muted); line-height: 1.65; border-top: 1px solid var(--grid); padding-top: 16px; }
+  footer b { color: var(--ink-2); }
+
+  #tip {
+    position: fixed; pointer-events: none; z-index: 10; display: none;
+    background: var(--ink); color: #fff; font-size: 12px; font-weight: 600;
+    padding: 6px 10px; border-radius: 7px; white-space: nowrap; box-shadow: var(--shadow-md);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .kpi, .campus { transition: none; }
+    .kpi:hover, .campus:hover { transform: none; }
+  }
+  @media print {
+    body { padding: 0; background: #fff; }
+    .panel, .kpi { box-shadow: none; }
+    details.tableview { display: none; }
+  }
+</style>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">First Baptist Church of Glenarden International &middot; Facilities</p>
+    <h1>Building Services Quality Inspection Program</h1>
+    <p class="sub">January 1 &ndash; July 31, 2026</p>
+    <p class="asof">Data as of <b>July 31, 2026</b></p>
+    <div class="brandrule"></div>
+  </header>
+
+  <section class="kpis" aria-label="Headline numbers">
+    <div class="kpi"><div class="label">Inspections completed</div><div class="value">196</div><div class="note">123 building &middot; 73 env/climate</div></div>
+    <div class="kpi"><div class="label">Findings documented</div><div class="value">268</div><div class="note">240 building &middot; 28 env/climate</div></div>
+    <div class="kpi"><div class="label">Work orders initiated</div><div class="value">91</div><div class="note">46% of inspections</div></div>
+    <div class="kpi"><div class="label">Clean inspections</div><div class="value">52%</div><div class="note">37% building &middot; 77% env/climate</div></div>
+    <div class="kpi"><div class="label">Coverage</div><div class="value">9</div><div class="note">inspectors across 5 campuses</div></div>
+  </section>
+
+  <section class="row-insight">
+    <div class="panel">
+      <h2>What the data says</h2>
+      <p class="panel-sub">Five takeaways from 196 inspections and 268 documented findings, January through July.</p>
+      <div class="insights">
+        <div class="insight"><span class="n">1</span><p><b>Winter showed up in the pavement, then eased.</b> Parking lots and sidewalks were the single largest issue source in H1. Exterior issues peaked in February (19) and were worked down through spring &mdash; the summer months run far lighter.</p></div>
+        <div class="insight"><span class="n">2</span><p><b>The program keeps proving itself.</b> Findings per inspection have fallen steadily &mdash; <b>2.2</b> (Feb) &rarr; 1.8 &rarr; 1.2 &rarr; 1.0 &rarr; 1.1 (Jun) &rarr; <b>0.6</b> in July: catch, fix, and find less on the next pass.</p></div>
+        <div class="insight"><span class="n">3</span><p><b>Two programs, two profiles.</b> Building checks carry the workload (240 findings, 37% clean). Environmental checks &mdash; temperature and climate conditions in equipment spaces &mdash; stay healthy (28 findings, 77% clean).</p></div>
+        <div class="insight"><span class="n">4</span><p><b>Coverage is slipping at two campuses.</b> Worship Center, Ministry Center and the Community Life Center were all walked at the end of July, but the <b>Empowerment Center hasn&rsquo;t been walked since June 18</b> and the <b>Service Building since June 4</b> &mdash; 43 and 57 days as of July 31.</p></div>
+        <div class="insight"><span class="n">5</span><p><b>The inspection-to-fix loop is real but uneven.</b> Of 110 FMX work orders our inspections logged in H1, <b>65% were closed by June 30</b> (median ~11 days). Ministry Center closes at <b>76%</b> and Worship Center at <b>50%</b>, but the <b>Community Life Center has 0 of 8 closed</b>.</p></div>
+      </div>
+    </div>
+    <div class="panel">
+      <h2>Findings by month</h2>
+      <p class="panel-sub"><b>All campuses</b> &mdash; both programs combined, by walk date.</p>
+      <div class="chart-box" id="chart-findings" role="img" aria-label="Bar chart: findings documented per month, January 27, February 59, March 56, April 46, May 37, June 28, July 15"></div>
+      <div class="ratehead"><span class="delta">&#9660; 73%</span> findings per inspection since February (2.2 &rarr; 0.6)</div>
+      <div class="chart-box" id="chart-rate" role="img" aria-label="Line chart: findings per inspection by month, February 2.2, March 1.8, April 1.2, May 1.0, June 1.1, July 0.6"></div>
+      <p class="footnote">Trend starts at February, the first full-cadence month (January was ramp-up: 8 inspections).</p>
+      <details class="tableview">
+        <summary>View data table</summary>
+        <table>
+          <thead><tr><th>Month</th><th>Building insp.</th><th>Env insp.</th><th>Findings</th><th>Per inspection</th></tr></thead>
+          <tbody>
+            <tr><td>Jan</td><td>4</td><td>4</td><td>27</td><td>3.4 (ramp-up)</td></tr>
+            <tr><td>Feb</td><td>20</td><td>7</td><td>59</td><td>2.2</td></tr>
+            <tr><td>Mar</td><td>18</td><td>14</td><td>56</td><td>1.8</td></tr>
+            <tr><td>Apr</td><td>25</td><td>15</td><td>46</td><td>1.2</td></tr>
+            <tr><td>May</td><td>23</td><td>14</td><td>37</td><td>1.0</td></tr>
+            <tr><td>Jun</td><td>21</td><td>5</td><td>28</td><td>1.1</td></tr>
+            <tr><td>Jul</td><td>12</td><td>14</td><td>15</td><td>0.6</td></tr>
+          </tbody>
+        </table>
+      </details>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <span class="tag bldg">Building inspection program</span>
+    <span class="facts"><b>123</b> inspections &middot; <b>240</b> findings &middot; <b>37%</b> clean</span>
+    <span class="rule"></span>
+  </div>
+
+  <section class="row2">
+    <div class="panel">
+      <h2>Building inspections by month</h2>
+      <p class="panel-sub"><b>All campuses</b> &mdash; full checklist walks, exterior to storage rooms.</p>
+      <div class="chart-box" id="chart-bldg" role="img" aria-label="Bar chart: building inspections per month, January 4, February 20, March 18, April 25, May 23, June 21, July 12"></div>
+    </div>
+    <div class="panel">
+      <h2>Where checkpoints fail <span style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.04em;">&middot; Jan&ndash;Jun</span></h2>
+      <p class="panel-sub"><b>All campuses</b> &mdash; 201 checkpoint failures across building inspections, grouped by area. <b>Area detail is shown on the Jan&ndash;Jun basis</b> (see note).</p>
+      <div class="barlist">
+        <div class="barrow"><span class="lbl">Exterior &amp; grounds</span><span class="track"><span class="fill p" style="width:100%"></span></span><span class="val">59</span></div>
+        <div class="sparkrow"><span class="lbl">by month &rarr;</span><span class="sparks" aria-label="Exterior failures by month: January 2, February 19, March 14, April 14, May 7, June 3">
+          <span class="spark"><span class="bar" style="height:3px"></span><span class="m">J</span></span>
+          <span class="spark"><span class="bar" style="height:22px"></span><span class="m">F</span></span>
+          <span class="spark"><span class="bar" style="height:16px"></span><span class="m">M</span></span>
+          <span class="spark"><span class="bar" style="height:16px"></span><span class="m">A</span></span>
+          <span class="spark"><span class="bar" style="height:8px"></span><span class="m">M</span></span>
+          <span class="spark"><span class="bar" style="height:4px"></span><span class="m">J</span></span>
+        </span></div>
+        <div class="barrow"><span class="lbl">Restrooms</span><span class="track"><span class="fill p" style="width:39%"></span></span><span class="val">23</span></div>
+        <div class="barrow"><span class="lbl">Sanctuary</span><span class="track"><span class="fill p" style="width:39%"></span></span><span class="val">23</span></div>
+        <div class="barrow"><span class="lbl">Stairwells</span><span class="track"><span class="fill p" style="width:39%"></span></span><span class="val">23</span></div>
+        <div class="barrow"><span class="lbl">Lobby &amp; halls</span><span class="track"><span class="fill p" style="width:32%"></span></span><span class="val">19</span></div>
+        <div class="barrow"><span class="lbl">Class &amp; conference rooms</span><span class="track"><span class="fill p" style="width:29%"></span></span><span class="val">17</span></div>
+        <div class="barrow"><span class="lbl">Elevators</span><span class="track"><span class="fill p" style="width:14%"></span></span><span class="val">8</span></div>
+        <div class="barrow"><span class="lbl">Entrance areas</span><span class="track"><span class="fill p" style="width:14%"></span></span><span class="val">8</span></div>
+        <div class="barrow"><span class="lbl">All other areas (6)</span><span class="track"><span class="fill base" style="width:36%"></span></span><span class="val">21</span></div>
+      </div>
+      <p class="panel-sub" style="margin: 12px 0 0;">Top single checkpoints: parking lots &amp; paved surfaces (22), sidewalks (12), sanctuary carpet (10), stairwell walls (10).</p>
+    </div>
+  </section>
+
+  <div class="section-head">
+    <span class="tag env">Environmental / climate program</span>
+    <span class="facts"><b>73</b> checks &middot; <b>28</b> findings &middot; <b>77%</b> clean</span>
+    <span class="rule"></span>
+  </div>
+
+  <section class="row2">
+    <div class="panel">
+      <h2>Environmental checks by month</h2>
+      <p class="panel-sub"><b>All campuses</b> &mdash; pass/fail temperature &amp; climate checks of equipment rooms and climate-sensitive spaces (server rooms, IT closets, kitchens, meeting spaces).</p>
+      <div class="chart-box" id="chart-env" role="img" aria-label="Bar chart: environmental checks per month, January 4, February 7, March 14, April 15, May 14, June 5, July 14"></div>
+    </div>
+    <div class="panel">
+      <h2>Where environmental checks flag <span style="font-size:11px;font-weight:600;color:var(--muted);letter-spacing:0.04em;">&middot; Jan&ndash;Jun</span></h2>
+      <p class="panel-sub"><b>All campuses</b> &mdash; 22 temperature/climate checkpoint failures; all July environmental checks came back clean.</p>
+      <div class="barlist">
+        <div class="barrow"><span class="lbl">Meeting rooms</span><span class="track"><span class="fill g" style="width:100%"></span></span><span class="val">10</span></div>
+        <div class="barrow"><span class="lbl">Sanctuary / warehouse</span><span class="track"><span class="fill g" style="width:60%"></span></span><span class="val">6</span></div>
+        <div class="barrow"><span class="lbl">Offices</span><span class="track"><span class="fill g" style="width:30%"></span></span><span class="val">3</span></div>
+        <div class="barrow"><span class="lbl">CLC / courts</span><span class="track"><span class="fill g" style="width:20%"></span></span><span class="val">2</span></div>
+        <div class="barrow"><span class="lbl">Kitchen / health clinic</span><span class="track"><span class="fill g" style="width:10%"></span></span><span class="val">1</span></div>
+      </div>
+      <p class="panel-sub" style="margin: 12px 0 0;">Server rooms, IT closets, telecom closets, storage rooms, and first-aid stations recorded <b>zero failures</b>. Community Life Center anchors the cadence (53 of 73 checks).</p>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>By campus</h2>
+    <p class="panel-sub">January&ndash;July. Inspection mixes differ by campus &mdash; Community Life Center runs mostly pass/fail environmental checks, so raw finding counts are not comparable across campuses.</p>
+    <div class="campuses">
+      <div class="campus">
+        <span class="code">WC</span><span class="name">Worship Center</span>
+        <span class="big">63 <small>inspections</small></span>
+        <div class="mixbar" title="46 building / 17 env-climate"><span class="b" style="flex: 46"></span><span class="e" style="flex: 17"></span></div>
+        <div class="stats"><span>Findings <b>96</b></span><span>Clean <b>33%</b></span></div>
+      </div>
+      <div class="campus">
+        <span class="code">CL</span><span class="name">Community Life Center</span>
+        <span class="big">63 <small>inspections</small></span>
+        <div class="mixbar" title="10 building / 53 env-climate"><span class="b" style="flex: 10"></span><span class="e" style="flex: 53"></span></div>
+        <div class="stats"><span>Findings <b>10</b></span><span>Clean <b>89%</b></span></div>
+      </div>
+      <div class="campus">
+        <span class="code">EC</span><span class="name">Empowerment Center</span>
+        <span class="big">40 <small>inspections</small></span>
+        <div class="mixbar" title="40 building / 0 env-climate"><span class="b" style="flex: 40"></span></div>
+        <div class="stats"><span>Findings <b>28</b></span><span>Clean <b>58%</b></span></div>
+      </div>
+      <div class="campus">
+        <span class="code">MC</span><span class="name">Ministry Center</span>
+        <span class="big">28 <small>inspections</small></span>
+        <div class="mixbar" title="26 building / 2 env-climate"><span class="b" style="flex: 26"></span><span class="e" style="flex: 2"></span></div>
+        <div class="stats"><span>Findings <b>133</b></span><span>Clean <b>4%</b></span></div>
+      </div>
+      <div class="campus">
+        <span class="code">SB</span><span class="name">Service Building</span>
+        <span class="big">2 <small>inspections</small></span>
+        <div class="mixbar" title="1 building / 1 env-climate"><span class="b" style="flex: 1"></span><span class="e" style="flex: 1"></span></div>
+        <div class="stats"><span>Findings <b>1</b></span><span>Clean <b>1 of 2</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Coverage freshness &mdash; when each campus was last walked</h2>
+    <p class="panel-sub">Most recent inspection on record for each campus, as of <b>July 31, 2026</b>. Two campuses are overdue for a walk.</p>
+    <div class="fresh">
+      <div class="fr stale"><span class="nm"><small>SB</small>Service Building <span class="badge">Overdue</span></span><span class="dt">Jun 4, 2026</span><span class="days">57 <span>days</span></span></div>
+      <div class="fr stale"><span class="nm"><small>EC</small>Empowerment Center <span class="badge">Overdue</span></span><span class="dt">Jun 18, 2026</span><span class="days">43 <span>days</span></span></div>
+      <div class="fr"><span class="nm"><small>WC</small>Worship Center</span><span class="dt">Jul 30, 2026</span><span class="days">1 <span>day</span></span></div>
+      <div class="fr"><span class="nm"><small>CL</small>Community Life Center</span><span class="dt">Jul 30, 2026</span><span class="days">1 <span>day</span></span></div>
+      <div class="fr"><span class="nm"><small>MC</small>Ministry Center</span><span class="dt">Jul 31, 2026</span><span class="days">0 <span>days</span></span></div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Coverage by route</h2>
+    <p class="panel-sub"><b>Inspectors grouped by campus route</b> (January&ndash;July). Each row is an inspector&rsquo;s work on that campus; someone covering two campuses appears under both. Finding counts reflect the condition and depth of the route covered, not inspector performance.</p>
+    <div class="legend">
+      <span><span class="swatch" style="background: var(--purple)"></span>Building inspections</span>
+      <span><span class="swatch" style="background: var(--gold)"></span>Env / Climate checks</span>
+    </div>
+    <div class="rt-colhead">
+      <span>Inspector</span>
+      <span class="cbar">Building / env mix on route</span>
+      <span class="r">Inspections</span>
+      <span class="r">Findings</span>
+    </div>
+
+    <div class="routegrp">
+      <div class="rt-head"><span class="rc">CL</span><span class="rn">Community Life Center</span><span class="rm"><b>63</b> inspections &middot; last walked Jul 30</span></div>
+      <div class="rt-body">
+        <div class="rt-row"><span class="nm">Armando Lopez</span><span class="track"><span class="seg p" style="width:7.5%"></span><span class="seg g" style="width:92.5%"></span></span><span class="ins"><b>53</b><span class="split"><span class="pb">4</span> bldg &middot; <span class="gb">49</span> env</span></span><span class="fnd">10</span></div>
+        <div class="rt-row"><span class="nm">Kenneth Carr</span><span class="track" style="width:19%"><span class="seg p" style="width:60%"></span><span class="seg g" style="width:40%"></span></span><span class="ins"><b>10</b><span class="split"><span class="pb">6</span> bldg &middot; <span class="gb">4</span> env</span></span><span class="fnd">0</span></div>
+      </div>
+    </div>
+
+    <div class="routegrp">
+      <div class="rt-head"><span class="rc">WC</span><span class="rn">Worship Center</span><span class="rm"><b>63</b> inspections &middot; last walked Jul 30</span></div>
+      <div class="rt-body">
+        <div class="rt-row"><span class="nm">Von Brown</span><span class="track" style="width:47%"><span class="seg p" style="width:96%"></span><span class="seg g" style="width:4%"></span></span><span class="ins"><b>25</b><span class="split"><span class="pb">24</span> bldg &middot; <span class="gb">1</span> env</span></span><span class="fnd">22</span></div>
+        <div class="rt-row"><span class="nm">Kenneth Carr</span><span class="track" style="width:43%"><span class="seg p" style="width:47.8%"></span><span class="seg g" style="width:52.2%"></span></span><span class="ins"><b>23</b><span class="split"><span class="pb">11</span> bldg &middot; <span class="gb">12</span> env</span></span><span class="fnd">58</span></div>
+        <div class="rt-row"><span class="nm">Misael Gonzalez</span><span class="track" style="width:24%"><span class="seg p" style="width:69.2%"></span><span class="seg g" style="width:30.8%"></span></span><span class="ins"><b>13</b><span class="split"><span class="pb">9</span> bldg &middot; <span class="gb">4</span> env</span></span><span class="fnd">1</span></div>
+        <div class="rt-row"><span class="nm">Luther Jones</span><span class="track" style="width:3.8%"><span class="seg p" style="width:100%"></span></span><span class="ins"><b>2</b><span class="split"><span class="pb">2</span> bldg &middot; <span class="gb">0</span> env</span></span><span class="fnd">15</span></div>
+      </div>
+    </div>
+
+    <div class="routegrp stale">
+      <div class="rt-head"><span class="rc">EC</span><span class="rn">Empowerment Center</span><span class="solo">Single inspector</span><span class="flag">Overdue</span><span class="rm"><b>40</b> inspections &middot; last walked Jun 18</span></div>
+      <div class="rt-body">
+        <div class="rt-row"><span class="nm">Harold Rogers</span><span class="track" style="width:75.5%"><span class="seg p" style="width:100%"></span></span><span class="ins"><b>40</b><span class="split"><span class="pb">40</span> bldg &middot; <span class="gb">0</span> env</span></span><span class="fnd">28</span></div>
+      </div>
+    </div>
+
+    <div class="routegrp">
+      <div class="rt-head"><span class="rc">MC</span><span class="rn">Ministry Center</span><span class="rm"><b>28</b> inspections &middot; last walked Jul 31</span></div>
+      <div class="rt-body">
+        <div class="rt-row"><span class="nm">Chaun Coleman</span><span class="track" style="width:37.7%"><span class="seg p" style="width:95%"></span><span class="seg g" style="width:5%"></span></span><span class="ins"><b>20</b><span class="split"><span class="pb">19</span> bldg &middot; <span class="gb">1</span> env</span></span><span class="fnd">98</span></div>
+        <div class="rt-row"><span class="nm">Brandon McRae</span><span class="track" style="width:7.5%"><span class="seg p" style="width:100%"></span></span><span class="ins"><b>4</b><span class="split"><span class="pb">4</span> bldg &middot; <span class="gb">0</span> env</span></span><span class="fnd">31</span></div>
+        <div class="rt-row"><span class="nm">Cordell Donte Jackson <span class="new">New</span></span><span class="track" style="width:7.5%"><span class="seg p" style="width:75%"></span><span class="seg g" style="width:25%"></span></span><span class="ins"><b>4</b><span class="split"><span class="pb">3</span> bldg &middot; <span class="gb">1</span> env</span></span><span class="fnd">4</span></div>
+      </div>
+    </div>
+
+    <div class="routegrp stale">
+      <div class="rt-head"><span class="rc">SB</span><span class="rn">Service Building</span><span class="solo">Single inspector</span><span class="flag">Overdue</span><span class="rm"><b>2</b> inspections &middot; last walked Jun 4</span></div>
+      <div class="rt-body">
+        <div class="rt-row"><span class="nm">Von Brown</span><span class="track" style="width:3.8%"><span class="seg p" style="width:50%"></span><span class="seg g" style="width:50%"></span></span><span class="ins"><b>2</b><span class="split"><span class="pb">1</span> bldg &middot; <span class="gb">1</span> env</span></span><span class="fnd">1</span></div>
+      </div>
+    </div>
+
+    <p class="footnote"><b>Inspections</b> = each inspector&rsquo;s walks on that route, split into <span style="color:var(--purple)">building</span> and <span style="color:var(--gold)">env/climate</span> (matching the bar). <b>Findings</b> = documented deficiencies on the route. Kenneth Carr (CL + WC) and Von Brown (WC + SB) each cover two routes; <b>Empowerment Center and Service Building are single-inspector routes</b> &mdash; and both have gone overdue.</p>
+  </section>
+
+  <section class="panel">
+    <h2>Closing the loop: inspection-originated FMX work orders<span class="badge-done">H1 &middot; as of Jun 30</span></h2>
+    <p class="panel-sub">The FMX work orders our inspections actually logged &mdash; matched by the ticket numbers recorded on each inspection row &mdash; tracked to closure. Scope: <b>tickets created Jan 1 &ndash; Jun 30, 2026, measured as of June 30</b>.</p>
+    <div class="loop">
+      <div class="flow">
+        <div class="step"><span class="n">170</span><span class="t">inspections completed, Jan&ndash;Jun</span></div>
+        <div class="arrow">&#9660;</div>
+        <div class="step"><span class="n">253</span><span class="t">findings documented</span></div>
+        <div class="arrow">&#9660;</div>
+        <div class="step"><span class="n">110</span><span class="t">FMX work orders logged on inspection rows</span></div>
+      </div>
+      <div>
+        <div class="pending">
+          <div class="slot"><div class="label">Tickets logged</div><div class="value">110</div><div class="sub">created &le; Jun 30</div></div>
+          <div class="slot"><div class="label">Closed by Jun 30</div><div class="value">72</div><div class="sub">65% closure</div></div>
+          <div class="slot"><div class="label">Open backlog</div><div class="value">38</div><div class="sub">unresolved at Jun 30</div></div>
+          <div class="slot"><div class="label">Median days to close</div><div class="value">10.8</div><div class="sub">avg 25.6 days</div></div>
+          <div class="slot"><div class="label">Closed &le; 7 days</div><div class="value">28</div><div class="sub">of 72 closed</div></div>
+        </div>
+        <div class="loopbldg" aria-label="Closure rate by campus">
+          <div class="lr"><span class="lbl">Ministry Center</span><span class="track"><span class="fill" style="width:76%"></span></span><span class="v"><b>76%</b> &middot; 57 / 75</span></div>
+          <div class="lr"><span class="lbl">Worship Center</span><span class="track"><span class="fill" style="width:50%"></span></span><span class="v"><b>50%</b> &middot; 12 / 24</span></div>
+          <div class="lr"><span class="lbl">Community Life Center</span><span class="track"><span class="fill zero" style="width:4%"></span></span><span class="v"><b>0%</b> &middot; 0 / 8</span></div>
+          <div class="lr"><span class="lbl">Empowerment Center</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="v"><b>100%</b> &middot; 2 / 2</span></div>
+          <div class="lr"><span class="lbl">Service Building</span><span class="track"><span class="fill" style="width:100%"></span></span><span class="v"><b>100%</b> &middot; 1 / 1</span></div>
+        </div>
+        <p class="await">Tickets are matched to the FMX export (rev 071426) by the FMX numbers logged on inspection rows &mdash; a true inspection&rarr;work-order closed loop, distinct from all-facilities FMX volume. <b>11 inspection rows carry mistyped ticket numbers</b> and are excluded pending correction (listed below); fixing them will raise the matched count toward 121.</p>
+      </div>
+    </div>
+    <details class="tableview">
+      <summary>Ticket-number exceptions to correct in Smartsheet (11 rows &middot; Von Brown 7)</summary>
+      <table>
+        <thead><tr><th>Inspector</th><th>Campus</th><th>Walk date</th><th>Report ID</th><th>Value entered</th><th>Issue</th></tr></thead>
+        <tbody>
+          <tr><td>Von Brown</td><td>WC</td><td>Feb 5</td><td>02/05/26-WC-Daily</td><td>#1201626297</td><td>10 digits &mdash; garbled</td></tr>
+          <tr><td>Von Brown</td><td>WC</td><td>Feb 9</td><td>02/09/26-WC-Daily/Weekly</td><td>#12027981</td><td>8-digit, not in FMX &mdash; verify</td></tr>
+          <tr><td>Von Brown</td><td>WC</td><td>Feb 11</td><td>02/11/26-WC-Daily/Weekly</td><td>#120941</td><td>6 digits &mdash; digits missing</td></tr>
+          <tr><td>Von Brown</td><td>WC</td><td>May 10</td><td>05/10/26-WC-Daily/Weekly</td><td>#1203348</td><td>7 digits &mdash; dropped a digit</td></tr>
+          <tr><td>Von Brown</td><td>WC</td><td>Jun 3</td><td>06/03/26-WC-Daily/Weekly</td><td>#1227677</td><td>7 digits &mdash; dropped a digit</td></tr>
+          <tr><td>Von Brown</td><td>WC</td><td>Jun 8</td><td>06/08/26-WC-Daily/Weekly</td><td># 1285970</td><td>7 digits &mdash; dropped a digit</td></tr>
+          <tr><td>Von Brown</td><td>WC</td><td>Jun 23</td><td>06/23/26-EnvClim-WC-Daily</td><td># FMX 1210428</td><td>7 digits &mdash; dropped a digit</td></tr>
+          <tr><td>Chaun Coleman</td><td>MC</td><td>Mar 13</td><td>03/13/26-MC-Daily</td><td>121085168</td><td>9 digits (rest of cell OK)</td></tr>
+          <tr><td>Brandon McRae</td><td>MC</td><td>Jun 5</td><td>06/05/26-MC-Daily</td><td>122841195</td><td>9 digits (rest of cell OK)</td></tr>
+          <tr><td>Luther Jones</td><td>WC</td><td>Mar 1</td><td>03/01/26-WC-Daily</td><td>12071010</td><td>8-digit, not in FMX &mdash; verify</td></tr>
+          <tr><td>Armando Lopez</td><td>CL</td><td>Jan 12</td><td>01/12/26-EnvClim-CL-Daily</td><td>11940593</td><td>8-digit, not in FMX &mdash; verify</td></tr>
+        </tbody>
+      </table>
+    </details>
+  </section>
+
+  <footer>
+    <b>Method:</b> Source is the Building Services Quality Inspection Checklist (Smartsheet), pulled live August 17, 2026 &mdash; 196 inspection reports with a walk date inside Jan 1 &ndash; Jul 31, 2026, bucketed by the walk date recorded in each Report ID. <b>Findings</b> (268) are individual documented deficiency line items; a clean inspection recorded zero findings. Environmental/climate checks verify temperature and climate conditions in equipment and climate-sensitive spaces. The two area-detail panels (&ldquo;Where checkpoints fail&rdquo; / &ldquo;Where environmental checks flag&rdquo;) are shown on the <b>Jan&ndash;Jun</b> basis (201 building / 22 environmental checkpoint failures); July&rsquo;s 15 findings are reflected in the headline, monthly and per-campus figures and will redistribute into the area panels when the live pipeline is refreshed. <b>FMX closed-loop panel</b> covers the <b>inspection-originated</b> work orders &mdash; the FMX ticket numbers logged on inspection rows &mdash; created Jan 1 &ndash; Jun 30, 2026 and measured as of June 30 against the FMX maintenance-request export (rev 071426); 11 rows with mistyped ticket references are excluded pending correction. &ldquo;Closed&rdquo; counts a resolved ticket.<br>
+    Prepared by Business Services &middot; Business Systems &amp; Solutions &middot; August 2026
+  </footer>
+</div>
+
+<div id="tip"></div>
+
+<script>
+(function () {
+  var css = function (name) { return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); };
+  var tip = document.getElementById('tip');
+  var NS = 'http://www.w3.org/2000/svg';
+
+  function el(name, attrs, parent) {
+    var e = document.createElementNS(NS, name);
+    for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function showTip(evt, text) {
+    tip.textContent = text;
+    tip.style.display = 'block';
+    tip.style.left = (evt.clientX + 12) + 'px';
+    tip.style.top = (evt.clientY - 30) + 'px';
+  }
+  function hideTip() { tip.style.display = 'none'; }
+
+  function topRoundedRect(x, y, w, h, r) {
+    r = Math.min(r, h, w / 2);
+    return 'M' + x + ' ' + (y + h) + 'V' + (y + r) + 'Q' + x + ' ' + y + ' ' + (x + r) + ' ' + y +
+           'H' + (x + w - r) + 'Q' + (x + w) + ' ' + y + ' ' + (x + w) + ' ' + (y + r) + 'V' + (y + h) + 'Z';
+  }
+
+  var MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'];
+  var gradId = 0;
+
+  function vGradient(svg, color) {
+    var id = 'bargrad-' + (gradId++);
+    var defs = el('defs', {}, svg);
+    var g = el('linearGradient', { id: id, x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+    el('stop', { offset: 0, 'stop-color': color, 'stop-opacity': 1 }, g);
+    el('stop', { offset: 1, 'stop-color': color, 'stop-opacity': 0.68 }, g);
+    return 'url(#' + id + ')';
+  }
+  function areaGradient(svg, color) {
+    var id = 'areagrad-' + (gradId++);
+    var defs = el('defs', {}, svg);
+    var g = el('linearGradient', { id: id, x1: 0, y1: 0, x2: 0, y2: 1 }, defs);
+    el('stop', { offset: 0, 'stop-color': color, 'stop-opacity': 0.22 }, g);
+    el('stop', { offset: 1, 'stop-color': color, 'stop-opacity': 0 }, g);
+    return 'url(#' + id + ')';
+  }
+
+  function barChart(mountId, opts) {
+    var mount = document.getElementById(mountId);
+    var W = 500, H = 210, mL = 30, mR = 6, mT = 16, mB = 24;
+    var plotW = W - mL - mR, plotH = H - mT - mB, baseY = mT + plotH;
+    var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H }, mount);
+    var fill = vGradient(svg, css(opts.color));
+    var scale = plotH / opts.max;
+    var n = opts.values.length;
+    var slot = plotW / n, barW = Math.min(46, slot * 0.62);
+
+    opts.ticks.forEach(function (t) {
+      var y = baseY - t * scale;
+      el('line', { x1: mL, x2: W - mR, y1: y, y2: y, stroke: t === 0 ? css('--baseline') : css('--grid'), 'stroke-width': 1 }, svg);
+      el('text', { x: mL - 6, y: y + 3.5, 'text-anchor': 'end', 'font-size': 10, fill: css('--muted') }, svg).textContent = t;
+    });
+
+    for (var i = 0; i < n; i++) {
+      var v = opts.values[i];
+      var x = mL + i * slot + (slot - barW) / 2;
+      var h = v * scale, y = baseY - h;
+      var shape = el('path', { d: topRoundedRect(x, y, barW, h, 5), fill: fill }, svg);
+      (function (label, val) {
+        shape.addEventListener('mousemove', function (evt) { showTip(evt, label + ': ' + val); });
+        shape.addEventListener('mouseleave', hideTip);
+      })(MONTHS[i] + ' · ' + opts.name, v);
+      if (opts.labelIdx.indexOf(i) !== -1) {
+        el('text', { x: x + barW / 2, y: y - 6, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: css('--ink') }, svg).textContent = v;
+      }
+      el('text', { x: mL + i * slot + slot / 2, y: baseY + 15, 'text-anchor': 'middle', 'font-size': 11, fill: css('--ink-2') }, svg).textContent = MONTHS[i];
+    }
+  }
+
+  function lineChart(mountId, opts) {
+    var mount = document.getElementById(mountId);
+    var W = 500, H = 132, mL = 30, mR = 14, mT = 16, mB = 22;
+    var plotW = W - mL - mR, plotH = H - mT - mB, baseY = mT + plotH;
+    var svg = el('svg', { viewBox: '0 0 ' + W + ' ' + H }, mount);
+    var color = css(opts.color);
+    var areaFill = areaGradient(svg, color);
+    var scale = plotH / opts.max;
+    var n = opts.values.length;
+    var step = plotW / (n - 1);
+
+    opts.ticks.forEach(function (t) {
+      var y = baseY - t * scale;
+      el('line', { x1: mL, x2: W - mR, y1: y, y2: y, stroke: t === 0 ? css('--baseline') : css('--grid'), 'stroke-width': 1 }, svg);
+      el('text', { x: mL - 6, y: y + 3.5, 'text-anchor': 'end', 'font-size': 10, fill: css('--muted') }, svg).textContent = t;
+    });
+
+    var pts = opts.values.map(function (v, i) { return [mL + i * step, baseY - v * scale]; });
+
+    var area = 'M' + pts[0][0] + ' ' + baseY + ' L' + pts.map(function (p) { return p.join(' '); }).join(' L') +
+               ' L' + pts[n - 1][0] + ' ' + baseY + ' Z';
+    el('path', { d: area, fill: areaFill }, svg);
+
+    el('polyline', {
+      points: pts.map(function (p) { return p.join(','); }).join(' '),
+      fill: 'none', stroke: color, 'stroke-width': 2.25, 'stroke-linejoin': 'round', 'stroke-linecap': 'round'
+    }, svg);
+    pts.forEach(function (p, i) {
+      var last = i === n - 1;
+      if (last) el('circle', { cx: p[0], cy: p[1], r: 7, fill: color, opacity: 0.16 }, svg);
+      el('circle', { cx: p[0], cy: p[1], r: last ? 4.5 : 3.5, fill: color, stroke: css('--surface'), 'stroke-width': 2 }, svg);
+      var hit = el('circle', { cx: p[0], cy: p[1], r: 12, fill: 'transparent' }, svg);
+      (function (label, idx) {
+        hit.addEventListener('mousemove', function (evt) { showTip(evt, label + ': ' + opts.values[idx].toFixed(1)); });
+        hit.addEventListener('mouseleave', hideTip);
+      })(opts.labels[i] + ' · ' + opts.name, i);
+      if (i === 0 || last) {
+        el('text', { x: p[0], y: p[1] - 10, 'text-anchor': 'middle', 'font-size': 11, 'font-weight': 700, fill: css('--ink') }, svg).textContent = opts.values[i].toFixed(1);
+      }
+      el('text', { x: p[0], y: baseY + 15, 'text-anchor': 'middle', 'font-size': 11, fill: css('--ink-2') }, svg).textContent = opts.labels[i];
+    });
+  }
+
+  function render() {
+    ['chart-findings', 'chart-bldg', 'chart-env', 'chart-rate'].forEach(function (id) { document.getElementById(id).innerHTML = ''; });
+    gradId = 0;
+    barChart('chart-findings', { name: 'Findings', color: '--purple-soft', max: 64, ticks: [0, 20, 40, 60], labelIdx: [1, 6], values: [27, 59, 56, 46, 37, 28, 15] });
+    lineChart('chart-rate', { name: 'Findings per inspection', color: '--good', max: 2.6, ticks: [0, 1, 2], labels: ['Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul'], values: [2.2, 1.8, 1.2, 1.0, 1.1, 0.6] });
+    barChart('chart-bldg', { name: 'Building inspections', color: '--purple', max: 28, ticks: [0, 10, 20], labelIdx: [0, 6], values: [4, 20, 18, 25, 23, 21, 12] });
+    barChart('chart-env', { name: 'Env checks', color: '--gold', max: 18, ticks: [0, 5, 10, 15], labelIdx: [3, 6], values: [4, 7, 14, 15, 14, 5, 14] });
+  }
+  render();
+})();
+</script>

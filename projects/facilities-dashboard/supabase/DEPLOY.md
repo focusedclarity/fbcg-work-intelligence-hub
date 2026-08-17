@@ -9,6 +9,15 @@ closed-loop** numbers wired in 2026-07-14. Run from the `supabase/` folder:
   (M365-gated / production). Both share `_shared/aggregate.ts`, so both pick up FMX.
 - **Secret:** `SMARTSHEET_TOKEN` (already set if you deployed before — step 3 is a no-op then).
 
+> **Status — 2026-08-17:** `facilities-metrics` redeployed via the Supabase **dashboard
+> editor** (no CLI) and verified live — the payload returns `"ticketsLogged":110` and the
+> rolled-forward `"asOf":"2026-07-31"`. Only `_shared/aggregate.ts` changed; `index.ts`
+> was unchanged. `dashboard-metrics` is **not deployed** (it doesn't exist in the project
+> yet) — it's the SSO-gated variant and belongs to the separate SSO track (see `README.md`
+> + `sso-finish-checklist.md`); it will inherit this same `_shared/aggregate.ts` when created.
+> Note: the Supabase dashboard editor keeps `index.ts` + `../_shared/aggregate.ts` as
+> separate files, so the `paste-deploy/` single-file builds turned out not to be needed.
+
 ---
 
 ## Copy-paste (PowerShell or bash — same commands)

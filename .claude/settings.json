@@ -1,1 +1,19 @@
-{}
+{
+  "hooks": {
+    "PreCompact": [
+      {
+        "matcher": "auto",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash .claude/hooks/checkpoint-precompact.sh",
+            "shell": "bash",
+            "timeout": 30,
+            "statusMessage": "Checkpointing before context compaction..."
+          }
+        ]
+      }
+    ]
+  }
+}
+

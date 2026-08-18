@@ -45,17 +45,19 @@ against two sheets; writes `audit_pairs.csv`, `audit_master_only.csv`, `audit_su
 
 ## Decisions taken
 
-1. **Access model** — approval-by-email plus a small named group. Only Contracts/CBO staff and 3–5
-   CMO leads get access to the master; everyone else uses the form and email approval/update
-   requests, which need no sheet share. Prerequisite: strip `Account User Name` / `Account Password`
-   from the master before any new share.
+1. **Access model** — **Dynamic View** (confirmed provisioned 2026-08-18). CMO staff work a
+   `Division = CMO` Dynamic View over the master, so they never see CBO / Pastor / CFO / PGCA rows;
+   direct sheet access stays with Contracts/CBO staff and 3–5 CMO leads. Form + email
+   approval/update requests remain the fallback for occasional submitters. Prerequisite either way:
+   strip `Account User Name` / `Account Password` from the master before any new share or view.
 2. **Twin conflicts** — resolved case-by-case from the audit sheet, not by a blanket rule.
 3. **Cutover** — one weekend freeze (Fri PM → live Monday), all workflows on both sheets deactivated
    during the window so a 379-row Move does not fire the master's alert/approval automations.
 
 ## Next actions
 
-- [ ] Sign in to Smartsheet in the Claude Browser pane so Step 0 (automations + forms inventory) can be captured
+- [ ] Step 0 inventory (automations + forms) — in progress via the Claude Browser pane
+- [ ] Build + test the CMO Dynamic View (`Division = CMO`) with a real CMO user, attachments panel verified
 - [ ] Run `audit_pairs.py`, import `audit_pairs.csv` as the audit sheet
 - [ ] Contracts sign-off on the `Survivor (confirm)` column
 - [ ] Step 1 (harden master: credentials out, column formulas) and Step 2 (schema reconcile)

@@ -32,3 +32,11 @@ two sheets and staff maintain both.
   that sheet is the pre-cutover audit record.
 
 **Record:** `projects/contracts-db-consolidation/` (PLAN.md, STEP0-INVENTORY.md, audit_pairs.py).
+
+### Amendment 2026-08-18 — access model switched to Dynamic View
+Dynamic View is provisioned in the tenant (confirmed in the Smartsheet toolbar). CMO staff will work
+a `Division = CMO` Dynamic View over the consolidated master rather than being shared to the sheet,
+which gives true row-level separation instead of the compromise (a handful of shared leads + email
+approvals for everyone else). The email approval/update path stays as the documented fallback. New
+dependency to watch: the CMO experience now rests on a premium add-on, so the view must be tested
+with a real CMO account during the cutover weekend and the add-on noted in the solutions register.

@@ -25,7 +25,7 @@ The CMO process now has a stable rhythm, so the goal is one system of record: th
 - 20 direct shares including Rev. Carr, CMO Team, Rachelle Patterson, Stefanie May, Aja Thomas, Tomiko Hankerson, Carl Bartee.
 
 ### Decisions taken
-1. **Access model:** approval-by-email + a small named group. Only Contracts/CBO staff and 3–5 CMO leads get sheet access; other CMO participants keep working through the form, automated **approval requests** and **update requests**, which do not require sheet sharing.
+1. **Access model:** **Dynamic View** (confirmed provisioned in the tenant, 2026-08-18). CMO staff work their contracts through a `Division = CMO` Dynamic View instead of being shared to the master sheet — true row-level access, so they never see CBO / Office of the Pastor / CFO / PGCA rows. Sheet-level access stays with Contracts/CBO staff and 3–5 CMO leads. Occasional submitters keep using the form plus automated **approval requests** / **update requests** (no share required) — that path is now the fallback, not the primary model.
 2. **Twin conflicts:** resolved **case-by-case from a reconciliation audit sheet**, not by a blanket rule.
 3. **Cutover:** one weekend freeze (Fri PM → live Monday).
 
@@ -35,7 +35,7 @@ The CMO process now has a stable rhythm, so the goal is one system of record: th
 
 | Option | Verdict |
 |---|---|
-| **A. Consolidate into master (chosen)** | Correct. One record per contract, one form, one approval chain, one audit trail; CBO already owns the master and 500 non-CMO rows are healthy there. Cost is a real one-time merge and an access-control redesign. |
+| **A. Consolidate into master (chosen)** | Correct. One record per contract, one form, one approval chain, one audit trail; CBO already owns the master and 500 non-CMO rows are healthy there. Cost is a real one-time merge and an access-control redesign — and with Dynamic View provisioned, the confidentiality objection that made this hard is fully answered rather than worked around. |
 | B. Make the CMO sheet the new master | Rejected. It carries 19 CMO-only/legacy columns, a duplicate `CBO Status` picklist, a narrower `Status` list (28 vs 34 options), and lives in `CMO TEAM ONLY` owned by a shared `cmo@` account. Moving 500 non-CMO rows *in* is strictly more work than moving 379 CMO rows *out*. |
 | C. Build a brand-new third sheet | Rejected. Doubles the migration (two sources, two sets of automations, two dashboards to repoint) for no gain the master doesn't already give. |
 | D. Keep both, fix the sync | Rejected as an end state, but note it is the only *reversible* option — hence the rollback plan below. Smartsheet has no two-way row sync; cell links are one-way per cell and cannot carry attachments, comments, or new rows. Any "fix" reproduces today's drift. |
@@ -44,7 +44,7 @@ The CMO process now has a stable rhythm, so the goal is one system of record: th
 
 | Lens | Risk | Mitigation in the plan |
 |---|---|---|
-| **Confidentiality** | Sharing master to all 20 CMO collaborators exposes 500 CBO / Pastor / CFO / PGCA contracts and dollar values. Master also has `Account User Name` / `Account Password` columns — *hidden is not secure*, any Editor can unhide. | Chosen access model (few leads + approval-by-email). **Prerequisite:** move credentials out of the sheet before any new share (Step 1). |
+| **Confidentiality** | Sharing master to all 20 CMO collaborators exposes 500 CBO / Pastor / CFO / PGCA contracts and dollar values. Master also has `Account User Name` / `Account Password` columns — *hidden is not secure*, any Editor can unhide. | Dynamic View filtered to `Division = CMO`, with sensitive fields excluded from the view and per-field edit rights. **Prerequisite regardless:** move credentials out of the sheet before any new share or view (Step 1) — a view is a control on rows, not a reason to keep secrets in a sheet. |
 | **Data integrity** | Twin merge picks the wrong survivor and a signed PDF or approval trail is lost. | Reconciliation audit sheet + human survivor choice + full pre-cutover backups; nothing is deleted until the audit is signed off. |
 | **Attachments** | 783 CMO + 1,279 master attachments. Smartsheet **cannot merge attachments into an existing row** — files travel only with a row Move/Copy. Deleting a master twin destroys its files. | Move (not re-key) the surviving CMO rows so attachments + comments travel automatically; for the minority of pairs where the *master* row also holds files, download and re-upload those files onto the survivor via a short API script. |
 | **Automations** | A Move/Copy counts as *rows added*: dropping 379 rows into master can fire every master alert/approval workflow at once (email storm to executives, spurious approval requests). CMO's workflows also must be rebuilt with `Division=CMO` conditions or they will fire on CBO rows. | Deactivate **all** workflows on both sheets during the window; migrate; rebuild/scope; reactivate one at a time with a test row. |
@@ -53,7 +53,8 @@ The CMO process now has a stable rhythm, so the goal is one system of record: th
 | **Reporting** | CMO dashboard + report + metrics-sheet cross-sheet formulas break the moment rows leave. | Repoint before reactivating; validate the two headline numbers (277 count / $4.12M value) against the master after migration. |
 | **Sheet limits** | Master at 155 columns hits the 500,000-cell cap at roughly **3,200 rows**; it will be ~1,490 rows / ~231k cells after this merge (≈46%). | Adopt an annual archive rule now (Step 8) and resist adding more columns; prune legacy columns during Step 2. |
 | **Ownership / continuity** | CMO sheet is owned by the shared `cmo@` login; master is owned by a personal account (`gthomas`). | Per BSS architecture standard, move master ownership to a group/service account as part of Step 8. |
-| **Change management** | CMO staff lose the sheet they've used daily; approvals arrive as email requests instead. | One-page "what changes Monday" note + the existing dashboard preserved (repointed) so their entry point looks the same. |
+| **Change management** | CMO staff lose the sheet they've used daily and move to a Dynamic View, which looks and behaves differently (row details panel, not a grid). | One-page "what changes Monday" note, the existing dashboard preserved and repointed so their entry point looks the same, and a walkthrough of the view with Rev. Carr's team before go-live. A new risk to watch: anything they did with grid tricks (bulk edit, sorting, their own filters) needs an equivalent in the view or a report. |
+| **Dynamic View dependency** | The whole CMO experience now rests on a premium add-on: if it is misconfigured (wrong filter, missing attachments panel) CMO work stalls on Monday, and if the add-on lapses at renewal the access model collapses. | Build and test the view during the freeze weekend with a real CMO user, not an admin account (verification item 6); keep the email approval/update path working as the documented fallback; note the add-on dependency in the solutions register so it surfaces at renewal. |
 | **Audit / retention** | Deleting the CMO sheet destroys cell history (history does **not** travel with moved rows). | Never delete: rename to `(ARCHIVE DNU) CMO Contracts Database`, strip edit shares, lock, keep in place. |
 | **Reversibility** | If the merge goes wrong mid-window. | Backups + rollback in Step 7; the archived CMO sheet remains a complete pre-cutover snapshot. |
 
@@ -103,7 +104,13 @@ Work strictly from the signed audit sheet, in batches of ~50 with a count check 
 
 ### Step 6 — Rebuild automations, form, reporting (Saturday–Sunday)
 - Rebuild each CMO workflow on the master from the Step 0 inventory, every one gated by a `Division = CMO` condition. Verify the reverse too: every pre-existing master workflow must be scoped so it does not now fire on CMO rows unintentionally. Watch the per-sheet workflow count and consolidate near-duplicate approval rules where the same trigger/recipients repeat.
-- Approvals for non-shared CMO participants: use **Request an approval** / **Request an update** actions (email-based, no sheet share required) — this is what makes the chosen access model work.
+- **Build the CMO Dynamic View** (this is now the primary CMO experience, so it is cutover-critical, not a nicety):
+  - Source: master sheet; view filter `Division = CMO`.
+  - Exclude from the view entirely: credential/legacy columns, other divisions' approval columns, anything CMO staff have no business seeing.
+  - Set per-field permissions — editable for CMO-owned fields (dates, deposits, artist fields, comments), read-only for `Status`, approval columns, and anything the automations write.
+  - Confirm attachments and comments are enabled in the view's details panel — CMO staff live in the attachments, so verify this with a real row before go-live.
+  - Share the view to the CMO group; remove those users' direct sheet shares (Step 8) so the view is the only path.
+- Approvals for occasional submitters who are not in the view: **Request an approval** / **Request an update** actions (email-based, no sheet share required) — fallback path.
 - Fold the CMO-only form questions into the master's form with conditional logic on `Division = CMO`; retire the CMO form (leave a redirect note on the dashboard shortcut).
 - **Delete the copy-row automation permanently** — this is the change that ends the drift.
 - Repoint the CMO report, the metrics sheet's cross-sheet formulas, and the dashboard's CMO-sheet metric widget at the master, filtered to `Division = CMO`. Validate the headline tiles still read ~277 contracts / ~$4.12M (or explain the delta deliberately).
@@ -115,7 +122,7 @@ Verify: row counts by `Division`; zero blank `Status` among migrated rows; attac
 
 ### Step 8 — Close out (Monday+)
 - Rename the old sheet `(ARCHIVE DNU) CMO Contracts Database`, remove all Editor shares, lock all columns, leave it in `CMO TEAM ONLY` for audit history (cell history does not migrate — this sheet *is* the pre-cutover record).
-- Reduce CMO shares on the master to the agreed 3–5 leads; everyone else on form + email approvals.
+- Reduce direct CMO shares on the master to the agreed 3–5 leads; move everyone else onto the CMO Dynamic View (or form + email approvals). Removing the direct shares is what actually enforces the row-level boundary — a Dynamic View alongside a live sheet share protects nothing.
 - Move master ownership to a group/service account per the BSS solution architecture standard; register the consolidated solution in the solutions register.
 - Adopt an annual archive rule (roll `Executed`/`Expired` rows older than N years into a `Contracts Archive` sheet) to stay well clear of the 500k-cell cap at 155 columns.
 - Have Scribe document the migration: prompts, scripts, the audit sheet, and the "what changed Monday" one-pager.
@@ -134,3 +141,4 @@ Verify: row counts by `Division`; zero blank `Status` among migrated rows; attac
 3. `list_attachments` / `list_discussions` on master → totals increased by the migrated volume; spot-check 10 audited rows for their expected PDFs and comment threads.
 4. Dashboard tiles and the CMO report render from the master with the `Division=CMO` filter.
 5. One end-to-end live form submission routes approvals correctly to a user who has **no** share on the master.
+6. **Dynamic View check with a real CMO user (not an admin account):** they see only `Division = CMO` rows, can open attachments and comments, can edit exactly the fields intended and no others, and cannot reach any other division's row by any means (search, filter, direct row link).

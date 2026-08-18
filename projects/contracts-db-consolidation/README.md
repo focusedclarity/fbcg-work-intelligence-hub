@@ -31,6 +31,7 @@ files travel only with a row Move/Copy.
 | `PLAN.md` | The approved plan: alternatives review, 12-lens risk register, Steps 0–8, rollback, verification checklist |
 | `STEP0-INVENTORY.md` | Template to capture what the API cannot read — automations, forms, cross-sheet refs, formatting |
 | `audit_pairs.py` | **Read-only.** Builds the Step 3 reconciliation audit: twin pairs, attachment/comment counts each side, recommended survivor |
+| `RESTRUCTURE.md` | Approved plan for restructuring the master sheet **before** migration: security fixes, ~50-column prune, frozen contract ID, archive sheet, entry QC, renewal ladder, and the `fbcgi-contract-analysis` row review |
 
 ## Running the audit
 
@@ -58,6 +59,8 @@ against two sheets; writes `audit_pairs.csv`, `audit_master_only.csv`, `audit_su
 
 - [x] Step 0 inventory — automations (27 master / 11 CMO) + forms captured 2026-08-18, see STEP0-INVENTORY.md
 - [ ] Step 0 remainder: conditional formatting + saved filters on the CMO sheet
+- [ ] **URGENT** turn off the public publish links: master `Read Only - Full` is ON, CMO sheet `Edit by Anyone` is ON (see RESTRUCTURE.md Phase A)
+- [ ] RESTRUCTURE.md Phases A-D before the cutover weekend (schema must be frozen before rows Move by name)
 - [ ] Build + test the CMO Dynamic View (`Division = CMO`) with a real CMO user, attachments panel verified
 - [ ] Run `audit_pairs.py`, import `audit_pairs.csv` as the audit sheet
 - [ ] Contracts sign-off on the `Survivor (confirm)` column

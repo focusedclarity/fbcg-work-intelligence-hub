@@ -28,6 +28,7 @@ files travel only with a row Move/Copy.
 
 | File | What it is |
 |---|---|
+| **`MASTER-PLAN.md`** | **Start here.** The complete plan in one document: findings, locked decisions, five stages, risk register, verification, open items |
 | `PLAN.md` | The approved plan: alternatives review, 12-lens risk register, Steps 0–8, rollback, verification checklist |
 | `STEP0-INVENTORY.md` | Template to capture what the API cannot read — automations, forms, cross-sheet refs, formatting |
 | `audit_pairs.py` | **Read-only.** Builds the Step 3 reconciliation audit: twin pairs, attachment/comment counts each side, recommended survivor |

@@ -40,3 +40,35 @@ which gives true row-level separation instead of the compromise (a handful of sh
 approvals for everyone else). The email approval/update path stays as the documented fallback. New
 dependency to watch: the CMO experience now rests on a premium add-on, so the view must be tested
 with a real CMO account during the cutover weekend and the add-on noted in the solutions register.
+
+### 2026-08-18 — Contracts programme consolidated into one plan (five stages)
+
+**Decision:** treat the CMO consolidation, the master-sheet restructure, and the contract-review
+automation as **one sequenced programme**, recorded in
+`projects/contracts-db-consolidation/MASTER-PLAN.md`. Stages: (1) security & truth, (2) restructure the
+master, (3) merge the CMO sheet over one weekend, (4) govern, (5) automate.
+
+**Why the order:** Smartsheet's Move matches columns by name, so the master's schema has to be final
+before 379 rows arrive. Restructuring first also means ~50 dead columns are gone before the merge
+rather than after, and the archive sheet can be cloned from the finished schema.
+
+**Findings that drove it (live audit, 2026-08-18):**
+- Two live PUBLIC publish links: master `Read Only - Full` ON (all 1,111 contracts + attachments,
+  no login); CMO sheet `Edit by Anyone` ON (anyone with the URL can edit). Decision: turn both off.
+- Four master workflows fire on every row added — one of them (`CFO`) triggers on `Row ID is Any Value`
+  and requests an approval; two trigger on an attachment being added, which every migrated row
+  satisfies. A 379-row Move would fire hundreds of approval requests.
+- Both divisions' approval chains key off one `Status` column, so `Legal Approved` would route CMO
+  catering contracts to Pastor Jenkins via `Construction Approval`. Every workflow now needs an
+  explicit `Division` condition.
+- The primary key rebuilds from `YEAR(TODAY())`, so every contract's ID drifts each January — which
+  also breaks the `fbcgi-contract-analysis` skill's own lookup-by-ID and every summary PDF already
+  filed under an older ID. Chaining will use the immutable `Row ID` instead.
+- CMO contracts have had no renewal reminders: the 5/14/30/60/90 ladder lives only on the master and
+  keys on a date column the CMO side kept as text.
+
+**Supporting decisions:** dead columns exported then deleted (135 → ~105); `Value ($)` converted to a
+real currency column with a `Value Notes` companion; entry QC = formula flag + a gate that blocks a row
+from reaching Legal Review until it is clean; the daily Claude row review is **read-only** and reports
+to a digest — nothing is written or attached to a row without per-item approval; renewal comparison
+gets its own "Renewal delta review" mode so the analysis skill's independence rule stays intact.

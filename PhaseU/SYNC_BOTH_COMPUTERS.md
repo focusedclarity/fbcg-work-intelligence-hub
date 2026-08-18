@@ -1,5 +1,9 @@
 # Sync the Build Across Both Computers — Step by Step
 
+> **This file is PhaseU-specific.** For the general two-computer process that governs the whole hub,
+> see the top-level [`SYNC.md`](../SYNC.md). `main` is now the single canonical branch — ignore any
+> older branch name below and always work on `main`.
+
 > How to work this build from either computer / either Claude account, and fail over cleanly when one
 > account runs low on credits — without losing any progress.
 
@@ -13,8 +17,8 @@
 - **Claude credits are per-account.** Git is what lets you stop on Computer A / Account A and continue on
   Computer B / Account B with the full plan and up-to-date progress in hand.
 
-**Repo:** `fbcg-work-intelligence-hub` · **Branch these docs live on:** `claude/office-automation-no-ai-builder-763f82`
-(main branch = `main`). All build docs are in the `PhaseU/` folder.
+**Repo:** `fbcg-work-intelligence-hub` · **Canonical branch:** `main` (both computers pull/push `main`).
+All build docs are in the `PhaseU/` folder.
 
 ---
 
@@ -24,9 +28,9 @@
    ```bash
    git clone <your-repo-url> && cd fbcg-work-intelligence-hub
    ```
-3. [ ] **On the right branch:**
+3. [ ] **On the canonical branch:**
    ```bash
-   git checkout claude/office-automation-no-ai-builder-763f82
+   git checkout main
    ```
 4. [ ] **Claude Code installed and working.** *Known issue on the second computer:* the `claude` command may
    not be on PATH (documented in `HANDOFF.md` second-computer notes). If `claude` isn't found, finish that PATH
@@ -83,20 +87,14 @@ When Account A is low on credits, or you're moving to the other machine:
 
 ---
 
-## Optional: make `main` the canonical home
-These docs currently live on branch `claude/office-automation-no-ai-builder-763f82`. Once you're happy, merge
-them into `main` so every clone gets them by default:
-```bash
-git checkout main && git merge claude/office-automation-no-ai-builder-763f82 && git push
-```
-After that, the daily workflow can just use `main` on both computers.
+## `main` is the canonical home (done)
+These docs now live on `main`, so every clone gets them by default. Both computers just use `main`.
 
 ---
 
 ## Commands cheat-sheet
 ```bash
-git pull                                             # before every session
+git checkout main && git pull                        # before every session
 git add PhaseU/ && git commit -m "..." && git push   # after every session
-git checkout claude/office-automation-no-ai-builder-763f82   # ensure right branch
 git status                                           # see what's changed / current branch
 ```

@@ -38,6 +38,18 @@
 - New "Coming Soon" tile on the Facilities dashboards page, no route yet (`status: "pending"`) — same pattern as "Work Order Analytics".
 - **Open:** no build behind it. When ready, decide: static export refresh (like Fleet/FMX) vs. a live SolarWinds API pull (bigger build — API token + likely a Supabase edge function, same architecture as the Smartsheet-backed Facilities Inspections dashboard).
 
+### F. Facilities — Work Order Analytics (content built & staged, 2026-08-18) — NOT YET PUSHED TO LOVABLE
+- **Status: content built and verified, awaiting push to the Lovable Staff Hub.** The "Work Order Analytics" tile is still `status: "pending"` in the app; do NOT mark it live until the Lovable build lands.
+- Built from the Facilities maintenance-request PDF export (pulled 2026-07-13), parsed and de-duplicated by work-order ID.
+- **Scope:** the export actually holds **2,243 unique work orders (Jun 15 2023 → Jul 13 2026)**. The dashboard is scoped to the **Jan–Jun 2026** focus period = **1,311 work orders**. July 2026 partial → excluded.
+- Content: YTD + per-month (Jan–Jun) filter pills driving KPI tiles, monthly volume, by-category and by-location breakdowns, time-to-resolution buckets (same-day / 1–7d / 8–30d / 1–3mo / 3mo+), status snapshot, insights, and two auto-collapsed detail sections (data notes, full category table).
+- **Honesty caveats baked in:** resolution timing is only known for the **94 all-time / 20 in-period** work orders carrying a recorded resolution date (median 6.5 days all-time); **~90% of rows have no explicit open/closed status**, so no closure/backlog rate is shown. A real closure rate needs the **Status field from the live maintenance system** (G. Thomas to obtain).
+- **Where the work lives:**
+  - Preview artifact (matches intended result): Claude artifact "Work Order Analytics".
+  - Build brief + verified `WORK_ORDER_DATA` constants + paste-ready Lovable prompt: `references/work-order-analytics-lovable-brief.md`.
+- **To ship:** run the "Prompt for Lovable" in the brief against project `55f65b31-3b4a-4c70-b01d-3d8d0b95f287` from a session with the Lovable connector attached → new route `/divisions/cbo/facilities/dashboards/work-orders`, component `src/pages/facilities/FacilitiesWorkOrderDashboard.tsx`, flip the tile to live, then update this record and the §4 table.
+- **Static snapshot, Phase 1**, same monthly-refresh model as Fleet.
+
 ### C. Human Resources — HR Monthly Metrics (live) — NEW DEPARTMENT LANDING
 - HR had no Reporting & Dashboards landing before this session. Added:
   - New `DeptGroup` `cbo-human-resources` in `ReportsDashboard.tsx`.
@@ -89,7 +101,7 @@ Marketing team asked whether stats could be pulled automatically instead of type
 | CBO | Business Services | Front Desk Dashboard | live |
 | CBO | Facilities | Facilities Inspections | live |
 | CBO | Facilities | **Fleet Report** | **live (new)** |
-| CBO | Facilities | Work Order Analytics | pending |
+| CBO | Facilities | **Work Order Analytics** | **pending — content built & staged, awaiting Lovable push** |
 | CBO | Facilities | **SolarWinds Energy Report** | **pending (new)** |
 | CBO | Marketing | CBO Weekly Digest — Email Performance | live |
 | CBO | Marketing | **Marketing Metrics** | **live (new)** |
@@ -110,6 +122,8 @@ Give the new AI:
 4. Any decision on the SolarWinds Energy Report build approach (static export vs. live API) before starting it.
 
 ### Open follow-ups
+- [ ] **Work Order Analytics: push to Lovable** — run the "Prompt for Lovable" in `references/work-order-analytics-lovable-brief.md` from a session with the connector attached; flip the tile live; then mark it live here + in §4.
+- [ ] **Work Order Analytics: get the Status field** from the live maintenance system → enables real open/closed counts + a true closure rate; drop the "status can't be derived" caveat.
 - [ ] Monthly refresh cadence for Fleet, HR, Marketing Metrics (all static, frozen July 2026).
 - [ ] SolarWinds Energy Report: decide static export vs. live API build.
 - [ ] Marketing auto-pull: decide if MarComm requests live in Asana; scope ActiveCampaign edge-function build (Phase 2) if pursued.

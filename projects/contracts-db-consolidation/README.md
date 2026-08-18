@@ -56,7 +56,8 @@ against two sheets; writes `audit_pairs.csv`, `audit_master_only.csv`, `audit_su
 
 ## Next actions
 
-- [ ] Step 0 inventory (automations + forms) — in progress via the Claude Browser pane
+- [x] Step 0 inventory — automations (27 master / 11 CMO) + forms captured 2026-08-18, see STEP0-INVENTORY.md
+- [ ] Step 0 remainder: conditional formatting + saved filters on the CMO sheet
 - [ ] Build + test the CMO Dynamic View (`Division = CMO`) with a real CMO user, attachments panel verified
 - [ ] Run `audit_pairs.py`, import `audit_pairs.csv` as the audit sheet
 - [ ] Contracts sign-off on the `Survivor (confirm)` column

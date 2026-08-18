@@ -1,81 +1,110 @@
 # Step 0 — Inventory of what the Smartsheet API cannot read
 
-The Smartsheet API (and the MCP tools) expose rows, columns, shares, attachments, discussions,
-reports and dashboards. They do **not** expose automations, forms, conditional formatting, or the
-cross-sheet-reference list. Those have to be captured from the UI — either by G. Thomas, or by
-Claude driving the Browser pane once signed in to Smartsheet.
+Captured 2026-08-18 by driving the Smartsheet UI in the Claude Browser pane (read-only: opened
+`Automation → Manage automation workflows`, `Forms → Manage forms`, and the CMO workspace items).
+The API exposes rows, columns, shares, attachments, discussions, reports and dashboards — but not
+automations, forms, or conditional formatting, so this had to come from the UI.
 
 Sheets in scope:
 - **Master** — Contracts Database, id `1551069754642308`, `/CBO/Contracts Database`
 - **Source** — CMO Contracts Database, id `8818557085241220`, `/CMO TEAM ONLY/Contracts/CMO Contracts Database`
 
-Capture order: CMO automations → master automations → forms → cross-sheet refs → formatting/views.
-
 ---
 
-## A. Automations — CMO Contracts Database
+## A. Automations — CMO Contracts Database (11 workflows, all active)
 
-For each workflow: `Automation → Manage workflows`, open it, record every branch.
+| # | Workflow | Trigger | Actions | Recipients | Last ran |
+|---|---|---|---|---|---|
+| 1 | CBO PGCA 3D Originator status update notification | rows changed AND `Status` changes to Any Value | Alert someone | Contacts in `Originator`, Gina Thomas | Dec 10 2025 |
+| 2 | CMO Approval | rows added **or** changed AND `Status` → `Legal Approved` | Alert, **Request an approval**, Change a cell | Rachelle Patterson, Gina Thomas, Contacts in `Originator`, Contacts in `Originating Department Director` | Aug 17 2026 |
+| 3 | CMO Executed contract flagged and attached | rows added **or** changed AND `Status` → `Approved and Signed` | Request an update, Change a cell | Gina Thomas, Lettie Carr Contracts | Aug 16 2026 |
+| 4 | CMO Initial Review | **rows added AND an attachment is added** | Alert, **Request an approval**, Change a cell | Gina Thomas, Lettie Carr Contracts, Rachelle Patterson, Loleta Holmes, Contacts in `Originator`, Contacts in `Originating Department Director` | Aug 13 2026 |
+| 5 | CMO Legal Resubmit to Originator | rows changed AND `Status` → `Legal Resubmit to Originator` | Alert, Request an update, Change a cell | Gina Thomas, Lettie Carr Contracts, Rachelle Patterson, Loleta Holmes, FBCG Procurement, Contacts in `Originator`, Contacts in `Originating Department Director` | Aug 1 2024 |
+| 6 | CMO Legal Review | rows changed AND `Status` → `CMO Initial Review Approved` | **Request an approval**, Change a cell | Gina Thomas, Lettie Carr Contracts, Stefanie May | Aug 13 2026 |
+| 7 | CMO Resubmission Back to Legal | rows changed AND `Status` → `Resubmission to Legal` | **Request an approval**, Change a cell | Lettie Carr Contracts, Rachelle Patterson, Gina Thomas, Loleta Holmes, FBCG Procurement | Aug 1 2024 |
+| 8 | Events - (CMO) Initial Review Approve / Decline | rows added **or** changed AND `Status` → `Events Initial Review` | Alert, **Request an approval**, Change a cell | Stacey Fleming, Gina Thomas, Contacts in `Originator` | never |
+| 9 | If event, change required renew date to No | rows added AND `Is this an event?` is `Yes` | Change a cell | — | Aug 11 2026 |
+| 10 | Reminder Legal Review | rows changed AND `Status` → `CMO Initial Review Approved` | Alert someone | Gina Thomas, Lettie Carr Contracts | Aug 14 2026 |
 
-| # | Workflow name | Active? | Trigger (event + when) | Conditions | Action(s) | Recipients | Rebuild in master? | Notes |
-|---|---|---|---|---|---|---|---|---|
-| 1 | | | | | | | | |
-| 2 | | | | | | | | |
-| 3 | | | | | | | | |
+(#1 is a stray CBO/PGCA-style workflow sitting on the CMO sheet — retire, do not rebuild.)
 
-Watch specifically for the workflows behind these CMO-only columns, since they drive the approval
-chain that has to be reproduced in the master with a `Division = CMO` condition:
-`CMO Initial CMO Approved`, `Legal Review`, `Keith Dukes approval`, `Diane initial review`,
-`CMO Approver >10K`, `Aja Reviewed Date`, `Quote / Proposal Expiration Date (n/a)`.
+**No copy-row automation lives here** — the copy is driven from the master (see B, `00.`).
 
-## B. Automations — Contracts Database (master)
+## B. Automations — Contracts Database (master) — 27 workflows
 
-Same table. Two things to flag per workflow:
-1. **Will it fire when 379 rows arrive?** (a Move counts as *rows added*)
-2. **Is it scoped so it will not now fire on CMO rows unintentionally?**
+The copy-row automation, recorded in full because Step 6 deletes it and rollback must recreate it:
 
-| # | Workflow name | Active? | Trigger | Conditions | Action(s) | Recipients | Fires on bulk arrival? | Needs Division scope? |
-|---|---|---|---|---|---|---|---|---|
-| 1 | | | | | | | | |
+> **`00. New CMO entries copied to CMO Smartsheet`**
+> Trigger: when rows are **added or changed** AND when `Division` changes to `CMO`
+> Actions: Alert someone, **Copy a row** (→ CMO Contracts Database)
+> Recipients: Gina Thomas · Last ran Aug 12 2026, 3:54 PM · Last modified Jul 20 2026
 
-**The copy-row automation** that duplicates `Division = CMO` submissions into the CMO sheet —
-record it in full here, because Step 6 deletes it and the rollback plan has to be able to recreate it:
+### 🔴 Fires on EVERY row added — these are the migration landmines
 
-- Name:
-- Trigger:
-- Condition:
-- Action / destination sheet:
-- Active:
+| Workflow | Trigger | Actions | Recipients | Why it matters |
+|---|---|---|---|---|
+| **CFO** | rows added AND `Row ID` is **Any Value** | Alert, **Request an approval**, Change a cell | Lettie Carr Contracts, Contacts in `Originator` | Unconditional. A 379-row Move = 379 approval requests plus 379 cell changes. |
+| **0. CBO Initial Review** | rows added AND `Originator` is **Any Value** | Change a cell | — | Unconditional; would rewrite a cell on every migrated row, potentially clobbering the CMO status we just merged. |
+| **Events - Pending Stacey Initial Review** | rows added AND an attachment is added or changed | Change a cell | — | Every migrated row arrives *with* attachments. |
+| **PGCA Reviewed and Signed** | rows added AND an attachment is added or changed | Alert, **Request an approval**, Change a cell | Gina Thomas, Sherline Lawson, Lettie Carr Contracts, Dr. Tujuana White, Dr. Eleanor White, Contacts in `Originator` | Same trigger, and it blasts approval requests to senior recipients. |
+
+### 🔴 Status-trigger collisions after consolidation
+
+Both divisions' chains key off the same `Status` column, so once CMO rows live in the master these
+pairs fire together unless each is gated on `Division`:
+
+| `Status` value | Master workflow | CMO workflow to be rebuilt | Result if unscoped |
+|---|---|---|---|
+| `Legal Approved` | `3. CBO Approval` → Junae Orendoff, Lettie Carr, Originator, Dept Director | `CMO Approval` → Rachelle Patterson, Loleta Holmes… | Both approver sets get requests for every contract |
+| `Legal Approved` | `Construction Approval` → Pam Virgil, **Pastor Jenkins**, Originator | (same value) | Pastor gets approval requests for CMO catering contracts |
+| `Legal Resubmit to Originator` | `CBO Legal Resubmit to Originator` | `CMO Legal Resubmit to Originator` | Duplicate alerts |
+| `Events Initial Review` | `Events - (CBO) Initial Review Approve / Decline` | `Events - (CMO) Initial Review…` | Duplicate approvals to Stacey Fleming |
+| `Executed` | `CBO Executed contract flagged and attached` | `CMO Executed contract flagged and attached` (on `Approved and Signed`) | Overlapping update requests |
+
+### Other master workflows (rebuild targets unaffected by the move)
+
+- Approval chain: `1. CBO`, `2. CBO Legal Review`, `Reminder CBO Initial Review`, `Reminder Legal`, `0. Originator - row changes`
+- `Construction Intake Route` (rows added AND `Originating Department` is Construction, or Originator ∈ Jerry Overbey / Robert L George Jr / Nicole Wells)
+- **Renewal reminder ladder — 5 / 14 / 30 / 60 / 90 days before `Required Notification to Renew by Date`** → Alert + Request an update to Gina Thomas, Lettie Carr Contracts, Vincent Miller, Originator, Dept Director
+- `Renew or Terminate Notification`, `If Event or Artist or Non renewal contract - update if renewable column to No`
+- **Dead / suspect:** `CFO Approval Route to Elder Barham then to Pastor` is *active* but triggers on `Division` changing to `CFO` — the master's `Division` picklist has no `CFO` option (`CBO`, `CMO`, `Office of the Pastor`, `PGCA`), so it can never fire. Same for the inactive `CFO Approval Route to Pastor`. Retire during Step 6.
+- **Inactive:** `Automation 1/2 - to update TODAY() formula daily` (lock/unlock rows, last ran Mar 2025).
 
 ## C. Forms
 
-The CMO dashboard links two forms; confirm which sheet each belongs to.
+| Form | Owning sheet | State |
+|---|---|---|
+| **Contracts Submission Form** | **master** | Active, **364 submissions** — this is the single intake |
+| Artist Rider InTake Form | master | Active, 0 submissions |
+| — | CMO Contracts Database | **No forms at all** |
 
-| Form | URL | Owning sheet | Fields / logic notes | Action at cutover |
-|---|---|---|---|---|
-| Contracts Submission Form | `https://app.smartsheet.com/b/form/62e59443fb694d97bea7494c082d4d18` | | | |
-| New Vendor Request Submission Form | `https://app.smartsheet.com/b/form/d3b8470a0af8461181fff0a78d4af02c` | | | |
+**Consequence for the plan:** there is no CMO form to merge or retire — good news. But it also means
+the CMO-only fields (artist deposits/balances, event fields, `Legal Review`, `CMO Initial CMO
+Approved`) are **typed directly into the CMO grid today**, since the master's form never collected
+them. After cutover those fields must be reachable either on the master form (conditional on
+`Division = CMO`) or as editable fields in the CMO Dynamic View — otherwise CMO staff lose the only
+place they can enter them.
 
-For the surviving master form, list the CMO-only questions to add with conditional logic on
-`Division = CMO` (artist/speaker fields, deposits/balances, event fields).
+## D. Cross-sheet references, reports, dashboards
 
-## D. Cross-sheet references and inbound links
-
-`⋯ (sheet menu) → Cross-sheet references` on each sheet, plus `Sheet used by` where available.
-
-| Source of the reference | Points at | Used for | Repoint to |
+| Asset | Type / location | Points at | Action |
 |---|---|---|---|
-| metrics sheet `6133771585671044` | CMO Contracts Database | dashboard tiles: Contract Count = 277, CMO Value = $4,117,760 | master, filtered `Division = CMO` |
-| | | | |
+| `Metrics` (`6133771585671044`) | sheet, `/Workspace: Contracts & Applications/Metrics` | CMO sheet via cross-sheet formulas; feeds dashboard tiles | Repoint to master + `Division = CMO` |
+| `User Database` (`4810942831349636`) | sheet, same workspace | dashboard leadership name/photo tiles | Unaffected |
+| CMO Contracts Executive Dashboard (`3579778738481028`) | dashboard, CMO TEAM ONLY | one METRIC widget reads the CMO sheet directly (`Originating Department`) | Repoint |
+| `CMO Contracts` (`7755998752100228`) | report, CMO TEAM ONLY > Contracts | CMO sheet, 49 columns, 1 filter, 1 sort | **Currently returns 0 rows** — rebuild against master, don't port the broken filter |
+| `CMO Metrics` | report, CMO TEAM ONLY > Contracts | CMO sheet — shows Counts **378**, Value **$8,631,500** | Rebuild against master |
+| `Contracts Value - CMO` (`8254086566596484`) | report, `(LEGACY DNU) Contracts & Applications` | legacy | Leave / retire |
 
-Known dashboard/report dependencies (already confirmed via API):
-- CMO Contracts Executive Dashboard `3579778738481028` — one METRIC widget reads a cell directly
-  from the CMO sheet (`Originating Department`); other tiles read metrics sheet `6133771585671044`;
-  two more tiles read sheet `4810942831349636` (leadership names/photos — unaffected).
-- Report `7755998752100228` "CMO Contracts" in `CMO TEAM ONLY > Contracts`.
-- Legacy report `8254086566596484` "Contracts Value - CMO" in `(LEGACY DNU) Contracts & Applications`.
+**⚠️ Reporting numbers already disagree**, before any migration: the dashboard tile reads **277
+contracts / $4,117,760** while the CMO Metrics report reads **378 / $8,631,500**, and the CMO
+Contracts report returns nothing. Do **not** use "dashboard tiles still match" as the post-migration
+correctness test (plan verification step 4) — the tiles are already wrong. Rebuild the CMO reporting
+from the master and validate against `get_sheet_aggregates` counts instead.
 
 ## E. Conditional formatting, saved filters, views (CMO sheet)
+
+Not yet captured — needs `Conditional Formatting` and the filter dropdown opened on the CMO sheet.
 
 | Rule / filter name | Definition | Recreate in master? |
 |---|---|---|
@@ -85,5 +114,6 @@ Known dashboard/report dependencies (already confirmed via API):
 
 ## Sign-off
 
-- Inventory complete (all workflows opened and recorded): ______ date ______
+- Automations + forms captured: **2026-08-18** (Claude, browser pane)
+- Conditional formatting / saved filters: ______
 - Reviewed with Contracts (Rev. Carr / Contracts): ______ date ______

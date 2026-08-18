@@ -1,0 +1,400 @@
+<title>Hub Operating Manual</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --paper:#f4f6f8; --surface:#ffffff; --surface-2:#eef1f5;
+    --ink:#18212e; --muted:#5b6879; --faint:#8996a6;
+    --line:#e0e5ec; --line-strong:#cdd5e0;
+    --accent:#0c6e69; --accent-ink:#0a4f4b; --accent-soft:#dcefed;
+    --good:#2f7d55; --good-soft:#dcefe3;
+    --warn:#8a5a10; --warn-soft:#f3e6cd;
+    --shadow:0 1px 2px rgba(24,33,46,.06), 0 8px 24px rgba(24,33,46,.06);
+    --radius:14px;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --paper:#0e131a; --surface:#161d27; --surface-2:#1d2632;
+      --ink:#e9edf3; --muted:#9aa6b6; --faint:#6a7787;
+      --line:#252f3c; --line-strong:#33404f;
+      --accent:#43bcb2; --accent-ink:#8fd8d1; --accent-soft:#123230;
+      --good:#57b783; --good-soft:#12281d;
+      --warn:#d6a24e; --warn-soft:#2c220f;
+      --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --paper:#0e131a; --surface:#161d27; --surface-2:#1d2632;
+    --ink:#e9edf3; --muted:#9aa6b6; --faint:#6a7787;
+    --line:#252f3c; --line-strong:#33404f;
+    --accent:#43bcb2; --accent-ink:#8fd8d1; --accent-soft:#123230;
+    --good:#57b783; --good-soft:#12281d;
+    --warn:#d6a24e; --warn-soft:#2c220f;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+    font-size:16px; line-height:1.6; letter-spacing:-.003em;
+    -webkit-font-smoothing:antialiased;
+  }
+  code,kbd,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+  h1,h2,h3{font-family:"Bricolage Grotesque","IBM Plex Sans",sans-serif; text-wrap:balance; margin:0}
+
+  .wrap{max-width:960px; margin:0 auto; padding:clamp(20px,5vw,56px) clamp(16px,4vw,32px) 72px}
+
+  /* ---- masthead ---- */
+  .mast{
+    position:relative; border:1px solid var(--line); background:var(--surface);
+    border-radius:var(--radius); box-shadow:var(--shadow);
+    padding:clamp(22px,4vw,38px); overflow:hidden;
+  }
+  .mast::before{
+    content:""; position:absolute; inset:0 0 auto 0; height:5px;
+    background:linear-gradient(90deg,var(--accent),color-mix(in srgb,var(--accent) 40%, var(--surface)));
+  }
+  .eyebrow{
+    font-family:"IBM Plex Mono",monospace; font-size:12px; font-weight:500;
+    letter-spacing:.18em; text-transform:uppercase; color:var(--accent-ink);
+    display:flex; align-items:center; gap:10px; margin-bottom:16px;
+  }
+  .eyebrow .dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
+  h1{font-size:clamp(28px,5vw,44px); line-height:1.04; font-weight:800; letter-spacing:-.02em}
+  .lede{color:var(--muted); font-size:clamp(15px,2vw,17px); max-width:60ch; margin-top:14px}
+  .metastrip{
+    display:flex; flex-wrap:wrap; gap:8px; margin-top:22px;
+  }
+  .chip{
+    font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--muted);
+    background:var(--surface-2); border:1px solid var(--line);
+    padding:5px 10px; border-radius:999px; display:inline-flex; gap:7px; align-items:center;
+  }
+  .chip b{color:var(--ink); font-weight:600}
+
+  .toggle{
+    position:absolute; top:16px; right:16px; z-index:2;
+    font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.05em;
+    background:var(--surface-2); color:var(--muted); border:1px solid var(--line);
+    padding:7px 11px; border-radius:999px; cursor:pointer;
+  }
+  .toggle:hover{color:var(--ink); border-color:var(--line-strong)}
+  .toggle:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+
+  /* ---- sections ---- */
+  section{margin-top:clamp(30px,5vw,52px)}
+  .sec-head{display:flex; align-items:baseline; gap:14px; margin-bottom:20px}
+  .sec-num{
+    font-family:"IBM Plex Mono",monospace; font-size:13px; font-weight:600;
+    color:var(--accent-ink); background:var(--accent-soft);
+    border-radius:8px; padding:3px 9px; flex:none; letter-spacing:.02em;
+  }
+  h2{font-size:clamp(20px,3vw,26px); font-weight:700; letter-spacing:-.015em}
+  .sec-sub{color:var(--muted); font-size:14.5px; margin:6px 0 0}
+
+  .card{
+    background:var(--surface); border:1px solid var(--line);
+    border-radius:var(--radius); box-shadow:var(--shadow); padding:clamp(18px,3vw,26px);
+  }
+
+  /* ---- the loop ---- */
+  .loop{display:grid; grid-template-columns:repeat(4,1fr); gap:12px}
+  .step{
+    position:relative; background:var(--surface); border:1px solid var(--line);
+    border-radius:12px; padding:16px 16px 18px; box-shadow:var(--shadow);
+  }
+  .step .k{font-family:"IBM Plex Mono",monospace; font-size:12px; color:var(--faint); letter-spacing:.1em}
+  .step h3{font-size:17px; margin-top:6px; font-weight:700; color:var(--accent-ink)}
+  .step p{margin:8px 0 0; font-size:13.5px; color:var(--muted); line-height:1.5}
+  .step .cmd{margin-top:12px}
+  .arrow{display:none}
+
+  .rule{
+    margin-top:16px; display:flex; gap:14px; align-items:flex-start;
+    background:var(--accent-soft); border:1px solid color-mix(in srgb,var(--accent) 30%, transparent);
+    border-radius:12px; padding:15px 18px;
+  }
+  .rule .mark{font-family:"Bricolage Grotesque"; font-weight:800; color:var(--accent-ink); font-size:20px; line-height:1.2; flex:none}
+  .rule p{margin:0; font-size:14.5px}
+  .rule b{color:var(--accent-ink)}
+
+  /* ---- code ---- */
+  .cmd{
+    font-family:"IBM Plex Mono",monospace; font-size:13px; line-height:1.7;
+    background:var(--surface-2); border:1px solid var(--line);
+    border-radius:10px; padding:12px 14px; overflow-x:auto; color:var(--ink);
+  }
+  .cmd .c{color:var(--faint)}
+  .cmd .g{color:var(--accent-ink)}
+  code.inline{
+    background:var(--surface-2); border:1px solid var(--line);
+    padding:1px 6px; border-radius:6px; font-size:.86em; color:var(--accent-ink);
+    white-space:nowrap;
+  }
+
+  /* ---- folder tree ---- */
+  .tree{display:grid; gap:2px}
+  .row{
+    display:grid; grid-template-columns:minmax(150px,220px) 1fr; gap:16px;
+    padding:13px 14px; border-radius:10px; align-items:start;
+  }
+  .row:nth-child(odd){background:var(--surface-2)}
+  .row .path{font-family:"IBM Plex Mono",monospace; font-size:13.5px; font-weight:500; color:var(--accent-ink)}
+  .row .path .slash{color:var(--faint)}
+  .row .desc{font-size:13.5px; color:var(--muted); line-height:1.5}
+  .row .desc b{color:var(--ink); font-weight:600}
+  @media(max-width:560px){.row{grid-template-columns:1fr; gap:4px}}
+
+  /* ---- numbered playbook ---- */
+  ol.play{list-style:none; counter-reset:s; margin:0; padding:0; display:grid; gap:14px}
+  ol.play li{
+    counter-increment:s; position:relative; padding-left:52px;
+  }
+  ol.play li::before{
+    content:counter(s); position:absolute; left:0; top:-2px;
+    width:34px; height:34px; border-radius:9px; display:grid; place-items:center;
+    font-family:"IBM Plex Mono",monospace; font-weight:600; font-size:15px;
+    background:var(--accent); color:#fff;
+  }
+  :root[data-theme="dark"] ol.play li::before{color:#08201f}
+  @media (prefers-color-scheme: dark){:root:not([data-theme="light"]) ol.play li::before{color:#08201f}}
+  ol.play li h3{font-size:16px; font-weight:700; margin-bottom:5px}
+  ol.play li p{margin:0 0 8px; font-size:14px; color:var(--muted)}
+
+  /* ---- two-col info ---- */
+  .grid2{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+  @media(max-width:640px){.grid2{grid-template-columns:1fr} .loop{grid-template-columns:1fr 1fr}}
+  @media(max-width:400px){.loop{grid-template-columns:1fr}}
+  .mini{background:var(--surface); border:1px solid var(--line); border-radius:12px; padding:16px 18px; box-shadow:var(--shadow)}
+  .mini h3{font-size:15px; font-weight:700; margin-bottom:6px; display:flex; align-items:center; gap:8px}
+  .mini .tag{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--accent-ink); background:var(--accent-soft); padding:2px 7px; border-radius:6px}
+  .mini p{margin:0; font-size:13.5px; color:var(--muted); line-height:1.55}
+  .mini p + p{margin-top:8px}
+
+  .note{
+    display:flex; gap:12px; align-items:flex-start; margin-top:16px;
+    border-left:3px solid var(--warn); background:var(--warn-soft);
+    padding:13px 16px; border-radius:0 10px 10px 0;
+  }
+  .note p{margin:0; font-size:13.5px; color:var(--ink)}
+  .note .lbl{font-family:"IBM Plex Mono",monospace; font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--warn); font-weight:600}
+
+  footer{margin-top:56px; padding-top:22px; border-top:1px solid var(--line); color:var(--faint); font-size:12.5px; font-family:"IBM Plex Mono",monospace; display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px}
+
+  a{color:var(--accent-ink); text-decoration-color:color-mix(in srgb,var(--accent) 40%, transparent); text-underline-offset:3px}
+</style>
+
+<div class="wrap">
+
+  <header class="mast">
+    <button class="toggle" id="tg" aria-label="Toggle color theme">◐ theme</button>
+    <div class="eyebrow"><span class="dot"></span>FBCGI Work Intelligence Hub · operating manual</div>
+    <h1>How the Hub Works</h1>
+    <p class="lede">Your git-backed second brain — one canonical copy on <code class="inline">main</code>, worked from two computers. This is the field guide: the folder map, the daily loop, and how to start anything new.</p>
+    <div class="metastrip">
+      <span class="chip">repo <b>fbcg-work-intelligence-hub</b></span>
+      <span class="chip">canonical <b>main</b></span>
+      <span class="chip">machines <b>gmail · fbcglenarden.org</b></span>
+    </div>
+  </header>
+
+  <!-- 01 THE GOLDEN RULE / LOOP -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <div>
+        <h2>The one rule, and the loop</h2>
+        <p class="sec-sub">Everything else hangs off this. Do it every session, on whichever machine you're at.</p>
+      </div>
+    </div>
+
+    <div class="rule">
+      <span class="mark">★</span>
+      <p><b>`main` is the single source of truth.</b> Both computers only pull and push <code class="inline">main</code>. You never lose work to a credit limit or a second machine — worst case, push what's done, switch, pull, keep going.</p>
+    </div>
+
+    <div class="loop" style="margin-top:16px">
+      <div class="step">
+        <div class="k">START</div>
+        <h3>Pull</h3>
+        <p>Get the latest before you touch anything.</p>
+        <div class="cmd"><span class="g">git</span> checkout main<br><span class="g">git</span> pull</div>
+      </div>
+      <div class="step">
+        <div class="k">DO</div>
+        <h3>Work</h3>
+        <p>Edit docs or build the project — one thing at a time.</p>
+      </div>
+      <div class="step">
+        <div class="k">CAPTURE</div>
+        <h3>Record</h3>
+        <p>Update the <code class="inline">projects/</code> record; log any real decision.</p>
+      </div>
+      <div class="step">
+        <div class="k">FINISH</div>
+        <h3>Push</h3>
+        <p>Send it up so the other machine sees it.</p>
+        <div class="cmd"><span class="g">git</span> add -A<br><span class="g">git</span> commit -m <span class="c">"…"</span><br><span class="g">git</span> push</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 02 STRUCTURE MAP -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <div>
+        <h2>Where everything lives</h2>
+        <p class="sec-sub">Seven folders, each with one job. Put new material where it belongs and the hub stays findable.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="tree">
+        <div class="row"><div class="path">context<span class="slash">/</span></div><div class="desc"><b>Read first.</b> Who you are, your role, team, goals, and <code class="inline">current-priorities.md</code>. The orientation layer that makes any new Claude session instantly useful.</div></div>
+        <div class="row"><div class="path">projects<span class="slash">/</span></div><div class="desc"><b>One file per project.</b> Status, what shipped, how to resume. e.g. <code class="inline">fbcgi-staff-hub-reporting.md</code>.</div></div>
+        <div class="row"><div class="path">decisions<span class="slash">/</span></div><div class="desc"><b>Append-only.</b> <code class="inline">log.md</code> — every meaningful decision with what &amp; why. Never rewrite past entries.</div></div>
+        <div class="row"><div class="path">references<span class="slash">/</span></div><div class="desc"><b>Reusable knowledge.</b> <code class="inline">playbooks/</code> (methods you follow), <code class="inline">sops/</code> (step-by-step procedures), <code class="inline">examples/</code>.</div></div>
+        <div class="row"><div class="path">templates<span class="slash">/</span></div><div class="desc"><b>Doc skeletons.</b> Copy-to-start files like <code class="inline">session-summary.md</code>.</div></div>
+        <div class="row"><div class="path">archives<span class="slash">/</span></div><div class="desc"><b>Retired material.</b> Finished or superseded work kept for the record.</div></div>
+        <div class="row"><div class="path">PhaseU<span class="slash">/</span></div><div class="desc"><b>The office-automation build.</b> Large, self-contained M365 project (Power Automate · Planner · SharePoint).</div></div>
+      </div>
+      <div class="note">
+        <div>
+          <span class="lbl">Front door</span>
+          <p style="margin-top:5px"><code class="inline">README.md</code> is the map · <code class="inline">SYNC.md</code> is the two-computer process. When in doubt, start there.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 03 START A NEW PROJECT -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <div>
+        <h2>Starting a new project</h2>
+        <p class="sec-sub">A genuine sequence — follow it in order and the project is trackable from day one, on both machines.</p>
+      </div>
+    </div>
+    <div class="card">
+      <ol class="play">
+        <li>
+          <h3>Pull, then create the record</h3>
+          <p>Start from a fresh <code class="inline">main</code>. Add one file: <code class="inline">projects/&lt;short-name&gt;.md</code>.</p>
+          <div class="cmd"><span class="g">git</span> checkout main &amp;&amp; <span class="g">git</span> pull<br><span class="c"># then create</span> projects/&lt;short-name&gt;.md</div>
+        </li>
+        <li>
+          <h3>Write the header block</h3>
+          <p>Top of the file: <b>Type · Status · Last-updated · Owner</b>, then a one-line "what &amp; why." This is what future-you (or the other computer) reads first.</p>
+        </li>
+        <li>
+          <h3>Capture the essentials</h3>
+          <p>Where it lives (tools, URLs, IDs), what's been built, the data source, and a <b>"how to resume"</b> section. Enough that any session can pick it up cold.</p>
+        </li>
+        <li>
+          <h3>Log the founding decisions</h3>
+          <p>Append to <code class="inline">decisions/log.md</code> anything you chose and why — data source, phase-1 approach, deferred work.</p>
+        </li>
+        <li>
+          <h3>Add it to priorities, then push</h3>
+          <p>Put a line in <code class="inline">context/current-priorities.md</code> so it surfaces next session. Commit and push to <code class="inline">main</code>.</p>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 04 ADD CONTENT -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">04</span>
+      <div>
+        <h2>Adding content as you go</h2>
+        <p class="sec-sub">Small, frequent updates beat big rewrites. Match the material to its folder.</p>
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="mini">
+        <h3><span class="tag">decisions/</span> A decision</h3>
+        <p>Append one line to <code class="inline">log.md</code>. Format: <span class="mono">[date] DECISION: … | REASONING: … | CONTEXT: …</span></p>
+        <p>Never edit old entries — the value is the unbroken trail.</p>
+      </div>
+      <div class="mini">
+        <h3><span class="tag">context/</span> Orientation</h3>
+        <p>Keep <code class="inline">current-priorities.md</code> honest at the start/end of a session. Fill the <span class="mono">(fill in)</span> blanks in <code class="inline">me.md</code>, <code class="inline">team.md</code>, <code class="inline">goals.md</code> when you have a minute.</p>
+      </div>
+      <div class="mini">
+        <h3><span class="tag">references/</span> Know-how</h3>
+        <p>A method you follow → <code class="inline">playbooks/</code>. A repeatable procedure → <code class="inline">sops/</code>. A worked sample → <code class="inline">examples/</code>.</p>
+      </div>
+      <div class="mini">
+        <h3><span class="tag">templates/</span> A reusable skeleton</h3>
+        <p>Made a doc you'll want to stamp out again? Save a blank version here and copy it next time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 05 CLAUDE WEB BRANCHES -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">05</span>
+      <div>
+        <h2>Landing a Claude-on-the-web session</h2>
+        <p class="sec-sub">Web sessions push to their own <code class="inline">claude/…</code> branch. That's delivery, not storage — land it on main right away.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="cmd"><span class="g">git</span> checkout main &amp;&amp; <span class="g">git</span> pull<br><span class="g">git</span> merge origin/claude/&lt;the-branch-name&gt;   <span class="c"># clean merge for docs</span><br><span class="g">git</span> push</div>
+      <div class="note">
+        <div>
+          <span class="lbl">Why it matters</span>
+          <p style="margin-top:5px">If finished work stays parked on a feature branch, the other computer's plain <code class="inline">git pull</code> won't see it. Merge to <code class="inline">main</code>, then start the next task from a fresh pull — don't keep stacking on the old branch.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 06 CHEAT SHEET -->
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">06</span>
+      <div>
+        <h2>Cheat-sheet</h2>
+        <p class="sec-sub">The whole workflow in six lines.</p>
+      </div>
+    </div>
+    <div class="card">
+      <div class="cmd"><span class="c"># before every session — on either computer</span>
+<span class="g">git</span> checkout main &amp;&amp; <span class="g">git</span> pull
+
+<span class="c"># after every session</span>
+<span class="g">git</span> add -A &amp;&amp; <span class="g">git</span> commit -m <span class="c">"what changed (date)"</span> &amp;&amp; <span class="g">git</span> push
+
+<span class="c"># land a Claude-web task branch onto main</span>
+<span class="g">git</span> merge origin/claude/&lt;branch&gt; &amp;&amp; <span class="g">git</span> push
+
+<span class="c"># see what's changed / which branch you're on</span>
+<span class="g">git</span> status</div>
+    </div>
+  </section>
+
+  <footer>
+    <span>fbcg-work-intelligence-hub · main</span>
+    <span>pull first · push after · one canonical copy</span>
+  </footer>
+
+</div>
+
+<script>
+  (function(){
+    var btn=document.getElementById('tg');
+    var root=document.documentElement;
+    btn.addEventListener('click',function(){
+      var cur=root.getAttribute('data-theme');
+      if(!cur){cur=matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}
+      root.setAttribute('data-theme', cur==='dark'?'light':'dark');
+    });
+  })();
+</script>

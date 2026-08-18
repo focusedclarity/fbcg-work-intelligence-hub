@@ -1,0 +1,796 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FBCG Incident Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700;800&family=Public+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<style>
+:root{
+  --ground:#eef1f5; --surface:#ffffff; --surface-2:#f6f8fb;
+  --ink:#161c26; --ink-2:#4a5568; --ink-3:#7a8699; --line:#e0e5ec; --line-2:#eef1f5;
+  --masthead:#141b2b; --masthead-ink:#e8edf5; --masthead-ink-2:#9aa7bd;
+  --accent:#2f5fae; --accent-soft:#e4ecf8;
+  --cat-1:#2f5fae; --cat-2:#0f9488; --cat-3:#c87a16; --cat-4:#9333a8;
+  --good:#2f855a; --warn:#c87a16; --serious:#dd6b20; --critical:#c0392b;
+  --good-bg:#e6f2ec; --warn-bg:#fbf0df; --serious-bg:#fbe9dc; --critical-bg:#f9e5e2;
+  --gold:#c6902a; --brand-purple:#7a3ea0;
+  --shadow:0 1px 2px rgba(20,27,43,.04),0 4px 16px rgba(20,27,43,.05);
+  --ctrl:#ffffff; --ctrl-line:#d5dbe4;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --ground:#0d1119; --surface:#151b26; --surface-2:#1b2230;
+    --ink:#e7ecf4; --ink-2:#a4b0c4; --ink-3:#6d7a90; --line:#28303f; --line-2:#1f2733;
+    --masthead:#0a0e16; --masthead-ink:#e8edf5; --masthead-ink-2:#8493ac;
+    --accent:#5288dc; --accent-soft:#1c2942;
+    --cat-1:#5288dc; --cat-2:#17a078; --cat-3:#be7c1a; --cat-4:#b266c6;
+    --good:#48bb78; --warn:#d69e2e; --serious:#ed8936; --critical:#e06a5a;
+    --good-bg:#16281f; --warn-bg:#2b2413; --serious-bg:#2c2013; --critical-bg:#2c1a17;
+    --gold:#d6a43e; --brand-purple:#c299e6;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 20px rgba(0,0,0,.35);
+    --ctrl:#1b2230; --ctrl-line:#323c4d;
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0d1119; --surface:#151b26; --surface-2:#1b2230;
+  --ink:#e7ecf4; --ink-2:#a4b0c4; --ink-3:#6d7a90; --line:#28303f; --line-2:#1f2733;
+  --masthead:#0a0e16; --masthead-ink:#e8edf5; --masthead-ink-2:#8493ac;
+  --accent:#5288dc; --accent-soft:#1c2942;
+  --cat-1:#5288dc; --cat-2:#17a078; --cat-3:#be7c1a; --cat-4:#b266c6;
+  --good:#48bb78; --warn:#d69e2e; --serious:#ed8936; --critical:#e06a5a;
+  --good-bg:#16281f; --warn-bg:#2b2413; --serious-bg:#2c2013; --critical-bg:#2c1a17;
+  --gold:#d6a43e; --brand-purple:#c299e6;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 20px rgba(0,0,0,.35);
+  --ctrl:#1b2230; --ctrl-line:#323c4d;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--ground);color:var(--ink);
+  font-family:"Public Sans",system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.5;-webkit-font-smoothing:antialiased}
+h1,h2,h3{font-family:"Archivo",system-ui,sans-serif;margin:0;line-height:1.15;text-wrap:balance}
+.tnum{font-variant-numeric:tabular-nums}
+button{font-family:inherit}
+
+.masthead{background:var(--masthead);color:var(--masthead-ink);border-bottom:3px solid var(--accent)}
+.masthead-in{max-width:1240px;margin:0 auto;padding:22px 24px 20px;display:flex;flex-wrap:wrap;gap:18px 32px;align-items:flex-start;justify-content:space-between}
+.brand{display:flex;flex-direction:column;gap:12px}
+.logo{height:52px;width:auto}
+.brand h1{font-size:clamp(21px,3.4vw,30px);font-weight:800;letter-spacing:-.02em;color:#fff}
+.brand-sub{color:var(--masthead-ink-2);font-size:13.5px;max-width:52ch}
+.eyebrow{font-family:"Archivo";font-weight:600;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--masthead-ink-2)}
+.top-right{display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.act-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.actbtn{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.16);color:var(--masthead-ink);
+  cursor:pointer;font-size:12.5px;font-weight:600;padding:7px 13px;border-radius:9px;font-family:"Public Sans"}
+.actbtn:hover{background:rgba(255,255,255,.16)}
+.actbtn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.actbtn.primary:hover{filter:brightness(1.08)}
+.theme-tog{display:inline-flex;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.14);border-radius:9px;padding:3px;gap:2px}
+.theme-tog button{background:none;border:0;color:var(--masthead-ink-2);cursor:pointer;font-size:12px;font-weight:600;padding:5px 11px;border-radius:6px}
+.theme-tog button.on{background:rgba(255,255,255,.14);color:#fff}
+.meta{display:flex;flex-direction:column;gap:2px;text-align:right}
+.meta .k{font-size:10.5px;letter-spacing:.13em;text-transform:uppercase;color:var(--masthead-ink-2);font-family:"Archivo";font-weight:600}
+.meta .v{font-size:14px;color:var(--masthead-ink);font-weight:500}
+
+.wrap{max-width:1240px;margin:0 auto;padding:0 24px 56px}
+
+.filterbar{position:sticky;top:0;z-index:20;margin:0 -24px 6px;padding:12px 24px;
+  background:color-mix(in srgb,var(--ground) 90%,transparent);backdrop-filter:blur(8px);
+  border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:12px 16px;align-items:center;justify-content:space-between}
+.filt-left{display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.filt-group{display:flex;align-items:center;gap:8px}
+.filt-lab{font-family:"Archivo";font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.seg{display:inline-flex;background:var(--ctrl);border:1px solid var(--ctrl-line);border-radius:10px;padding:3px;gap:2px}
+.seg button{background:none;border:0;color:var(--ink-2);cursor:pointer;font-size:13px;font-weight:600;padding:6px 12px;border-radius:7px;transition:.12s;white-space:nowrap;font-variant-numeric:tabular-nums}
+.seg button:hover{color:var(--ink)}
+.seg button.on{background:var(--accent);color:#fff}
+.seg.sm button{padding:5px 10px;font-size:12px}
+.msel{font-family:inherit;font-size:12.5px;font-weight:600;color:var(--ink-2);background:var(--ctrl);border:1px solid var(--ctrl-line);border-radius:9px;padding:6px 9px;cursor:pointer}
+.msel:focus{outline:2px solid var(--accent);outline-offset:1px}
+.cmp{display:inline-flex;align-items:center;gap:7px;background:var(--ctrl);border:1px solid var(--ctrl-line);color:var(--ink-2);
+  border-radius:9px;padding:6px 12px;font-size:12.5px;font-weight:600;cursor:pointer}
+.cmp:hover{color:var(--ink)}
+.cmp.on{background:var(--accent);border-color:var(--accent);color:#fff}
+.cmp .dot{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.7}
+.filt-right{text-align:right;display:flex;flex-direction:column;gap:1px}
+.filt-right .win{font-family:"Archivo";font-weight:700;font-size:14px;color:var(--ink);font-variant-numeric:tabular-nums}
+.filt-right .scope{font-size:11.5px;color:var(--ink-3)}
+.filt-right .win .lab{font-weight:600;font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3);font-family:"Archivo";margin-right:6px}
+
+.section-label{display:flex;align-items:baseline;gap:12px;margin:26px 2px 14px}
+.section-label h2{font-size:14px;font-weight:700;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-2)}
+.section-label .rule{flex:1;height:1px;background:var(--line)}
+.section-label .count{font-size:12.5px;color:var(--ink-3);font-variant-numeric:tabular-nums}
+.section-label .badge{font-family:"Archivo";font-size:10px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--good);background:var(--good-bg);padding:3px 8px;border-radius:20px}
+
+.grid{display:grid;gap:16px}
+.kpis{grid-template-columns:repeat(6,1fr)}
+.two{grid-template-columns:1fr 1fr}
+.resp{grid-template-columns:repeat(5,1fr)}
+@media(max-width:960px){.kpis{grid-template-columns:repeat(3,1fr)}.two{grid-template-columns:1fr}.resp{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}.resp{grid-template-columns:1fr 1fr}}
+
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 18px 16px;box-shadow:var(--shadow)}
+.card.plot{padding:18px 18px 12px}
+.card-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:4px;flex-wrap:wrap}
+.card-h h3{font-size:15.5px;font-weight:700;letter-spacing:-.01em}
+.card-h .sub{font-size:12.5px;color:var(--ink-3)}
+.card-sub{font-size:12.5px;color:var(--ink-3);margin:2px 0 12px}
+
+.kpi{position:relative;overflow:hidden}
+.kpi .lab{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-family:"Archivo"}
+.kpi .num{font-family:"Archivo";font-weight:800;font-size:33px;letter-spacing:-.03em;line-height:1;margin:9px 0 5px;font-variant-numeric:tabular-nums}
+.kpi .foot{font-size:12px;color:var(--ink-2)}
+.kpi .stripe{position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent)}
+.kpi.s-critical .stripe{background:var(--critical)}.kpi.s-critical .num{color:var(--critical)}
+.kpi.s-serious .stripe{background:var(--serious)}
+.kpi.s-warn .stripe{background:var(--warn)}
+.kpi.s-accent .stripe{background:var(--accent)}.kpi.s-accent .num{color:var(--accent)}
+
+/* compare strip */
+#compare[hidden]{display:none}
+#compare{margin-bottom:16px}
+.cmp-card .card-sub{margin-bottom:14px}
+.cmp-rows{display:flex;flex-direction:column;gap:10px}
+.cmp-row{display:grid;grid-template-columns:74px 1fr 96px;align-items:center;gap:12px}
+.cmp-row .yr{font-family:"Archivo";font-weight:700;font-size:14px;color:var(--ink-2);font-variant-numeric:tabular-nums}
+.cmp-row.cur .yr{color:var(--accent)}
+.cmp-track{position:relative;height:24px;background:var(--surface-2);border-radius:6px;overflow:hidden}
+.cmp-fill{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--accent);transition:width .7s cubic-bezier(.2,.7,.3,1)}
+.cmp-row .rt{font-size:12.5px;color:var(--ink-2);text-align:right;font-variant-numeric:tabular-nums}
+.cmp-row .rt b{color:var(--ink);font-size:14px}
+
+.bars{display:flex;flex-direction:column;gap:9px;margin-top:4px}
+.bar-row{display:grid;grid-template-columns:132px 1fr 40px;align-items:center;gap:10px}
+.bar-row .name{font-size:12.5px;color:var(--ink-2);text-align:right;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar-track{position:relative;height:20px;background:var(--surface-2);border-radius:5px;overflow:hidden}
+.bar-fill{position:absolute;left:0;top:0;bottom:0;border-radius:5px;transition:width .7s cubic-bezier(.2,.7,.3,1)}
+.bar-row .val{font-size:13px;font-weight:600;color:var(--ink);text-align:right;font-variant-numeric:tabular-nums}
+.bar-row.dim .name,.bar-row.dim .val{color:var(--ink-3)}
+.bar-row.click{cursor:pointer}
+.bar-row.click .bar-track{transition:box-shadow .12s}
+.bar-row.click:hover .bar-track,.bar-row.click:focus-visible .bar-track,.bar-row.sel .bar-track{box-shadow:0 0 0 2px var(--accent)}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin-top:14px}
+.legend .it{display:flex;align-items:center;gap:7px;font-size:12.5px;color:var(--ink-2)}
+.legend .sw{width:11px;height:11px;border-radius:3px;flex:none}
+
+.meter{display:flex;flex-direction:column;gap:8px}
+.meter .top{display:flex;align-items:baseline;justify-content:space-between}
+.meter .big{font-family:"Archivo";font-weight:800;font-size:26px;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.meter .lab{font-size:11.5px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--ink-3);font-family:"Archivo"}
+.meter .track{height:7px;border-radius:4px;background:var(--surface-2);overflow:hidden}
+.meter .track>i{display:block;height:100%;border-radius:4px;transition:width .7s cubic-bezier(.2,.7,.3,1)}
+.meter .note{font-size:11.5px;color:var(--ink-3)}
+
+/* drill-down detail */
+.detail{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.detail[hidden]{display:none}
+.detail .dh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}
+.detail .dh .dt{font-family:"Archivo";font-weight:700;font-size:13.5px;color:var(--ink)}
+.detail .dh .dt b{color:var(--accent)}
+.detail .dclose{border:1px solid var(--ctrl-line);background:var(--ctrl);color:var(--ink-2);border-radius:7px;font-size:12px;font-weight:600;padding:4px 9px;cursor:pointer}
+.detail .dclose:hover{color:var(--ink)}
+.tw{overflow-x:auto;max-height:340px;overflow-y:auto;border:1px solid var(--line);border-radius:9px}
+table.rec{width:100%;border-collapse:collapse;font-size:12.5px}
+table.rec th{position:sticky;top:0;background:var(--surface-2);text-align:left;font-family:"Archivo";font-weight:600;font-size:11px;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-3);padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap}
+table.rec td{padding:7px 10px;border-bottom:1px solid var(--line-2);color:var(--ink-2);vertical-align:top}
+table.rec tr:last-child td{border-bottom:0}
+table.rec td.mono{font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap}
+.detail .empty{font-size:12.5px;color:var(--ink-3);padding:10px 2px}
+.detail .pii{font-size:11px;color:var(--ink-3);margin-top:8px;display:flex;gap:6px;align-items:flex-start}
+.detail .pii b{color:var(--ink-2)}
+
+/* insights */
+.insights{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:720px){.insights{grid-template-columns:1fr}}
+.ins{display:flex;gap:11px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 15px;box-shadow:var(--shadow)}
+.ins .ico{flex:none;width:30px;height:30px;border-radius:8px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px}
+.ins p{margin:0;font-size:13px;color:var(--ink-2);line-height:1.45}
+.ins p b{color:var(--ink);font-weight:600}
+.ins.warn .ico{background:var(--warn-bg);color:var(--warn)}
+.ins.crit .ico{background:var(--critical-bg);color:var(--critical)}
+.ins.good .ico{background:var(--good-bg);color:var(--good)}
+
+#tip{position:fixed;z-index:50;pointer-events:none;opacity:0;transition:opacity .12s;background:var(--masthead);color:var(--masthead-ink);border:1px solid rgba(255,255,255,.12);padding:7px 10px;border-radius:8px;font-size:12.5px;box-shadow:0 6px 24px rgba(0,0,0,.3);max-width:230px;line-height:1.35}
+#tip b{color:#fff;font-weight:600}
+svg{display:block;width:100%;height:auto;overflow:visible}
+.logo{width:auto}
+.gridline{stroke:var(--line);stroke-width:1}
+.axis-txt{fill:var(--ink-3);font-size:11px;font-family:"Public Sans";font-variant-numeric:tabular-nums}
+
+.notes{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:20px 22px;box-shadow:var(--shadow)}
+.notes h3{font-size:14px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:var(--ink-2);margin-bottom:12px}
+.notes ul{margin:0;padding-left:0;list-style:none;display:grid;gap:9px}
+.notes li{display:flex;gap:10px;font-size:13px;color:var(--ink-2);line-height:1.45}
+.notes li .dot{flex:none;width:6px;height:6px;border-radius:50%;background:var(--accent);margin-top:6px}
+.notes li.q .dot{background:var(--warn)}
+.footer{margin-top:24px;padding-top:18px;border-top:1px solid var(--line);display:flex;flex-wrap:wrap;gap:8px 20px;justify-content:space-between;font-size:12px;color:var(--ink-3)}
+.footer a{color:var(--accent);text-decoration:none}
+
+/* password gate */
+#gate{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--masthead);padding:24px}
+#gate[hidden]{display:none}
+#gate .box{width:100%;max-width:380px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:30px 28px;box-shadow:0 20px 60px rgba(0,0,0,.35);text-align:center}
+#gate .lock{width:46px;height:46px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-size:22px}
+#gate .eyebrow{font-family:"Archivo";font-weight:600;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--ink-3)}
+#gate h2{font-family:"Archivo";font-weight:800;font-size:21px;letter-spacing:-.02em;margin:6px 0;color:var(--ink)}
+#gate p{font-size:13px;color:var(--ink-2);margin:0 0 18px}
+#gate form{display:flex;flex-direction:column;gap:10px}
+#gate input{font-family:inherit;font-size:15px;padding:11px 13px;border-radius:9px;border:1px solid var(--ctrl-line);background:var(--surface-2);color:var(--ink);text-align:center;letter-spacing:.05em}
+#gate input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+#gate button{font-family:"Archivo";font-weight:700;font-size:14px;padding:11px;border-radius:9px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+#gate .err{font-size:12.5px;color:var(--critical);min-height:16px;font-weight:600}
+#gate .foot{font-size:11px;color:var(--ink-3);margin-top:14px;line-height:1.4}
+body.locked{overflow:hidden}
+body.locked .wrap,body.locked .masthead{filter:blur(7px);pointer-events:none;user-select:none}
+
+/* print header (screen-hidden) */
+#printHead{display:none}
+
+/* ===== print / PDF: force a legible light layout ===== */
+@media print{
+  :root,:root[data-theme="dark"],:root:not([data-theme="light"]){
+    --ground:#ffffff;--surface:#ffffff;--surface-2:#f2f4f8;
+    --ink:#12161d;--ink-2:#2f3a4a;--ink-3:#5a6473;--line:#c9d1dd;--line-2:#e4e8ef;
+    --masthead:#12233f;--masthead-ink:#ffffff;--masthead-ink-2:#c9d5e6;
+    --accent:#234f95;--accent-soft:#e6edf8;
+    --cat-1:#234f95;--cat-2:#0f7a70;--cat-3:#a9670f;--cat-4:#7a3ea0;
+    --good:#20653f;--warn:#a9670f;--serious:#b25417;--critical:#a5281f;
+    --good-bg:#e6f2ec;--warn-bg:#f7efdd;--serious-bg:#f7e7db;--critical-bg:#f6e2df;
+    --gold:#b9821f;--brand-purple:#6a2d8f;--shadow:none;--ctrl:#fff;--ctrl-line:#c9d1dd;
+  }
+  @page{margin:14mm}
+  html,body{background:#fff!important}
+  .filterbar,.theme-tog,.act-row,#tip,#gate,.detail,.bar-row .chev{display:none!important}
+  .masthead{border-bottom:2px solid var(--accent)}
+  .masthead-in{padding:0 0 12px}
+  .wrap{padding:0;max-width:100%}
+  #printHead{display:block;margin:10px 0 4px;padding:10px 0;border-bottom:1px solid var(--line)}
+  #printHead .pt{font-family:"Archivo";font-weight:800;font-size:16px;color:var(--ink)}
+  #printHead .ps{font-size:12px;color:var(--ink-2);margin-top:3px}
+  .card,.notes,.ins,.cmp-card,.kpi{box-shadow:none!important;break-inside:avoid;page-break-inside:avoid}
+  .section-label{margin:16px 2px 10px}
+  .grid{gap:10px}
+  .kpis{grid-template-columns:repeat(3,1fr)}
+  .resp{grid-template-columns:repeat(5,1fr)}
+  .insights{grid-template-columns:1fr 1fr}
+  .detail{page-break-inside:auto}
+  .tw{max-height:none;overflow:visible}
+  a[href]{color:var(--accent)!important;text-decoration:none}
+  * { -webkit-print-color-adjust:exact;print-color-adjust:exact }
+}
+</style>
+
+<header class="masthead">
+  <div class="masthead-in">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 356 84" role="img" aria-label="FBCG Safety and Security">
+        <path d="M74 30 C74 20 63 15 49 15 C34 15 25 23 25 33 C25 43 34 47 49 49 C64 51 74 55 74 66 C74 77 63 82 49 82 C36 82 26 78 25 69"
+          fill="none" stroke="var(--gold)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+        <rect x="95" y="14" width="4" height="56" rx="2" fill="var(--gold)"/>
+        <text x="114" y="40" font-family="Archivo,sans-serif" font-weight="700" font-size="30" letter-spacing="3" fill="var(--brand-purple)">SAFETY <tspan fill="var(--gold)">&amp;</tspan></text>
+        <text x="114" y="74" font-family="Archivo,sans-serif" font-weight="700" font-size="30" letter-spacing="3" fill="var(--brand-purple)">SECURITY</text>
+      </svg>
+      <h1>Incident Report Dashboard</h1>
+      <div class="brand-sub">First Baptist Church of Glenarden — analysis of all reported safety &amp; security incidents across FBCG facilities.</div>
+    </div>
+    <div class="top-right">
+      <div class="act-row">
+        <button class="actbtn" id="pdfBtn" title="Open a print-friendly view to save as PDF">🖨 Save PDF</button>
+        <button class="actbtn primary" id="emailBtn" title="Compose an email with a legible summary">✉ Email Pastor</button>
+      </div>
+      <div class="theme-tog" id="themeTog" role="group" aria-label="Color theme">
+        <button data-th="light" title="Light">☀︎ Light</button>
+        <button data-th="system" title="Match system">◐ Auto</button>
+        <button data-th="dark" title="Dark">☾ Dark</button>
+      </div>
+      <div class="meta"><span class="k">Last Updated</span><span class="v tnum">Aug 17, 2026</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div id="printHead"><div class="pt">FBCG Safety &amp; Security — Incident Report Dashboard</div><div class="ps" id="printScope"></div></div>
+  <div class="filterbar">
+    <div class="filt-left">
+      <div class="filt-group"><span class="filt-lab">Year</span>
+        <div class="seg" id="yearSeg" role="group" aria-label="Filter by year">
+          <button data-y="all" class="on">All</button>
+          <button data-y="2023">2023</button><button data-y="2024">2024</button>
+          <button data-y="2025">2025</button><button data-y="2026">2026</button>
+        </div>
+      </div>
+      <div class="filt-group"><span class="filt-lab">Period</span>
+        <div class="seg sm" id="perSeg" role="group" aria-label="Period">
+          <button data-pp="full" class="on">Full</button>
+          <button data-pp="ytd" title="Year-to-date: on/before Aug 17">YTD</button>
+        </div>
+        <select class="msel" id="monthSel" aria-label="Filter by month">
+          <option value="all">All months</option>
+          <option value="0">January</option><option value="1">February</option><option value="2">March</option>
+          <option value="3">April</option><option value="4">May</option><option value="5">June</option>
+          <option value="6">July</option><option value="7">August</option><option value="8">September</option>
+          <option value="9">October</option><option value="10">November</option><option value="11">December</option>
+        </select>
+      </div>
+      <button class="cmp" id="cmpBtn" aria-pressed="false"><span class="dot"></span>Compare years</button>
+    </div>
+    <div class="filt-right">
+      <div class="win"><span class="lab">Reporting Window</span><span id="winVal" class="tnum">Jul 2023 – Aug 2026</span></div>
+      <div class="scope" id="scopeNote"></div>
+    </div>
+  </div>
+
+  <div id="compare" hidden></div>
+
+  <div class="section-label"><h2>At a Glance</h2><span class="rule"></span><span class="count" id="glanceCount"></span></div>
+  <div class="grid kpis" id="kpis"></div>
+
+  <div class="section-label"><h2>Reporting Trend</h2><span class="rule"></span><span class="count" id="trendCount"></span></div>
+  <div class="card plot">
+    <div class="card-h">
+      <h3 id="trendTitle">Incidents Reported per Month</h3>
+      <div class="seg" id="modeSeg" role="group" aria-label="Trend view">
+        <button data-m="timeline" class="on">Timeline</button>
+        <button data-m="yoy">YoY</button>
+        <button data-m="mom">MoM Δ</button>
+      </div>
+    </div>
+    <div class="card-sub" id="trendSub"></div>
+    <div id="trend"></div>
+    <div class="legend" id="trendLegend"></div>
+  </div>
+
+  <div class="section-label"><h2>What &amp; Where</h2><span class="rule"></span><span class="count">nature &amp; location</span></div>
+  <div class="grid two">
+    <div class="card plot">
+      <div class="card-h"><h3>Nature of Report</h3><span class="sub" id="natSub"></span></div>
+      <div class="card-sub">Click any category to see the underlying incident records (structured fields — no narratives).</div>
+      <div class="bars" id="nature"></div>
+      <div class="detail" id="natDetail" hidden></div>
+    </div>
+    <div class="card plot">
+      <div class="card-h"><h3>Location of Incident</h3><span class="sub" id="locSub"></span></div>
+      <div class="card-sub">The Worship Center and Ministry Center concentrate most incidents.</div>
+      <div class="bars" id="location"></div>
+    </div>
+  </div>
+
+  <div class="section-label"><h2>Who &amp; How Severe</h2><span class="rule"></span><span class="count">affiliation &amp; injury severity</span></div>
+  <div class="grid two">
+    <div class="card plot">
+      <div class="card-h"><h3>Person Involved — FBCG Affiliation</h3><span class="sub" id="affSub"></span></div>
+      <div class="card-sub">Members lead; guests and non-affiliated visitors together are a large share.</div>
+      <div id="affil"></div>
+    </div>
+    <div class="card plot">
+      <div class="card-h"><h3>Injury / Illness Severity</h3><span class="sub" id="sevSub"></span></div>
+      <div class="card-sub">Most medical calls are complaints with no visible injury; severe injuries are the critical minority.</div>
+      <div class="bars" id="severity"></div>
+      <div class="card-sub" id="splitNote" style="margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)"></div>
+    </div>
+  </div>
+
+  <div class="section-label"><h2>Response &amp; Escalation</h2><span class="rule"></span><span class="count">how incidents were handled</span></div>
+  <div class="grid resp" id="response"></div>
+
+  <div class="section-label"><h2>Factual Insights</h2><span class="rule"></span><span class="badge">computed from data</span></div>
+  <div class="card-sub" style="margin:-6px 2px 12px">Each statement below is calculated directly from the records currently in view — figures, not opinions. They update with the filters above.</div>
+  <div class="insights" id="insights"></div>
+
+  <div class="section-label"><h2>Reading This Data</h2><span class="rule"></span></div>
+  <div class="notes">
+    <h3>Interpretation &amp; Data Quality Notes</h3>
+    <ul>
+      <li><span class="dot"></span><span><b>Medical response is the core workload.</b> Injury/illness/medical is the single largest category every year — this is as much a first-aid operation as a security one.</span></li>
+      <li><span class="dot"></span><span><b>2026 shifts toward security events:</b> weapons, suspicious individuals, mental-health and violence/threat reports concentrate in the current year — worth watching alongside the medical baseline.</span></li>
+      <li><span class="dot"></span><span><b>Escalation is well-documented:</b> Safety &amp; Security was notified in 75% of all reports and police in 41%.</span></li>
+      <li class="q"><span class="dot"></span><span><b>Data hygiene:</b> the <i>Department</i> field is blank on every row; "Nature" and "Location" free-text duplicates were merged for this view; one incident date (1963) is an obvious mis-entry excluded from the reporting window. 2023 (from July) and Aug 2026 are partial months.</span></li>
+      <li class="q"><span class="dot"></span><span><b>Under-completed follow-up fields:</b> "911 called" and "transported to hospital" are blank on more than half of reports, so response rates are shown against reports where the field was actually answered.</span></li>
+    </ul>
+    <div class="footer">
+      <span>Source: Smartsheet — <b>Incident Report</b> · 489 rows · pulled Aug 17, 2026</span>
+      <span><a href="https://app.smartsheet.com/sheets/M2Qq2rj2p65pp6QVX93WPfMx6ph4mf5j3Q5gCj31">Open source sheet ↗</a></span>
+    </div>
+  </div>
+</div>
+
+<div id="gate" hidden>
+  <div class="box">
+    <div class="lock">🛡️</div>
+    <div class="eyebrow">Restricted · Safety &amp; Security</div>
+    <h2>Incident Dashboard</h2>
+    <p>This report contains sensitive incident data. Enter the access password to continue.</p>
+    <form id="gateForm">
+      <input id="gatePw" type="password" placeholder="Password" autocomplete="current-password" aria-label="Password">
+      <button type="submit">Unlock</button>
+      <div class="err" id="gateErr" role="alert"></div>
+    </form>
+    <div class="foot">Client-side access control — a deterrent for casual viewing, not a substitute for hosting behind authentication.</div>
+  </div>
+</div>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+const $=s=>document.querySelector(s);
+const tip=$("#tip");
+const cvar=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+function showTip(html,x,y){tip.innerHTML=html;tip.style.opacity="1";const w=tip.offsetWidth,h=tip.offsetHeight;let nx=x+14,ny=y-h-12;if(nx+w>innerWidth-8)nx=x-w-14;if(ny<8)ny=y+18;tip.style.left=nx+"px";tip.style.top=ny+"px";}
+function hideTip(){tip.style.opacity="0";}
+const MN=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+const MONTH_NAMES=["January","February","March","April","May","June","July","August","September","October","November","December"];
+
+/* ===== record-level data (structured fields only — no narratives) =====
+ REC row = [0 Report#,1 Date,2 Nature,3 Location,4 Aff(M/E/G/O),5 Time,6 AMPM(A/P),
+            7 Severity(C/N/S/X),8 FirstAid(1/0/R),9 911(1/0),10 Transport(1/0),11 Police(1/0),12 S&S(1/0),13 Minor(1/0)] */
+const REC=[["Incident #0090-25","1963-09-06","Injury / Illness / Medical","Worship Center","M","1:22","P","C","1","0","0","1","1","0"],["Incident 013","2023-07-18","Injury / Illness / Medical","Worship Center","M","1:00","P","","0","","","0","0","0"],["Incident #0005","2023-07-30","Inappropriate Touch / SA","Worship Center","M","1:15","P","","0","","","0","0","0"],["Incident 012","2023-07-30","Vehicle Accident","Worship Center","G","1:15","P","","0","","","1","1","0"],["Incident #0006","2023-08-15","Other / unspecified","Worship Center","O","1:45 am","A","","0","","","1","1","0"],["Incident #0007","2023-08-18","Injury / Illness / Medical","Family Life Center","O","","P","X","1","1","1","0","1","1"],["Incident #0008","2023-08-19","Injury / Illness / Medical","Ministry Center","O","","P","C","1","1","0","1","1","1"],["Incident #0009","2023-08-28","Other / unspecified","Worship Center","O","","P","","0","","","0","1","0"],["Incident #0010","2023-08-31","Other / unspecified","Ministry Center","O","1:30","P","","0","","","0","1","0"],["Incident #0011","2023-09-06","Injury / Illness / Medical","Worship Center","E","6:00 pm","P","","0","","","0","1","0"],["Incident #0013","2023-09-07","Injury / Illness / Medical","Family Life Center","G","11:45","A","N","1","1","0","0","1","0"],["Incident #0016","2023-09-10","Injury / Illness / Medical","Service Building","E","6:45","P","S","1","1","1","1","1","0"],["Incident #0014","2023-09-12","Injury / Illness / Medical","Family Life Center","M","4:24","P","N","1","0","0","0","1","0"],["Incident #0017","2023-09-13","Other / unspecified","Ministry Center","E","9:00","A","","","","","1","1","1"],["Incident #0015","2023-09-13","Other / unspecified","Ministry Center","O","2:30","P","","","","","1","1","1"],["Incident #0020","2023-09-18","Dispute / Domestic","Ministry Center","O","8:40","A","","","","","1","1","0"],["Incident #0019","2023-09-18","Injury / Illness / Medical","Ministry Center","M","","P","","","","","0","1","0"],["Incident #0018","2023-09-18","Injury / Illness / Medical","Family Life Center","M","5:50","P","C","1","0","1","0","1","0"],["Incident #0021","2023-09-20","Injury / Illness / Medical","Family Life Center","O","3:45","P","N","1","0","1","0","1","0"],["Incident #0022","2023-09-29","Injury / Illness / Medical","Ministry Center","M","8:00","P","N","1","0","0","0","1","1"],["Incident #0024","2023-10-03","Injury / Illness / Medical","FBCG Travel","M","9:30 a.","A","S","1","0","","0","0","0"],["Incident #0023","2023-10-03","Theft","Ministry Center","E","3:00","P","","","","","0","1","0"],["Incident #0025","2023-10-09","Other / unspecified","Ministry Center","M","9:00","A","","","","","0","0","0"],["Incident #0031","2023-10-12","Dispute / Domestic","Family Life Center","G","12:00","P","","","","","1","0","0"],["Incident #0027","2023-10-12","Injury / Illness / Medical","Other / free-text","M","9:30","P","C","1","1","1","1","1","0"],["Incident #0026","2023-10-12","Vehicle Accident","Ministry Center","O","4.0","P","","","","","1","1","0"],["Incident #0028","2023-10-14","Injury / Illness / Medical","Ministry Center","M","10:10","A","N","1","1","0","1","1","0"],["Incident #0030","2023-10-16","Injury / Illness / Medical","Family Life Center","O","3:55","P","C","0","1","0","0","1","1"],["Incident #0029","2023-10-16","Injury / Illness / Medical","Ministry Center","E","","P","C","1","1","1","0","1","0"],["Incident #0033","2023-10-19","Property Damage","Ministry Center","G","","A","","","","","0","1","0"],["Incident #0034","2023-10-21","Injury / Illness / Medical","Worship Center","G","1:00","P","C","1","1","0","1","1","0"],["Incident #0035","2023-10-22","Injury / Illness / Medical","Worship Center","M","10:20","A","C","1","0","0","0","1","0"],["Incident #0036","2023-10-23","Injury / Illness / Medical","Ministry Center","O","2:10","P","C","1","1","0","0","1","1"],["Incident #0037","2023-10-25","Other / unspecified","Ministry Center","O","10:15","A","","","","","1","1","0"],["Incident #0038","2023-11-03","Injury / Illness / Medical","Other / free-text","O","","A","","","","","0","1","1"],["Incident #0040","2023-11-12","Other / unspecified","Worship Center","G","","P","","","","","1","1","0"],["Incident #0039","2023-11-12","Injury / Illness / Medical","Worship Center","M","0915","A","","1","0","0","0","0","0"],["Incident #0041","2023-11-13","Injury / Illness / Medical","Family Life Center","O","5:55","P","N","1","0","0","","0","1"],["Incident #0042","2023-11-16","Injury / Illness / Medical","Other / free-text","O","11.0","A","C","1","1","0","1","1","1"],["Incident #0043","2023-11-19","Injury / Illness / Medical","Worship Center","M","","A","C","1","1","0","1","1","0"],["Incident #0044","2023-11-21","Property Damage","Ministry Center","O","","P","","","","","0","1","0"],["Incident #0045","2023-11-29","Injury / Illness / Medical","Ministry Center","M","9:30","A","C","1","0","0","0","1","0"],["Incident #0046","2023-12-01","Other / unspecified","Ministry Center","O","7:00","A","","","","","0","1","0"],["Incident #0048","2023-12-04","Injury / Illness / Medical","Family Life Center","O","6:05","P","N","1","0","0","0","1","0"],["Incident #0047","2023-12-04","Injury / Illness / Medical","Ministry Center","G","","P","C","1","1","0","0","1","0"],["Incident #0049","2023-12-10","Injury / Illness / Medical","Worship Center","M","","A","N","1","0","0","0","0","0"],["Incident #0050","2023-12-14","Dispute / Domestic","Family Life Center","M","5:16","P","","","","","0","1","1"],["Incident #0051","2023-12-16","Injury / Illness / Medical","Family Life Center","M","9:15","A","S","1","0","1","0","1","0"],["Incident #0052","2023-12-17","Injury / Illness / Medical","Worship Center","M","8:50","A","N","R","0","0","","1","0"],["Incident #0054","2023-12-24","Injury / Illness / Medical","Worship Center","M","10:45","A","C","1","0","0","0","0","0"],["Incident #0053","2023-12-24","Injury / Illness / Medical","Worship Center","M","10:50","A","C","1","1","1","1","1","0"],["Incident #0055","2023-12-29","Dispute / Domestic","Family Life Center","M","3:00","P","","","","","0","1","0"],["Incident #0006-24","2023-12-31","Property Damage","FBCG Travel","M","","A","","","","","0","0","0"],["Incident #0056","2024-01-03","Injury / Illness / Medical","Worship Center","M","06:35","P","","1","0","0","1","1","0"],["Incident #0058","2024-01-04","Other / unspecified","Worship Center","O","3:10","P","","","","","1","1","0"],["Incident #0057","2024-01-04","Injury / Illness / Medical","Worship Center","E","9:100","P","C","1","0","0","0","0","0"],["Incident #0004-24","2024-01-10","Unauthorized Entry","Worship Center","G","2:00","P","","","","","0","1","0"],["Incident #0005-24","2024-01-14","Injury / Illness / Medical","Worship Center","M","","A","N","1","0","0","0","1","0"],["Incident #0008-24","2024-01-15","Injury / Illness / Medical","Family Life Center","M","2:00","P","N","1","1","0","0","1","0"],["Incident #0007-24","2024-01-15","Injury / Illness / Medical","Family Life Center","M","11:55","A","C","R","0","0","1","1","0"],["Incident #0009-24","2024-01-20","Injury / Illness / Medical","Family Life Center","G","9:50","P","S","1","0","1","0","1","1"],["Incident #0010-24","2024-01-23","Other / unspecified","Other / free-text","E","4:00","P","","","","","0","0","0"],["Incident #0011-24","2024-01-28","Vehicle Accident","Worship Center","M","10:00","A","","","","","0","0","0"],["Incident #0012-24","2024-01-30","Unauthorized Entry","Worship Center","O","5:48 PM","P","","","","","0","1","0"],["Incident #0013-24","2024-02-04","Vehicle Accident","Worship Center","G","08:30","A","","","","","1","1","0"],["Incident #0014-24","2024-02-05","Other / unspecified","Family Life Center","E","8:30","A","","","","","1","1","0"],["Incident #0018-24","2024-02-08","Injury / Illness / Medical","Worship Center","M","9:15","P","C","R","0","0","0","0","0"],["Incident #0017-24","2024-02-08","Injury / Illness / Medical","Worship Center","M","","P","C","0","0","0","0","0","0"],["Incident #0016-24","2024-02-08","Injury / Illness / Medical","Worship Center","M","","P","C","0","1","0","1","1","0"],["Incident #0015-24","2024-02-08","Injury / Illness / Medical","Worship Center","M","7:30am","A","C","1","0","0","0","0","0"],["Incident #0020-24","2024-02-13","Other / unspecified","Worship Center","M","9:30","A","","","","","0","1","0"],["Incident #0019-24","2024-02-14","Injury / Illness / Medical","Ministry Center","E","1:50","P","N","0","1","0","0","1","0"],["Incident #0022-24","2024-02-25","Injury / Illness / Medical","Worship Center","M","07:15","P","C","1","0","0","1","1","0"],["Incident #0021-24","2024-02-25","Injury / Illness / Medical","Worship Center","M","12:00no","P","C","1","1","0","0","1","0"],["Incident #0023-24","2024-03-06","Other / unspecified","Worship Center","E","8:05","P","","","","","1","1","0"],["Incident #0024-24","2024-03-07","Dispute / Domestic","Ministry Center","O","0820","P","","","","","1","1","0"],["Incident #0025-24","2024-03-11","Dispute / Domestic","Ministry Center","E","","P","","","","","0","1","0"],["Incident #0026-24","2024-03-16","Injury / Illness / Medical","Ministry Center","M","11:50","A","X","0","1","0","1","0","0"],["Incident #0029-24","2024-03-17","Other / unspecified","Worship Center","M","1:15","P","","","","","1","1","1"],["Incident #0028-24","2024-03-17","Injury / Illness / Medical","Other / free-text","M","0800","A","C","1","0","0","0","0","0"],["Incident #0027-24","2024-03-17","Injury / Illness / Medical","Worship Center","M","","A","C","1","0","0","0","0","0"],["Incident #0030-24","2024-03-20","Property Damage","Ministry Center","E","4:30","A","","","","","1","1","0"],["Incident #0031-24","2024-03-21","Injury / Illness / Medical","Ministry Center","O","2:28","P","S","0","1","1","0","1","1"],["Incident #0032-24","2024-03-24","Other / unspecified","Other / free-text","E","5:15","P","","","","","0","1","0"],["Incident #0033-24","2024-03-27","Other / unspecified","Family Life Center","O","8:30am","A","","","","","0","0","0"],["Incident #0035-24","2024-03-31","Other / unspecified","Empowerment Center","E","5:55","P","","","","","0","1","0"],["Incident #0034-24","2024-03-31","Other / unspecified","Worship Center","O","12:01","P","","","","","1","1","0"],["Incident #0036-24","2024-04-01","Dispute / Domestic","Family Life Center","G","9:40","A","","","","","0","1","0"],["Incident #0037-24","2024-04-04","Theft","Family Life Center","E","5:00 pm","P","","","","","0","1","0"],["Incident #0038-24","2024-04-06","Injury / Illness / Medical","Other / free-text","M","","A","","","","","1","0","0"],["Incident #0040-24","2024-04-07","Injury / Illness / Medical","Worship Center","M","1:25","P","N","1","0","0","0","0","0"],["Incident #0039-24","2024-04-07","Injury / Illness / Medical","Worship Center","M","10:30","A","N","0","0","0","0","1","0"],["Incident #0041-24","2024-04-08","Dispute / Domestic","Ministry Center","M","","P","","","","","1","1","0"],["Incident #0042-24","2024-04-09","Other / unspecified","Ministry Center","E","11:10","A","","","","","0","1","0"],["Incident #0043-24","2024-04-12","Injury / Illness / Medical","Worship Center","M","4:00","P","N","0","0","0","0","1","0"],["Incident #0047-24","2024-04-17","Injury / Illness / Medical","Other / free-text","O","12:40pm","P","C","1","0","0","0","1","1"],["Incident #0046-24","2024-04-21","Injury / Illness / Medical","Worship Center","M","1:45","P","N","1","0","0","0","0","0"],["Incident #0045-24","2024-04-21","Unauthorized Entry","Worship Center","O","1:45pm","P","","","","","0","1","0"],["Incident #0044-24","2024-04-21","Injury / Illness / Medical","Worship Center","M","10:30","A","N","1","0","0","0","1","0"],["Incident #0048-24","2024-04-26","Other / unspecified","Worship Center","M","7:15pm","P","","","","","1","1","0"],["Incident #0049-24","2024-04-27","Other / unspecified","Other / free-text","M","","A","","","","","1","1","1"],["Incident #0051-24","2024-04-28","Vehicle Accident","Worship Center","O","11:15","A","","","","","0","1","0"],["Incident #0050-24","2024-04-28","Other / unspecified","Worship Center","M","","P","","","","","1","1","0"],["Incident #0052-24","2024-05-02","Property Damage","Family Life Center","G","11:00","A","","","","","1","1","0"],["Incident #0053-24","2024-05-05","Injury / Illness / Medical","Other / free-text","M","10:00","A","","","","","0","0","0"],["Incident #0056-24","2024-05-06","Other / unspecified","Worship Center","G","11:50","A","","","","","0","1","0"],["Incident #0055-24","2024-05-08","Dispute / Domestic","Ministry Center","G","11:45","A","","","","","1","1","0"],["Incident #0054-24","2024-05-08","Injury / Illness / Medical","Worship Center","M","12:15","P","","1","0","0","0","1","0"],["Incident #0057-24","2024-05-11","Injury / Illness / Medical","Family Life Center","M","12:15","P","N","1","0","0","0","0","1"],["Incident #0058-24","2024-05-15","Unauthorized Entry","Other / free-text","O","6:03","P","","","","","1","1","0"],["Incident #0059-24","2024-05-17","Other / unspecified","Ministry Center","O","0930","A","","","","","1","1","0"],["Incident #0060-24","2024-05-20","Vehicle Accident","Ministry Center","G","6:37","P","","","","","1","1","0"],["Incident #0061-24","2024-05-22","Unauthorized Entry","Worship Center","O","10:00 a","A","","","","","1","1","0"],["Incident #0062-24","2024-05-24","Injury / Illness / Medical","Ministry Center","M","","P","C","0","0","0","1","1","1"],["Incident #0063-24","2024-06-04","Other / unspecified","Ministry Center","O","2:18","P","","","","","0","1","0"],["Incident #0064-24","2024-06-13","Injury / Illness / Medical","Ministry Center","E","1:45","P","C","0","0","","0","1","0"],["Incident #0065-24","2024-06-15","Theft","Worship Center","O","12:15","P","","","","","1","0","0"],["Incident #0066-24","2024-06-16","Injury / Illness / Medical","Worship Center","M","1:35","P","","","","","0","0","0"],["Incident #0067-24","2024-06-17","Fire","Worship Center","E","","P","","","","","0","1","0"],["Incident #0068-24","2024-06-23","Injury / Illness / Medical","Worship Center","M","6:00","P","C","1","1","1","1","1","0"],["Incident #0069-24","2024-06-25","Unauthorized Entry","Worship Center","M","5:00","P","","","","","1","1","0"],["Incident #0070-24","2024-06-26","Injury / Illness / Medical","Ministry Center","G","0943","A","C","R","0","0","0","1","0"],["Incident #0071-24","2024-06-28","Property Damage","Ministry Center","O","","P","","","","","1","1","0"],["Incident #0072-24","2024-07-08","Suspicious Individual","Ministry Center","O","4:16","P","","","","","0","1","0"],["Incident #0075-24","2024-07-10","Other / unspecified","Other / free-text","E","12:47","P","","","","","0","1","0"],["Incident #0074-24","2024-07-10","Suspicious Vehicle","Other / free-text","O","2:15","P","","","","","0","1","0"],["Incident #0073-24","2024-07-10","Other / unspecified","Worship Center","O","11:45 a","A","","","","","0","1","0"],["Incident #0076-24","2024-07-12","Other / unspecified","Ministry Center","E","","P","","","","","1","1","0"],["Incident #0078-24","2024-07-13","Injury / Illness / Medical","Worship Center","M","2:30","P","C","1","0","0","1","1","0"],["Incident #0077-24","2024-07-13","Injury / Illness / Medical","Worship Center","M","2:30","P","C","1","0","0","1","1","0"],["Incident #0079-24","2024-07-14","Injury / Illness / Medical","Worship Center","M","","P","C","1","0","0","0","0","0"],["Incident #0080-24","2024-07-21","Vehicle Accident","Worship Center","M","2:00","P","","","","","1","1","0"],["Incident #0081-24","2024-07-23","Theft","Worship Center","O","","A","","","","","0","1","1"],["Incident #0087-24","2024-07-26","Injury / Illness / Medical","Worship Center","E","12.0","P","C","1","1","1","1","1","0"],["Incident #0086-24","2024-07-26","Injury / Illness / Medical","Worship Center","O","","A","C","1","1","1","1","1","0"],["Incident #0085-24","2024-07-26","Injury / Illness / Medical","Worship Center","O","","A","C","1","1","1","1","1","0"],["Incident #0082-24","2024-07-26","Unauthorized Entry","Ministry Center","O","9:15","A","","","","","1","1","0"],["Incident #0083-24","2024-07-27","Dispute / Domestic","Family Life Center","M","7:00","P","","","","","0","1","1"],["Incident #0089-24","2024-08-02","Injury / Illness / Medical","Ministry Center","G","","P","C","R","1","1","0","1","0"],["Incident #0088-24","2024-08-02","Injury / Illness / Medical","Worship Center","M","","A","C","0","0","0","1","1","0"],["Incident #0084-24","2024-08-02","Injury / Illness / Medical","Worship Center","M","","A","","1","0","0","1","1","0"],["Incident #0093-24","2024-08-04","Other / unspecified","Worship Center","G","10:45","A","","","","","1","1","0"],["Incident #0092-24","2024-08-04","Other / unspecified","Worship Center","O","1:30 pm","P","","","","","0","0","0"],["Incident #0090-24","2024-08-04","Injury / Illness / Medical","Other / free-text","M","9:41","A","N","1","1","1","0","0","0"],["Incident #0091-24","2024-08-05","Vehicle Accident","Ministry Center","E","2:30","P","","","","","1","1","0"],["Incident #0094-24","2024-08-08","Injury / Illness / Medical","Family Life Center","M","","A","C","R","0","0","0","0","0"],["Incident #0095-24","2024-08-11","Injury / Illness / Medical","Worship Center","M","","A","C","1","0","0","0","0","0"],["Incident #0097-24","2024-08-18","Other / unspecified","Worship Center","M","4:30","P","","","","","1","1","0"],["Incident #0098-24","2024-08-22","Other / unspecified","Worship Center","O","3:50 pm","P","","","","","0","1","0"],["Incident #0103-24","2024-08-23","Unauthorized Entry","Worship Center","O","6:51 PM","P","","","","","1","1","0"],["Incident #0101-24","2024-08-26","Other / unspecified","Family Life Center","G","8:45","A","","","","","1","1","0"],["Incident #0100-24","2024-08-28","Elevator Entrapment","Worship Center","G","12:39 n","P","","","","","0","1","0"],["Incident #0099-24","2024-08-28","Vehicle Accident","Ministry Center","O","","P","","","","","0","1","0"],["Incident #0102-24","2024-08-30","Other / unspecified","Ministry Center","E","","P","","","","","1","1","0"],["Incident #0104-24","2024-09-02","Unauthorized Entry","Worship Center","O","10:09","A","","","","","0","1","0"],["Incident #0105-24","2024-09-04","Injury / Illness / Medical","Home School (Sports)","O","10:25","A","C","1","0","0","0","1","1"],["Incident #0106-24","2024-09-07","Other / unspecified","Worship Center","E","4:43Nar","P","","","","","0","1","0"],["Incident #0107-24","2024-09-08","Other / unspecified","Worship Center","O","10:49","A","","","","","0","1","0"],["Incident #0108-24","2024-09-09","Other / unspecified","Lower School (MC)","O","12:40","A","","","","","1","1","0"],["Incident #0110-24","2024-09-10","Parking Violation","Empowerment Center","O","5:15","P","","","","","0","1","0"],["Incident #0109-24","2024-09-10","Injury / Illness / Medical","Ministry Center","G","1:00","P","C","1","1","0","0","1","0"],["Incident #0111-24","2024-09-11","Unauthorized Entry","Home School (Sports)","O","1:40 pm","P","","","","","0","1","0"],["Incident #0112-24","2024-09-12","Property Damage","Ministry Center","E","9:25pm","P","","","","","0","1","0"],["Incident #0113-24","2024-09-16","Injury / Illness / Medical","Family Life Center","G","","A","C","1","0","1","0","0","0"],["Incident #0116-24","2024-09-18","Injury / Illness / Medical","Empowerment Center","E","12:08","P","C","1","1","0","0","1","0"],["Incident #0115-24","2024-09-18","Injury / Illness / Medical","Empowerment Center","O","","P","","1","1","0","0","1","0"],["Incident #0114-24","2024-09-18","Unauthorized Entry","Worship Center","O","11:15 a","A","","","","","1","0","0"],["Incident #0119-24","2024-09-19","Property Damage","Worship Center","O","4:33","P","","","","","1","1","0"],["Incident #0117-24","2024-09-19","Other / unspecified","Empowerment Center","O","1:00","P","","","","","1","1","1"],["Incident #0121-24","2024-09-21","Injury / Illness / Medical","Ministry Center","M","","A","C","1","1","0","1","0","0"],["Incident #0120-24","2024-09-21","Injury / Illness / Medical","Ministry Center","M","10:45","A","C","0","1","0","1","1","1"],["Incident #0125-24","2024-09-22","Dispute / Domestic","Worship Center","M","12:11","P","","","","","1","1","0"],["Incident #0122-24","2024-09-22","Injury / Illness / Medical","Worship Center","E","6:45","P","","","","","0","0","0"],["Incident #0124-24","2024-09-29","Vehicle Accident","Worship Center","G","1:45","P","","","","","1","1","0"],["Incident #0123-24","2024-09-29","Injury / Illness / Medical","Worship Center","G","","A","C","1","1","1","1","1","0"],["Incident #0127-24","2024-10-03","Other / unspecified","Ministry Center","E","7:45","P","","","","","1","1","0"],["Incident #0126-24","2024-10-03","Injury / Illness / Medical","Worship Center","M","4:45","P","C","R","1","0","1","1","0"],["Incident #0128-24","2024-10-04","Injury / Illness / Medical","Worship Center","M","1:20","P","","1","0","0","0","1","0"],["Incident #0129-24","2024-10-07","Injury / Illness / Medical","Home School (Sports)","O","12:50","P","C","1","0","0","0","1","1"],["Incident #0130-24","2024-10-08","Other / unspecified","Ministry Center","E","5:30","P","","","","","0","1","0"],["Incident #0133-24","2024-10-10","Dispute / Domestic","Worship Center","M","8:30","P","","","","","0","0","1"],["Incident #0132-24","2024-10-11","Injury / Illness / Medical","Worship Center","M","8:15","P","","","","","0","1","0"],["Incident #0131-24","2024-10-11","Other / unspecified","Worship Center","O","4:30","P","","","","","0","1","0"],["Incident #0134-24","2024-10-18","Other / unspecified","Lower School (MC)","E","8:35","P","","","","","1","1","0"],["Incident #0141-24","2024-10-20","Injury / Illness / Medical","Worship Center","M","","A","N","0","0","0","0","0","0"],["Incident #0135-24","2024-10-23","Dispute / Domestic","Home School (Sports)","O","","P","","","","","0","1","1"],["Incident #0139-24","2024-10-24","Unauthorized Entry","Family Life Center","M","1:30pm","P","","","","","0","1","0"],["Incident #0136-24","2024-10-24","Other / unspecified","Ministry Center","E","","P","","","","","1","1","0"],["Incident #0137-24","2024-10-27","Injury / Illness / Medical","Worship Center","M","10:56","A","C","1","1","1","1","0","0"],["Incident #0138-24","2024-10-31","Other / unspecified","Ministry Center","E","10:35","A","","","","","1","1","0"],["Incident #0140-24","2024-11-05","Injury / Illness / Medical","Worship Center","G","9:40","A","C","R","0","0","0","1","0"],["Incident #0142-24","2024-11-10","Other / unspecified","Worship Center","O","2:50","P","","","","","0","1","0"],["Incident #0143-24","2024-11-11","Other / unspecified","Family Life Center","O","12:45","P","","","","","0","1","0"],["Incident #0144-24","2024-11-14","Other / unspecified","Home School (Sports)","O","2:00","P","","1","","0","0","1","1"],["Incident #0145-24","2024-11-19","Other / unspecified","Worship Center","E","10:30","A","","","","","0","0","0"],["Incident #0146-24","2024-11-20","Other / unspecified","Ministry Center","M","9:10","A","","","","","0","1","0"],["Incident #0147-24","2024-11-21","Injury / Illness / Medical","Empowerment Center","O","4:15","P","N","1","0","0","0","1","0"],["Incident #0148-24","2024-11-27","Property Damage","Worship Center","E","9:55","P","","","","","1","1","0"],["Incident #0149-24","2024-12-01","Property Damage","Worship Center","M","11:10 a","A","","","","","0","0","0"],["Incident #0150-24","2024-12-02","Other / unspecified","Worship Center","O","8:48","P","","","","","0","1","0"],["Incident #0152-24","2024-12-03","Injury / Illness / Medical","Lower School (MC)","O","1:20","P","S","1","0","1","0","1","1"],["Incident #0151-24","2024-12-03","Other / unspecified","Ministry Center","G","9:40","A","","","","","1","1","0"],["Incident #0156-24","2024-12-07","Dispute / Domestic","Family Life Center","G","09:15","P","","","","","0","1","1"],["Incident #0153-24","2024-12-08","Injury / Illness / Medical","Worship Center","M","","A","C","1","0","","0","0","0"],["Incident #0154-24","2024-12-09","Injury / Illness / Medical","Ministry Center","M","7:04 PM","P","C","1","0","0","1","1","0"],["Incident #0155-24","2024-12-10","Other / unspecified","Worship Center","O","8:00","P","","","","","0","1","0"],["Incident #0157-24","2024-12-11","Injury / Illness / Medical","Family Life Center","O","6:15","P","N","1","0","0","0","1","0"],["Incident #0159-24","2024-12-12","Other / unspecified","Lower School (MC)","O","","P","","","","","1","1","1"],["Incident #0158-24","2024-12-12","Other / unspecified","Lower School (MC)","G","12:20 P","P","","","","","1","1","1"],["Incident #0162-24","2024-12-13","Injury / Illness / Medical","Worship Center","G","7:10","P","C","1","1","1","1","0","0"],["Incident #0160-24","2024-12-13","Injury / Illness / Medical","Worship Center","G","0710","P","C","","1","1","1","1","0"],["Incident #0161-24","2024-12-14","Injury / Illness / Medical","Other / free-text","M","12:14","P","N","1","0","0","0","0","0"],["Incident #0164-24","2024-12-15","Other / unspecified","Worship Center","M","","A","","","","","1","1","1"],["Incident #0163-24","2024-12-15","Other / unspecified","Worship Center","O","8:30","A","","","","","1","1","0"],["Incident #0166-24","2024-12-22","Unauthorized Entry","Worship Center","M","11:00","A","","","","","1","1","0"],["Incident #0165-24","2024-12-22","Injury / Illness / Medical","Worship Center","M","9:20","A","S","1","1","1","1","1","0"],["Incident #0167-24","2024-12-23","Injury / Illness / Medical","Ministry Center","G","8:00","A","C","0","1","1","0","1","0"],["Incident #0168-24","2024-12-28","Injury / Illness / Medical","Family Life Center","G","10:40","A","N","R","0","0","0","1","0"],["Incident #0169-24","2024-12-29","Other / unspecified","Worship Center","M","11:00","A","","","","","0","1","0"],["Incident #0170-24","2025-01-09","Other / unspecified","Ministry Center","O","3.0","P","","","","","1","1","0"],["Incident #0171-24","2025-01-10","Injury / Illness / Medical","Worship Center","G","9:15","P","C","0","1","1","1","1","0"],["Incident #0003-25","2025-01-19","Injury / Illness / Medical","Worship Center","E","11:45","A","","","","","0","1","0"],["Incident #0006-25","2025-01-23","Other / unspecified","Ministry Center","O","","P","","","","","1","1","0"],["Incident #0005-25","2025-01-24","Other / unspecified","Worship Center","O","10:05","A","","","","","1","1","0"],["Incident #0007-25","2025-02-02","Injury / Illness / Medical","Other / free-text","M","","P","C","1","1","0","1","1","0"],["Incident #0009-25","2025-02-16","Injury / Illness / Medical","Worship Center","M","","P","C","1","0","0","1","1","0"],["Incident #0008-25","2025-02-16","Injury / Illness / Medical","Worship Center","M","9:45","A","N","1","0","0","0","0","0"],["Incident #0010-25","2025-02-17","Injury / Illness / Medical","Family Life Center","G","8:45","P","","0","0","1","0","0","1"],["Incident #0011-25","2025-02-18","Injury / Illness / Medical","Ministry Center","O","4:30","P","S","1","0","1","1","1","0"],["Incident #0012-25","2025-02-21","Dispute / Domestic","Family Life Center","G","","P","","","","","0","1","0"],["Incident #0013-25","2025-02-28","Injury / Illness / Medical","Ministry Center","O","6:00","P","C","","","","0","1","0"],["Incident #0014-25","2025-03-03","Other / unspecified","Worship Center","E","7:13pm","P","","","","","1","1","0"],["Incident #0015-25","2025-03-04","Dispute / Domestic","Family Life Center","O","3:30","P","","","","","1","1","0"],["Incident #0019-25","2025-03-09","Vehicle Accident","Worship Center","M","9:35","A","","","","","1","1","0"],["Incident #0016-25","2025-03-09","Property Damage","Worship Center","M","0935","A","","","","","1","1","0"],["Incident #0020-25","2025-03-12","Other / unspecified","Worship Center","M","","P","","","","","1","1","0"],["Incident #0021-25","2025-03-15","Injury / Illness / Medical","Other / free-text","M","11:45","A","","","","","1","0","0"],["Incident #0023-25","2025-03-16","Injury / Illness / Medical","Worship Center","G","12:15","P","C","1","0","0","0","1","0"],["Incident #0022-25","2025-03-16","Injury / Illness / Medical","Worship Center","M","9:30","A","","1","0","0","0","0","0"],["Incident #0025-25","2025-03-26","Property Damage","Ministry Center","O","8:19","P","","","","","1","1","0"],["Incident #0024-25","2025-03-28","Property Damage","Worship Center","G","9:30","A","","","","","0","1","0"],["Incident #0028-25","2025-03-30","Other / unspecified","Worship Center","E","4:38","P","","","","","0","1","0"],["Incident #0027-25","2025-03-30","Injury / Illness / Medical","Worship Center","G","10:15","A","S","1","1","1","1","1","0"],["Incident #0026-25","2025-03-30","Injury / Illness / Medical","Worship Center","G","10:15","A","S","1","1","1","1","1","0"],["Incident #0029-25","2025-04-03","Other / unspecified","Ministry Center","O","1:13","P","","","","","1","1","0"],["Incident #0031-25","2025-04-04","Injury / Illness / Medical","Family Life Center","G","6:30","P","N","1","0","0","0","0","0"],["Incident #0030-25","2025-04-04","Dispute / Domestic","Ministry Center","G","2:00","P","","","","","0","1","0"],["Incident #0038-25","2025-04-06","Other / unspecified","Worship Center","O","2:00","P","","","","","1","1","1"],["Incident #0032-25","2025-04-06","Injury / Illness / Medical","Other / free-text","G","1:00","P","","","","","0","1","0"],["Incident #0033-25","2025-04-07","Injury / Illness / Medical","Family Life Center","G","","P","S","0","0","0","0","1","1"],["Incident #0035-25","2025-04-08","Dispute / Domestic","Home School (Sports)","G","","P","","","","","1","1","0"],["Incident #0034-25","2025-04-08","Other / unspecified","Home School (Sports)","E","","P","","","","","1","1","1"],["Incident #0036-25","2025-04-12","Injury / Illness / Medical","Worship Center","M","11:15","A","X","1","0","0","1","0","1"],["Incident #0037-25","2025-04-13","Injury / Illness / Medical","Worship Center","M","11:40 e","A","S","1","1","1","0","1","0"],["Incident #0039-25","2025-04-16","Property Damage","Worship Center","O","5:20pm","P","","","","","0","1","0"],["Incident #0040-25","2025-04-20","Other / unspecified","Worship Center","O","8:45","A","","","","","1","1","0"],["Incident #0041-25","2025-04-24","Other / unspecified","Lower School (MC)","E","","P","","","","","1","1","0"],["Incident #0042-25","2025-04-27","Injury / Illness / Medical","Worship Center","M","9:12","A","","","","","1","0","0"],["Incident #0043-25","2025-05-04","Injury / Illness / Medical","Other / free-text","M","10:10 a","A","N","1","0","0","0","0","0"],["Incident #0044-25","2025-05-07","Injury / Illness / Medical","Ministry Center","M","11:25","A","X","0","0","0","0","1","0"],["Incident #0045-25","2025-05-08","Other / unspecified","Ministry Center","O","12:15","P","","","","","0","1","0"],["Incident #0046-25","2025-05-12","Injury / Illness / Medical","Family Life Center","O","7:15","P","N","1","0","0","0","0","0"],["Incident #0051-25","2025-05-22","Property Damage","Other / free-text","O","","P","","","","","1","1","0"],["Incident #0047-25","2025-05-22","Injury / Illness / Medical","Family Life Center","M","11:15","A","","R","0","0","0","0","0"],["Incident #0048-25","2025-05-23","Other / unspecified","Family Life Center","M","","A","","","","","0","1","0"],["Incident #0050-25","2025-05-25","Injury / Illness / Medical","Other / free-text","G","","P","","1","0","0","0","0","1"],["Incident #0049-25","2025-05-25","Injury / Illness / Medical","Worship Center","M","9:20","A","C","1","1","0","1","1","0"],["Incident #0052-25","2025-05-30","Injury / Illness / Medical","Ministry Center","E","2:55","P","N","1","0","0","0","1","0"],["Incident #0054-25","2025-05-31","Injury / Illness / Medical","Worship Center","G","","A","C","1","1","0","1","1","1"],["Incident #0053-25","2025-05-31","Injury / Illness / Medical","Ministry Center","M","7:05","A","N","1","0","0","0","1","0"],["Incident #0055-25","2025-06-07","Injury / Illness / Medical","Worship Center","M","8:50","P","N","1","0","0","0","0","0"],["Incident #0056-25","2025-06-08","Injury / Illness / Medical","Worship Center","M","","A","N","1","0","","0","0","1"],["Incident #0057-25","2025-06-14","Injury / Illness / Medical","Worship Center","G","","P","C","1","1","1","1","0","0"],["Incident #0059-25","2025-06-15","Injury / Illness / Medical","Worship Center","M","1:00","P","C","0","1","1","1","1","0"],["Incident #0058-25","2025-06-15","Injury / Illness / Medical","Worship Center","M","7:58","A","C","1","1","1","0","1","0"],["Incident #0060-25","2025-06-17","Injury / Illness / Medical","Family Life Center","G","8:52","A","C","R","0","0","0","1","0"],["Incident #0061-25","2025-06-23","Injury / Illness / Medical","Family Life Center","M","2:00pm","","C","1","0","0","0","0","1"],["Incident #0063-25","2025-06-24","Theft","Ministry Center","O","7:15","P","","","","","1","1","0"],["Incident #0062-25","2025-06-24","Property Damage","Family Life Center","M","0830","A","","","","","1","1","0"],["Incident #0064-25","2025-06-25","Injury / Illness / Medical","Family Life Center","M","9:05","P","N","1","0","0","0","0","0"],["Incident #0065-25","2025-06-30","Injury / Illness / Medical","Family Life Center","M","11:20","A","C","0","1","0","1","1","0"],["Incident #0066-25","2025-07-10","Injury / Illness / Medical","Family Life Center","M","","A","N","1","0","0","0","0","1"],["Incident #0067-25","2025-07-13","Injury / Illness / Medical","Worship Center","M","11:11","A","C","0","0","0","0","0","0"],["Incident #0068-25","2025-07-15","Injury / Illness / Medical","Ministry Center","G","","P","C","0","0","0","0","1","0"],["Incident #0069-25","2025-07-18","Other / unspecified","Other / free-text","G","","P","","","","","1","0","1"],["Incident #0073-25","2025-07-20","Other / unspecified","Worship Center","E","10:10","A","","","","","1","0","0"],["Incident #0072-25","2025-07-20","Other / unspecified","Worship Center","M","10:15","A","","","","","1","0","0"],["Incident #0071-25","2025-07-20","Injury / Illness / Medical","Worship Center","M","","A","","","","","0","0","0"],["Incident #0070-25","2025-07-20","Injury / Illness / Medical","Other / free-text","M","9:15","A","","R","0","0","0","0","0"],["Incident #0075-25","2025-07-23","Injury / Illness / Medical","Ministry Center","O","4:30pm","P","X","1","1","1","0","1","1"],["Incident #0074-25","2025-07-23","Other / unspecified","Worship Center","O","3:50","P","","","","","1","1","0"],["Incident #0076-25","2025-07-29","Injury / Illness / Medical","Ministry Center","E","","P","S","0","1","1","0","1","0"],["Incident #0077-25","2025-07-30","Injury / Illness / Medical","Ministry Center","E","2:19","P","N","1","1","0","1","1","0"],["Incident #0078-25","2025-08-04","Property Damage","Worship Center","O","","A","","","","","1","1","0"],["Incident #0079-25","2025-08-13","Injury / Illness / Medical","Ministry Center","G","12:20","P","C","1","0","0","0","1","0"],["Incident #0080-25","2025-08-14","Other / unspecified","Worship Center","O","9:45","A","","","","","0","1","0"],["Incident #0082-25","2025-08-16","Injury / Illness / Medical","Ministry Center","M","1:50","P","C","1","1","0","1","1","1"],["Incident #0081-25","2025-08-17","Property Damage","Other / free-text","M","","A","","","","","0","1","0"],["Incident #0083-25","2025-08-19","Injury / Illness / Medical","Family Life Center","M","11.0","A","C","0","0","0","0","0","0"],["Incident #0087-25","2025-08-24","Injury / Illness / Medical","Worship Center","G","7:45","P","S","1","0","0","0","0","0"],["Incident #0086-25","2025-08-24","Injury / Illness / Medical","Worship Center","M","8:20","P","C","1","0","0","0","0","0"],["Incident #0085-25","2025-08-24","Injury / Illness / Medical","Worship Center","M","6:20","P","C","1","0","0","0","0","0"],["Incident #0084-25","2025-08-24","Other / unspecified","Other / free-text","M","7:15","A","","","","","1","1","0"],["Incident #0088-25","2025-09-04","Injury / Illness / Medical","Ministry Center","E","1:50","P","C","1","1","0","0","1","0"],["Incident #0089-25","2025-09-06","Injury / Illness / Medical","Worship Center","M","1:10","P","C","1","1","1","1","1","0"],["Incident #0091-25","2025-09-07","Theft","Worship Center","G","0941","A","","","","","1","1","0"],["Incident #0092-25","2025-09-09","Other / unspecified","Ministry Center","E","4:11 PM","P","","","","","0","1","0"],["Incident #0093-25","2025-09-10","Injury / Illness / Medical","Family Life Center","G","4:50","P","S","1","1","0","0","1","0"],["Incident #0094-25","2025-09-14","Injury / Illness / Medical","Worship Center","M","","A","C","1","0","0","0","1","0"],["Incident #0096-25","2025-09-21","Injury / Illness / Medical","Worship Center","M","9:00","A","","","","","0","0","0"],["Incident #0095-25","2025-09-21","Injury / Illness / Medical","Worship Center","M","9:10","A","N","R","0","0","0","0","0"],["Incident #0097-25","2025-09-25","Other / unspecified","Other / free-text","O","12:00 P","P","","","","","0","1","0"],["Incident #0098-25","2025-09-26","Injury / Illness / Medical","Ministry Center","M","1.0","P","C","1","1","0","0","1","0"],["Incident #0123-25","2025-10-05","Other / unspecified","Worship Center","G","","A","","","","","1","0","0"],["Incident #0100-25","2025-10-05","Other / unspecified","Worship Center","O","9:40","A","","","","","1","1","0"],["Incident #0099-25","2025-10-05","Dispute / Domestic","Worship Center","M","9:25","A","","","","","1","1","0"],["Incident #0101-25","2025-10-09","Other / unspecified","Lower School (MC)","O","0927","A","","","","","1","1","0"],["Incident #0102-25","2025-10-12","Injury / Illness / Medical","Worship Center","G","","A","C","1","1","0","0","0","1"],["Incident #0104-25","2025-10-13","Injury / Illness / Medical","Ministry Center","E","7:20pm","P","","","","","0","1","0"],["Incident #0103-25","2025-10-13","Unauthorized Entry","Ministry Center","O","1:45","P","","","","","1","1","0"],["Incident #0106-25","2025-10-15","Injury / Illness / Medical","Ministry Center","E","9:05","P","","","","","1","1","0"],["Incident #0105-25","2025-10-15","Injury / Illness / Medical","Lower School (MC)","E","9:05","P","C","1","1","0","0","1","0"],["Incident #0109-25","2025-10-18","Vehicle Accident","Other / free-text","M","1:45","P","","","","","1","0","0"],["Incident #0108-25","2025-10-19","Injury / Illness / Medical","Worship Center","G","0925","A","","","","","","1","0"],["Incident #0107-25","2025-10-19","Injury / Illness / Medical","Worship Center","G","9:25","A","","","","","0","0","0"],["Incident #0110-25","2025-10-29","Fire","Empowerment Center","O","11.0","A","","","","","0","1","0"],["Incident #0111-25","2025-10-30","Other / unspecified","Family Life Center","M","4:45","P","","","","","0","1","0"],["Incident #0112-25","2025-10-31","Injury / Illness / Medical","Worship Center","M","3:35","P","S","0","1","1","0","1","0"],["Incident #0113-25","2025-11-01","Other / unspecified","Worship Center","G","11:45","A","","","","","1","1","0"],["Incident #0114-25","2025-11-02","Injury / Illness / Medical","Worship Center","M","","P","C","1","0","0","0","0","0"],["Incident #0115-25","2025-11-05","Injury / Illness / Medical","Empowerment Center","O","2:40","P","C","0","0","0","0","1","0"],["Incident #0116-25","2025-11-06","Injury / Illness / Medical","Ministry Center","E","11:30","A","C","0","0","0","0","1","0"],["Incident #0117-25","2025-11-11","Injury / Illness / Medical","Family Life Center","G","4:00","P","N","1","0","0","0","0","0"],["Incident #0118-25","2025-11-16","Injury / Illness / Medical","Worship Center","M","11.0","A","","","","","0","1","0"],["Incident #0119-25","2025-11-18","Injury / Illness / Medical","Family Life Center","M","3:20","P","N","1","0","0","0","0","0"],["Incident #0120-25","2025-11-22","Injury / Illness / Medical","Family Life Center","G","12:45","P","S","1","1","0","1","1","1"],["Incident #0122-25","2025-11-23","Property Damage","Worship Center","G","9:18","A","","","","","1","0","0"],["Incident #0121-25","2025-11-23","Injury / Illness / Medical","Worship Center","M","","A","C","1","1","0","1","1","0"],["Incident #0124-25","2025-11-27","Injury / Illness / Medical","Worship Center","M","0950","A","C","1","1","0","1","1","0"],["Incident #0125-25","2025-12-05","Injury / Illness / Medical","Family Life Center","M","6:42","P","S","1","0","0","0","0","0"],["Incident #0127-25","2025-12-07","Other / unspecified","Family Life Center","M","1:07","P","","","","","0","1","1"],["Incident #0126-25","2025-12-07","Other / unspecified","Family Life Center","M","1:07","P","","","","","0","1","1"],["Incident #0128-25","2025-12-08","Theft","Ministry Center","O","7:13","P","","","","","0","1","0"],["Incident #0129-25","2025-12-14","Theft","Worship Center","M","","A","","","","","1","0","0"],["Incident #0130-25","2025-12-15","Other / unspecified","Ministry Center","O","","P","","","","","1","1","0"],["Incident #0131-25","2025-12-17","Other / unspecified","Ministry Center","O","3:25","P","","","","","1","1","0"],["Incident #0133-25","2025-12-20","Injury / Illness / Medical","Worship Center","M","0815","P","N","1","0","0","0","0","0"],["Incident #0132-25","2025-12-20","Injury / Illness / Medical","Worship Center","M","5:35!","P","C","1","1","1","0","1","0"],["Incident #0135-25","2025-12-21","Injury / Illness / Medical","Worship Center","M","6:35","P","C","1","0","0","0","0","1"],["Incident #0134-25","2025-12-21","Injury / Illness / Medical","Worship Center","M","","A","","","","","0","0","0"],["Incident #0136-25","2025-12-25","Other / unspecified","Worship Center","O","8:30","A","","","","","0","1","0"],["Incident #0001-26","2025-12-31","Injury / Illness / Medical","Worship Center","M","10:55","P","C","1","1","1","1","1","0"],["Incident #0137-25","2025-12-31","Other / unspecified","Worship Center","M","12:20","P","","","","","1","1","0"],["Incident #0002-26","2026-01-01","Injury / Illness / Medical","Worship Center","M","12:00","A","C","1","1","0","1","0","0"],["Incident #0004-26","2026-01-05","Other / unspecified","Worship Center","O","","P","","","","","0","1","0"],["Incident #0003-26","2026-01-05","Other / unspecified","Ministry Center","G","","P","","","","","0","1","0"],["Incident #0005-26","2026-01-08","Injury / Illness / Medical","Worship Center","G","6:00","P","N","1","0","0","0","1","0"],["Incident #0007-26","2026-01-11","Injury / Illness / Medical","Worship Center","G","","P","S","1","1","1","1","1","0"],["Incident #0006-26","2026-01-11","Injury / Illness / Medical","Worship Center","M","10:05","A","C","0","0","0","0","0","0"],["Incident #0008-26","2026-01-17","Vehicle Accident","Ministry Center","M","1:40","P","","","","","1","1","0"],["Incident #0009-26","2026-01-18","Injury / Illness / Medical","Worship Center","M","10:15","A","","1","1","1","0","1","0"],["Incident #0010-26","2026-01-22","Injury / Illness / Medical","Ministry Center","O","12:20","P","C","1","1","0","1","1","0"],["Incident #0013-26","2026-01-25","Injury / Illness / Medical","Ministry Center","E","4:45","P","C","0","0","0","0","1","0"],["Incident #0012-26","2026-01-28","Injury / Illness / Medical","Family Life Center","E","1:15","P","N","R","0","0","0","0","0"],["Incident #0011-26","2026-01-28","False Alarm","Worship Center","E","10:10","A","","","","","0","1","0"],["Incident #0014-26","2026-02-02","Suspicious Individual","Ministry Center","G","","P","","","","","0","1","0"],["Incident #0015-26","2026-02-05","Parking Violation","Ministry Center","E","8:50pm","P","","","","","0","1","0"],["Incident #0016-26","2026-02-08","Injury / Illness / Medical","Worship Center","G","","P","C","1","1","0","","1","0"],["Incident #0017-26","2026-02-09","Other / unspecified","Ministry Center","M","9:28","P","","","","","0","1","0"],["Incident #0018-26","2026-02-11","Vehicle Accident","Family Life Center","O","","A","","","","","1","1","0"],["Incident #0025-26","2026-02-15","Injury / Illness / Medical","Worship Center","E","","A","","","","","0","0","0"],["Incident #0021-26","2026-02-15","Vehicle Accident","Worship Center","O","0940","A","","","","","1","1","0"],["Incident #0019-26","2026-02-15","Vehicle Accident","Worship Center","M","9:27am","A","","","","","1","1","0"],["Incident #0020-26","2026-02-16","Injury / Illness / Medical","Ministry Center","E","10:00","A","N","1","0","0","0","1","0"],["Incident #0030-26","2026-02-20","Injury / Illness / Medical","Family Life Center","E","2:15","P","C","0","0","0","0","0","0"],["Incident #0023-26","2026-02-20","Injury / Illness / Medical","Family Life Center","E","11:45","A","","","","","0","1","0"],["Incident #0022-26","2026-02-20","Injury / Illness / Medical","Family Life Center","E","11:30","A","N","1","0","0","0","1","0"],["Incident #0024-26","2026-02-21","Injury / Illness / Medical","Worship Center","M","11:15","A","","","","","0","1","0"],["Incident #0026-26","2026-02-23","Injury / Illness / Medical","Ministry Center","O","11:00","A","C","1","1","0","1","1","0"],["Incident #0027-26","2026-02-26","Other / unspecified","Ministry Center","G","8:55","P","","","","","1","1","0"],["Incident #0028-26","2026-02-27","Weapons Related","Ministry Center","O","","A","","","","","1","1","0"],["Incident #0029-26","2026-03-04","False Alarm","Empowerment Center","E","10:18","A","","","","","0","1","0"],["Incident #0031-26","2026-03-06","Property Damage","Family Life Center","M","6:22","P","","","","","0","0","0"],["Incident #0077-26","2026-03-07","Weapons Related","Family Life Center","G","10:30","A","","","","","0","1","0"],["Incident #0034-26","2026-03-08","Suspicious Individual","Worship Center","O","2:30","P","","","","","1","1","0"],["Incident #0033-26","2026-03-08","Injury / Illness / Medical","Worship Center","M","10:25","A","","","","","0","1","0"],["Incident #0032-26","2026-03-08","Injury / Illness / Medical","Worship Center","M","7:45","A","C","1","1","0","0","1","0"],["Incident #0048-26","2026-03-09","Injury / Illness / Medical","Empowerment Center","E","1.0","A","C","1","1","1","0","1","0"],["Incident #0035-26","2026-03-09","Suspicious Vehicle","Worship Center","O","2:02","P","","","","","0","1","0"],["Incident #0038-26","2026-03-11","Injury / Illness / Medical","Ministry Center","E","4.0","P","N","1","0","0","0","1","0"],["Incident #0037-26","2026-03-11","Injury / Illness / Medical","Worship Center","O","3:21","P","N","R","1","0","1","1","0"],["Incident #0036-26","2026-03-11","Inappropriate Touch / SA","Worship Center","M","3:31","P","","","","","1","1","0"],["Incident #0039-26","2026-03-12","Suspicious Individual","Ministry Center","O","12:45pm","P","","","","","1","1","0"],["Incident #0040-26","2026-03-16","Suspicious Individual","Ministry Center","O","9:00","A","","","","","1","1","0"],["Incident #0041-26","2026-03-17","Suspicious Vehicle","Worship Center","O","1:15","P","","","","","0","1","0"],["Incident #0043-26","2026-03-22","Injury / Illness / Medical","Worship Center","G","","P","N","1","0","0","0","0","1"],["Incident #0042-26","2026-03-22","Injury / Illness / Medical","Worship Center","M","10.0","A","C","1","1","1","1","1","0"],["Incident #0044-26","2026-03-24","Suspicious Individual","Worship Center","G","10:05","P","","","","","1","1","0"],["Incident #0045-26","2026-03-29","Other / unspecified","Worship Center","O","1:25","P","","","","","0","0","1"],["Incident #0047-26","2026-03-31","Injury / Illness / Medical","Ministry Center","E","4:05","P","C","R","0","0","0","1","0"],["Incident #0046-26","2026-03-31","Injury / Illness / Medical","Ministry Center","E","4:00","P","N","1","0","0","0","1","0"],["Incident #0051-26","2026-04-03","Injury / Illness / Medical","Worship Center","M","8:49","P","C","1","1","0","0","0","1"],["Incident #0050-26","2026-04-03","Injury / Illness / Medical","Worship Center","G","8:25","P","N","1","0","0","0","0","0"],["Incident #0049-26","2026-04-03","Injury / Illness / Medical","Worship Center","M","6:05","P","C","1","0","0","1","1","1"],["Incident #0053-26","2026-04-05","Vehicle Accident","Worship Center","E","2:24","P","","","","","1","1","0"],["Incident #0052-26","2026-04-05","Injury / Illness / Medical","Worship Center","M","12:25","P","C","1","0","0","1","1","0"],["Incident #0054-26","2026-04-08","Injury / Illness / Medical","Ministry Center","G","9:15","A","C","1","1","1","1","1","0"],["Incident #0055-26","2026-04-11","False Alarm","Worship Center","M","9.0","A","","","","","0","1","0"],["Incident #0056-26","2026-04-12","Injury / Illness / Medical","Ministry Center","M","1:30pm","P","","1","0","0","0","1","0"],["Incident #0057-26","2026-04-15","Mental Health","Worship Center","M","6:10","P","","","","","1","1","0"],["Incident #0058-26","2026-04-16","Suspicious Individual","Upper School (HP)","O","0800","A","","","","","1","1","0"],["Incident #0062-26","2026-04-17","Other / unspecified","Ministry Center","M","8:45","P","","","","","0","0","1"],["Incident #0060-26","2026-04-17","Mental Health","Ministry Center","O","9.0","P","","","","","1","1","1"],["Incident #0059-26","2026-04-17","Injury / Illness / Medical","Family Life Center","G","7:15","P","C","1","0","0","1","0","0"],["Incident #0061-26","2026-04-19","Property Damage","Worship Center","M","4:20","P","","","","","0","1","0"],["Incident #0063-26","2026-04-22","Suspicious Vehicle","Worship Center","E","","P","","","","","1","1","0"],["Incident #0067-26","2026-04-26","Injury / Illness / Medical","Worship Center","M","","P","","1","0","0","0","0","0"],["Incident #0066-26","2026-04-26","Injury / Illness / Medical","Worship Center","M","","P","","1","0","0","0","0","0"],["Incident #0065-26","2026-04-26","Injury / Illness / Medical","Worship Center","M","12:08","P","C","1","0","0","0","0","0"],["Incident #0064-26","2026-04-26","Other / unspecified","Worship Center","E","11.0","A","","","","","1","1","0"],["Incident #0068-26","2026-05-01","Injury / Illness / Medical","FBCG Travel","O","10:36","P","C","0","0","0","0","1","1"],["Incident #0101-26","2026-05-03","Other / unspecified","Worship Center","E","11:00","A","","","","","0","1","0"],["Incident #0070-26","2026-05-03","Injury / Illness / Medical","Worship Center","M","8:10","A","","","1","1","0","1","0"],["Incident #0069-26","2026-05-03","Injury / Illness / Medical","Worship Center","M","7:15","A","","","","","0","0","0"],["Incident #0071-26","2026-05-04","Injury / Illness / Medical","Family Life Center","M","9:30","P","N","1","0","0","1","0","1"],["Incident #0072-26","2026-05-05","Vehicle Accident","Ministry Center","G","1:25","P","","","","","0","1","0"],["Incident #0073-26","2026-05-06","Elevator Entrapment","Family Life Center","G","","A","","","","","0","1","0"],["Incident #0074-26","2026-05-07","Suspicious Vehicle","Lower School (MC)","G","1:15","P","","","","","0","1","0"],["Incident #0075-26","2026-05-14","Injury / Illness / Medical","Ministry Center","M","","P","C","0","0","0","0","0","0"],["Incident #0076-26","2026-05-17","Injury / Illness / Medical","Worship Center","M","12:15","P","C","1","0","0","1","1","1"],["Incident #0078-26","2026-05-19","Suspicious Individual","Family Life Center","O","9:15 AM","A","","","","","0","1","0"],["Incident #0080-26","2026-05-20","Other / unspecified","Ministry Center","M","2:45","P","","","","","0","1","0"],["Incident #0079-26","2026-05-20","Injury / Illness / Medical","Ministry Center","M","11:17","A","C","0","0","0","0","1","0"],["Incident #0085-26","2026-05-22","Vehicle Accident","Ministry Center","O","7:50","P","","","","","0","0","0"],["Incident #0082-26","2026-05-22","Other / unspecified","Ministry Center","E","12:18","P","","","","","1","1","0"],["Incident #0081-26","2026-05-22","Injury / Illness / Medical","Ministry Center","G","10:55","A","","R","0","0","1","1","0"],["Incident #0084-26","2026-05-24","Injury / Illness / Medical","Worship Center","M","9:15am","A","C","1","0","0","0","0","0"],["Incident #0083-26","2026-05-26","Mental Health","Other / free-text","O","8.0","P","","","","","0","1","1"],["Incident #0086-26","2026-05-28","Injury / Illness / Medical","Ministry Center","G","","A","C","R","0","0","0","1","0"],["Incident #0087-26","2026-05-29","Violence / Threat","Family Life Center","O","1:30","P","","","","","0","1","0"],["Incident #0088-26","2026-06-01","Weapons Related","Ministry Center","G","9:00","A","","","","","1","1","0"],["Incident #0090-26","2026-06-03","Property Damage","Worship Center","O","5:40","P","","","","","0","1","0"],["Incident #0089-26","2026-06-03","Other / unspecified","Empowerment Center","G","11:10","A","","","","","1","1","0"],["Incident #0091-26","2026-06-05","Other / unspecified","Family Life Center","M","","A","","","","","1","1","0"],["Incident #0093-26","2026-06-07","Parking Violation","Worship Center","M","10:24","A","","","","","1","1","0"],["Incident #0092-26","2026-06-07","Vehicle Accident","Worship Center","M","0643","A","","","","","1","0","0"],["Incident #0095-26","2026-06-10","Other / unspecified","Ministry Center","M","12:15","P","","","","","0","1","0"],["Incident #0094-26","2026-06-10","Injury / Illness / Medical","Ministry Center","G","09:06","A","N","R","0","0","0","1","0"],["Incident #0096-26","2026-06-11","Other / unspecified","Worship Center","M","7:26","P","","","","","1","1","0"],["Incident #0105-26","2026-06-12","Injury / Illness / Medical","Worship Center","M","6:46","P","N","1","0","0","0","0","1"],["Incident #0099-26","2026-06-12","Mental Health","Worship Center","M","8:30","P","","","","","0","1","1"],["Incident #0097-26","2026-06-12","Property Damage","Ministry Center","G","5:35pm","P","","","","","1","1","0"],["Incident #0098-26","2026-06-13","Other / unspecified","Worship Center","M","8:20","P","","","","","0","0","1"],["Incident #0100-26","2026-06-14","Injury / Illness / Medical","Worship Center","M","11:11","A","C","1","0","0","0","0","0"],["Incident #0104-26","2026-06-16","Vehicle Accident","Other / free-text","O","3:00 pm","P","","","","","0","1","0"],["Incident #0103-26","2026-06-16","Suspicious Individual","Ministry Center","G","4:30","P","","","","","0","1","0"],["Incident #0102-26","2026-06-17","Property Damage","Worship Center","G","","","","","","","0","1","0"],["Incident #0106-26","2026-06-23","Injury / Illness / Medical","Worship Center","M","10:14","A","C","1","1","1","1","0","0"],["Incident #0109-26","2026-06-24","Other / unspecified","Other / free-text","G","","P","","","","","0","0","0"],["Incident #0108-26","2026-06-24","Injury / Illness / Medical","Worship Center","G","1:45pm","P","C","1","1","0","0","1","0"],["Incident #0107-26","2026-06-24","Other / unspecified","FBCG Travel","G","12:45","P","","","","","0","0","1"],["Incident #0110-26","2026-06-25","Violence / Threat","Ministry Center","O","11:25","A","","","","","0","1","0"],["Incident #0113-26","2026-06-28","Other / unspecified","Worship Center","E","8:32","P","","","","","0","1","0"],["Incident #0112-26","2026-06-28","Vehicle Accident","Worship Center","M","11:40","A","","","","","1","1","0"],["Incident #0111-26","2026-06-28","Other / unspecified","Worship Center","M","","A","","","","","0","0","0"],["Incident #0114-26","2026-06-29","Weapons Related","Ministry Center","G","12:00","P","","","","","0","1","0"],["Incident #0116-26","2026-07-05","Injury / Illness / Medical","Worship Center","M","","A","C","1","0","0","0","0","0"],["Incident #0115-26","2026-07-05","Injury / Illness / Medical","Worship Center","M","10.0","A","C","1","1","0","1","1","0"],["Incident #0117-26","2026-07-06","Other / unspecified","Worship Center","G","2:45pm","P","","","","","0","0","1"],["Incident #0118-26","2026-07-09","Other / unspecified","Ministry Center","E","1:40","P","","","","","0","1","0"],["Incident #0123-26","2026-07-10","Injury / Illness / Medical","Ministry Center","O","2:24","P","C","1","1","1","0","1","0"],["Incident #0122-26","2026-07-11","Vehicle Accident","FBCG Travel","E","9:40","A","","","","","0","0","0"],["Incident #0121-26","2026-07-12","Injury / Illness / Medical","Worship Center","M","1:12","P","C","1","0","0","0","0","0"],["Incident #0120-26","2026-07-12","Injury / Illness / Medical","Worship Center","M","11:20","A","C","1","1","0","1","1","0"],["Incident #0119-26","2026-07-12","Injury / Illness / Medical","Worship Center","M","11:20","A","C","1","1","0","1","1","0"],["Incident #0124-26","2026-07-19","Injury / Illness / Medical","Other / free-text","M","","A","C","1","1","1","1","1","0"],["Incident #0125-26","2026-07-21","Injury / Illness / Medical","Ministry Center","O","","P","","R","0","0","0","1","1"],["Incident #0126-26","2026-07-22","Injury / Illness / Medical","Ministry Center","G","10:15","A","C","1","1","1","1","1","0"],["Incident #0127-26","2026-07-24","Injury / Illness / Medical","Ministry Center","M","2.0","P","S","1","1","1","0","1","0"],["Incident #0128-26","2026-07-31","Injury / Illness / Medical","Family Life Center","G","8:55","A","N","1","1","0","1","1","0"],["Incident #0129-26","2026-08-01","Injury / Illness / Medical","Ministry Center","G","","P","C","1","0","0","0","0","0"],["Incident #0132-26","2026-08-02","Other / unspecified","Other / free-text","G","","P","","","","","0","0","1"],["Incident #0131-26","2026-08-02","Suspicious Individual","Worship Center","G","","A","","","","","1","1","0"],["Incident #0130-26","2026-08-02","Injury / Illness / Medical","Worship Center","M","0750","A","C","0","0","0","","1","0"],["Incident #0136-26","2026-08-07","Property Damage","Worship Center","O","7:46","P","","","","","0","1","0"],["Incident #0135-26","2026-08-09","Vehicle Accident","Worship Center","M","11:10","A","","","","","1","1","0"],["Incident #0134-26","2026-08-09","Suspicious Individual","Other / free-text","M","","P","","","","","1","0","0"],["Incident #0133-26","2026-08-09","Vehicle Accident","Worship Center","M","","A","","","","","1","1","0"],["Incident #0137-26","2026-08-14","Other / unspecified","Worship Center","M","7:45","P","","","","","0","1","0"]];
+const AFFNAME={M:"Member",E:"Employee",G:"Guest",O:"Other / none"};
+const AFFCOL={M:"--cat-1",G:"--cat-2",E:"--cat-3",O:"--cat-4"};
+const YEAR_KEYS=["2023","2024","2025","2026"];
+const YEAR_COL={"2023":"--cat-3","2024":"--cat-2","2025":"--cat-4","2026":"--cat-1"};
+const PARTIAL={"2023-6":1,"2026-7":1};
+const TODAY_M=7, TODAY_D=17; // Aug 17
+
+let YEAR="all", PERIOD="full", MONTH="all", MODE="timeline", COMPARE=false, NAT_SEL=null;
+
+function inScope(r,yr,per,mo){const d=r[1];if(!d)return false;
+  if(yr!=="all"&&d.slice(0,4)!==yr)return false;
+  const m=+d.slice(5,7)-1;
+  if(mo!=="all")return m===+mo;
+  if(per==="ytd"){const day=+d.slice(8,10);return m<TODAY_M||(m===TODAY_M&&day<=TODAY_D);}
+  return true;}
+function filtered(){return REC.filter(r=>inScope(r,YEAR,PERIOD,MONTH));}
+function countYes(recs,i){return recs.filter(r=>r[i]==="1").length;}
+function answered(recs,i){return recs.filter(r=>r[i]==="1"||r[i]==="0").length;}
+function pct(a,b){return b?(a/b*100):0;}
+function pct1(a,b){return b?(Math.round(a/b*1000)/10):0;}
+function tally(recs,idx,dim){const m=new Map();recs.forEach(r=>{const k=r[idx]||"(blank)";m.set(k,(m.get(k)||0)+1);});
+  return [...m.entries()].sort((a,b)=>b[1]-a[1]).map(([n,v])=>[n,v,n===dim?1:0]);}
+
+/* monthly counts derived from REC */
+const MONTHS={};YEAR_KEYS.forEach(y=>MONTHS[y]=Array(12).fill(null));
+REC.forEach(r=>{const d=r[1];if(!d||d<"2023-01-01")return;const y=d.slice(0,4),m=+d.slice(5,7)-1;if(MONTHS[y])MONTHS[y][m]=(MONTHS[y][m]||0)+1;});
+
+/* ===== theme ===== */
+function applyTheme(t){const r=document.documentElement;if(t==="system")r.removeAttribute("data-theme");else r.setAttribute("data-theme",t);
+  try{localStorage.setItem("fbcg-theme",t);}catch(e){}
+  document.querySelectorAll("#themeTog button").forEach(b=>b.classList.toggle("on",b.dataset.th===t));}
+(function(){let t="system";try{t=localStorage.getItem("fbcg-theme")||"system";}catch(e){}applyTheme(t);
+  $("#themeTog").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;applyTheme(b.dataset.th);renderAll();});})();
+
+/* ===== KPIs ===== */
+function renderKPIs(recs){
+  const total=recs.length,med=recs.filter(r=>r[2]==="Injury / Illness / Medical").length,
+    severe=recs.filter(r=>r[7]==="S").length,c911=countYes(recs,9),c911b=answered(recs,9),
+    trans=countYes(recs,10),minor=countYes(recs,13);
+  const k=[
+    {lab:"Total Reports",num:total,foot:winText(recs),cls:"s-accent"},
+    {lab:"Medical / Injury",num:pct1(med,total)+"%",foot:med+" injury &amp; illness reports",cls:"s-warn"},
+    {lab:"Severe Injuries",num:severe,foot:"fractures, head injury, deep cuts",cls:"s-critical"},
+    {lab:"911 Calls",num:c911,foot:(c911b?Math.round(pct(c911,c911b))+"% of reports where asked":"—"),cls:"s-serious"},
+    {lab:"Hospital Transports",num:trans,foot:"by ambulance",cls:"s-serious"},
+    {lab:"Minors Involved",num:minor,foot:pct1(minor,total)+"% of reports",cls:"s-warn"}
+  ];
+  $("#kpis").innerHTML=k.map(x=>`<div class="card kpi ${x.cls}"><span class="stripe"></span>
+    <div class="lab">${x.lab}</div><div class="num tnum">${x.num}</div><div class="foot">${x.foot}</div></div>`).join("");
+}
+function winDates(recs){return recs.map(r=>r[1]).filter(d=>d>="2023-01-01").sort();}
+function winText(recs){const ds=winDates(recs);if(!ds.length)return"no records";
+  const f=ds[0],l=ds[ds.length-1],fmt=s=>MN[+s.slice(5,7)-1]+" "+s.slice(0,4);
+  return fmt(f)===fmt(l)?fmt(f):fmt(f)+" – "+fmt(l);}
+
+/* ===== bars ===== */
+function drawBars(sel,data,color,total,opts){
+  opts=opts||{};const max=Math.max(...data.map(d=>d[1]),1);
+  $(sel).innerHTML=data.map(d=>{const[name,val,dim]=d,p=pct(val,total),clk=!!opts.click,s2=opts.selected===name?" sel":"";
+    return `<div class="bar-row${dim?" dim":""}${clk?" click":""}${s2}" tabindex="0" role="${clk?"button":"group"}" data-n="${encodeURIComponent(name)}" data-t="<b>${name}</b><br>${val} report${val===1?"":"s"} · ${p.toFixed(1)}%${clk?"<br><span style='opacity:.7'>click to see records</span>":""}">
+      <span class="name" title="${name}">${name}</span>
+      <span class="bar-track"><span class="bar-fill" style="width:0;background:${dim?"var(--ink-3)":color}"></span></span>
+      <span class="val tnum">${val}</span></div>`;}).join("");
+  requestAnimationFrame(()=>{$(sel).querySelectorAll(".bar-row").forEach((r,i)=>{
+    r.querySelector(".bar-fill").style.width=pct(data[i][1],max)+"%";
+    const mv=e=>{const p=e.touches?e.touches[0]:e;showTip(r.dataset.t,p.clientX,p.clientY);};
+    r.addEventListener("pointermove",mv);r.addEventListener("pointerleave",hideTip);
+    r.addEventListener("focus",()=>{const b=r.getBoundingClientRect();showTip(r.dataset.t,b.right-40,b.top);});
+    r.addEventListener("blur",hideTip);
+    if(opts.click){const go=()=>opts.click(decodeURIComponent(r.dataset.n));
+      r.addEventListener("click",go);r.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}});}
+  });});
+}
+
+/* ===== What & Where ===== */
+function renderWhatWhere(recs){
+  const AC=cvar("--accent"),total=recs.length||1;
+  const nat=tally(recs,2,"Other / unspecified"),loc=tally(recs,3,"Other / free-text");
+  drawBars("#nature",nat.slice(0,13),AC,total,{selected:NAT_SEL,click:name=>{
+    NAT_SEL=NAT_SEL===name?null:name;
+    if(NAT_SEL)renderNatDetail(NAT_SEL,recs);else $("#natDetail").hidden=true;
+    document.querySelectorAll("#nature .bar-row").forEach(r=>r.classList.toggle("sel",decodeURIComponent(r.dataset.n)===NAT_SEL));
+  }});
+  drawBars("#location",loc.slice(0,11),AC,total);
+  const per=MONTH!=="all"?MONTH_NAMES[+MONTH]:(PERIOD==="ytd"?"YTD ≤ Aug 17":"full period");
+  $("#natSub").textContent=$("#locSub").textContent=`${recs.length} reports · ${per}`;
+  if(NAT_SEL){if(nat.some(n=>n[0]===NAT_SEL))renderNatDetail(NAT_SEL,recs);else{NAT_SEL=null;$("#natDetail").hidden=true;}}
+}
+function renderNatDetail(name,recs){
+  const rows=recs.filter(r=>r[2]===name).sort((a,b)=>a[1]<b[1]?1:-1),host=$("#natDetail");host.hidden=false;
+  const ap={A:"AM",P:"PM","":""};
+  const body=rows.map(r=>`<tr><td class="mono">${r[0]}</td><td class="mono">${r[1]||"—"}</td><td class="mono">${(r[5]||"")+(r[5]&&r[6]?" ":"")+(ap[r[6]]||"")}</td><td>${r[3]}</td><td>${AFFNAME[r[4]]||r[4]}</td></tr>`).join("");
+  host.innerHTML=`<div class="dh"><div class="dt"><b>${name}</b> — ${rows.length} record${rows.length===1?"":"s"}</div><button class="dclose" id="dclose">Close ✕</button></div>
+    <div class="tw"><table class="rec"><thead><tr><th>Report #</th><th>Date</th><th>Time</th><th>Location</th><th>Affiliation</th></tr></thead>
+    <tbody>${body||'<tr><td colspan="5" class="empty">No records for this selection.</td></tr>'}</tbody></table></div>
+    <div class="pii"><span>🔒</span><span><b>Structured fields only.</b> Incident narratives (names, DOBs, medical/abuse details) are intentionally excluded — open the source sheet for full records.</span></div>`;
+  host.querySelector("#dclose").addEventListener("click",()=>{NAT_SEL=null;host.hidden=true;document.querySelectorAll("#nature .bar-row").forEach(r=>r.classList.remove("sel"));});
+}
+
+/* ===== affiliation donut ===== */
+function renderAffil(recs){
+  const t=tally(recs,4),total=recs.length||1,host=$("#affil");
+  const data=t.map(([code,val])=>[AFFNAME[code]||code,val,AFFCOL[code]||"--cat-4"]);
+  const size=210,r=82,c=size/2,sw=30,C=2*Math.PI*r;let off=0,segs="";
+  data.forEach((d,i)=>{const frac=d[1]/total,len=C*frac,gap=Math.min(3,len*.5),col=cvar(d[2]);
+    segs+=`<circle class="seg" data-i="${i}" cx="${c}" cy="${c}" r="${r}" fill="none" stroke="${col}" stroke-width="${sw}"
+      stroke-dasharray="${(len-gap).toFixed(2)} ${(C-len+gap).toFixed(2)}" stroke-dashoffset="${(-off).toFixed(2)}"
+      transform="rotate(-90 ${c} ${c})" style="cursor:pointer;transition:stroke-width .15s"/>`;off+=len;});
+  host.innerHTML=`<div style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:center">
+    <svg viewBox="0 0 ${size} ${size}" style="width:200px;flex:none" role="img" aria-label="Affiliation donut">${segs}
+      <text x="${c}" y="${c-6}" text-anchor="middle" style="font-family:Archivo;font-weight:800;font-size:30px;fill:var(--ink)" class="tnum">${total}</text>
+      <text x="${c}" y="${c+14}" text-anchor="middle" style="font-size:11px;fill:var(--ink-3);letter-spacing:.05em">REPORTS</text></svg>
+    <div class="legend" style="flex-direction:column;gap:10px">
+      ${data.map(d=>`<div class="it"><span class="sw" style="background:${cvar(d[2])}"></span>
+        <span style="min-width:98px">${d[0]}</span><b class="tnum" style="color:var(--ink)">${d[1]}</b>
+        <span style="color:var(--ink-3)" class="tnum">${pct(d[1],total).toFixed(0)}%</span></div>`).join("")}
+    </div></div>`;
+  host.querySelectorAll(".seg").forEach(s=>{const d=data[s.dataset.i];
+    s.addEventListener("pointermove",e=>{const p=e.touches?e.touches[0]:e;showTip(`<b>${d[0]}</b><br>${d[1]} reports · ${pct(d[1],total).toFixed(1)}%`,p.clientX,p.clientY);});
+    s.addEventListener("pointerenter",()=>s.setAttribute("stroke-width",sw+5));
+    s.addEventListener("pointerleave",()=>{s.setAttribute("stroke-width",sw);hideTip();});});
+  $("#affSub").textContent=total+" reports";
+}
+
+/* ===== severity ===== */
+function renderSeverity(recs){
+  const cnt=c=>recs.filter(r=>r[7]===c).length;
+  const rows=[["Complaint — no visible injury",cnt("C"),"var(--good)"],
+    ["Minor injury (bruise, scratch)",cnt("N"),"var(--warn)"],
+    ["Severe (fracture, head, deep cut)",cnt("S"),"var(--critical)"],
+    ["Other described (free-text)",cnt("X"),"var(--ink-3)"]].filter(r=>r[1]>0);
+  const coded=rows.reduce((a,b)=>a+b[1],0),max=Math.max(...rows.map(r=>r[1]),1);
+  $("#severity").innerHTML=rows.map(d=>{const[name,val,col]=d;
+    return `<div class="bar-row" tabindex="0" data-t="<b>${name}</b><br>${val} of ${coded} coded medical reports · ${pct(val,coded).toFixed(0)}%">
+      <span class="name" title="${name}">${name}</span>
+      <span class="bar-track"><span class="bar-fill" style="width:0;background:${col}"></span></span>
+      <span class="val tnum">${val}</span></div>`;}).join("")||'<div class="card-sub">No coded medical reports in this selection.</div>';
+  requestAnimationFrame(()=>{$("#severity").querySelectorAll(".bar-row").forEach((r,i)=>{
+    r.querySelector(".bar-fill").style.width=pct(rows[i][1],max)+"%";
+    const mv=e=>{const p=e.touches?e.touches[0]:e;showTip(r.dataset.t,p.clientX,p.clientY);};
+    r.addEventListener("pointermove",mv);r.addEventListener("pointerleave",hideTip);
+    r.addEventListener("focus",()=>{const b=r.getBoundingClientRect();showTip(r.dataset.t,b.right-40,b.top);});
+    r.addEventListener("blur",hideTip);});});
+  $("#sevSub").textContent=coded+" medical reports with severity coded";
+  const minorN=countYes(recs,13),total=recs.length;
+  const pm=recs.filter(r=>r[6]==="P").length,ap=recs.filter(r=>r[6]==="P"||r[6]==="A").length;
+  $("#splitNote").innerHTML=`<b>${minorN}</b> incident${minorN===1?"":"s"} (${pct1(minorN,total||1)}%) involved a <b>minor</b>. ${ap?Math.round(pct(pm,ap)):0}% of incidents with a time logged occurred in the <b>afternoon/evening (PM)</b>.`;
+}
+
+/* ===== response ===== */
+function renderResponse(recs){
+  const R=[["S&S Notified",12,"--good"],["Police Notified",11,"--serious"],["911 Called",9,"--serious"],
+    ["Hospital Transport",10,"--critical"],["First Aid Offered",8,"--good"]];
+  $("#response").innerHTML=R.map(x=>{const[lab,i,col]=x;
+    let yes,base,note;
+    if(i===8){yes=recs.filter(r=>r[8]==="1").length;base=recs.filter(r=>r[8]==="1"||r[8]==="0"||r[8]==="R").length;note="of answered";}
+    else{yes=countYes(recs,i);base=answered(recs,i);note=(i===12?"of reports":"of answered");}
+    const p=base?Math.round(pct(yes,base)):0;
+    return `<div class="card meter" tabindex="0" data-t="<b>${lab}</b><br>Yes on ${yes} of ${base} reports (${p}%)">
+      <div class="top"><span class="lab">${lab}</span><span class="big tnum" style="color:${cvar(col)}">${base?p+"%":"—"}</span></div>
+      <div class="track"><i style="width:0;background:${cvar(col)}" data-w="${p}"></i></div>
+      <div class="note"><b class="tnum" style="color:var(--ink-2)">${yes}</b> yes · ${base} ${note}</div></div>`;}).join("");
+  requestAnimationFrame(()=>{$("#response").querySelectorAll(".meter").forEach(m=>{
+    const i=m.querySelector("i");i.style.width=i.dataset.w+"%";
+    const mv=e=>{const p=e.touches?e.touches[0]:e;showTip(m.dataset.t,p.clientX,p.clientY);};
+    m.addEventListener("pointermove",mv);m.addEventListener("pointerleave",hideTip);
+    m.addEventListener("focus",()=>{const b=m.getBoundingClientRect();showTip(m.dataset.t,b.left+b.width/2,b.top);});
+    m.addEventListener("blur",hideTip);});});
+}
+
+/* ===== compare years ===== */
+function renderCompare(){
+  const host=$("#compare");
+  if(!COMPARE){host.hidden=true;host.innerHTML="";return;}
+  host.hidden=false;
+  const per=MONTH!=="all"?MONTH_NAMES[+MONTH]:(PERIOD==="ytd"?"year-to-date (≤ Aug 17)":"full year");
+  const rows=YEAR_KEYS.map(y=>{const rs=REC.filter(r=>inScope(r,y,PERIOD,MONTH));
+    return {y,n:rs.length,med:rs.filter(r=>r[2]==="Injury / Illness / Medical").length};});
+  const max=Math.max(...rows.map(r=>r.n),1);
+  host.innerHTML=`<div class="card cmp-card">
+    <div class="card-h"><h3>Year-over-Year Comparison</h3><span class="sub">same period each year · ${per}</span></div>
+    <div class="card-sub">Incident count for the selected period in each year${YEAR!=="all"?` — <b style="color:var(--accent)">${YEAR}</b> highlighted`:""}.</div>
+    <div class="cmp-rows">${rows.map(r=>`<div class="cmp-row${r.y===YEAR?" cur":""}">
+      <span class="yr">${r.y}</span>
+      <span class="cmp-track"><span class="cmp-fill" style="width:0" data-w="${pct(r.n,max)}"></span></span>
+      <span class="rt"><b>${r.n}</b> reports · ${pct1(r.med,r.n||1)}% med</span></div>`).join("")}</div></div>`;
+  requestAnimationFrame(()=>{host.querySelectorAll(".cmp-fill").forEach(f=>f.style.width=f.dataset.w+"%");});
+}
+
+/* ===== factual insights ===== */
+function renderInsights(recs){
+  const total=recs.length,out=[];
+  const per=MONTH!=="all"?MONTH_NAMES[+MONTH]:(PERIOD==="ytd"?"the year-to-date period":"this selection");
+  const scope=YEAR==="all"?"across all years":"in "+YEAR;
+  if(!total){$("#insights").innerHTML=`<div class="ins"><span class="ico">∅</span><p>No records match the current filters.</p></div>`;return;}
+  const nat=tally(recs,2),loc=tally(recs,3),aff=tally(recs,4);
+  out.push({i:"▲",c:"",h:`<b>${nat[0][0]}</b> is the most common report type — <b>${nat[0][1]}</b> of ${total} reports (${pct1(nat[0][1],total)}%) ${scope}.`});
+  out.push({i:"⌖",c:"",h:`The <b>${loc[0][0]}</b> is the most frequent location, with <b>${loc[0][1]}</b> reports (${pct1(loc[0][1],total)}%).`});
+  const memb=recs.filter(r=>r[4]==="M").length,vis=recs.filter(r=>r[4]==="G"||r[4]==="O").length;
+  out.push({i:"◑",c:"",h:`Members account for <b>${pct1(memb,total)}%</b> of those involved; guests and non-affiliated visitors together are <b>${pct1(vis,total)}%</b>.`});
+  const c9=countYes(recs,9),c9b=answered(recs,9),tr=countYes(recs,10);
+  if(c9b)out.push({i:"✚",c:"crit",h:`911 was called in <b>${Math.round(pct(c9,c9b))}%</b> of the ${c9b} reports where the question was answered; <b>${tr}</b> ended in a hospital transport.`});
+  const sev=recs.filter(r=>r[7]==="S").length,coded=recs.filter(r=>["C","N","S","X"].includes(r[7])).length;
+  if(coded)out.push({i:"!",c:"warn",h:`<b>${sev}</b> severe injuries recorded — ${pct1(sev,coded)}% of the ${coded} medical reports with a coded severity.`});
+  const minor=countYes(recs,13);
+  out.push({i:"◔",c:"warn",h:`A minor was involved in <b>${minor}</b> report${minor===1?"":"s"} (${pct1(minor,total)}%).`});
+  const ss=countYes(recs,12);
+  out.push({i:"✔",c:"good",h:`Safety &amp; Security was notified in <b>${pct1(ss,total)}%</b> of reports (${ss} of ${total}) ${scope}.`});
+  // busiest month within scope
+  const mm={};recs.forEach(r=>{if(r[1]<"2023-01-01")return;const k=r[1].slice(0,7);mm[k]=(mm[k]||0)+1;});
+  const keys=Object.keys(mm);
+  if(keys.length>1){const top=keys.sort((a,b)=>mm[b]-mm[a])[0];
+    out.push({i:"▮",c:"",h:`The busiest month in view was <b>${MN[+top.slice(5,7)-1]} ${top.slice(0,4)}</b> with <b>${mm[top]}</b> reports.`});}
+  $("#insights").innerHTML=out.map(o=>`<div class="ins ${o.c}"><span class="ico">${o.i}</span><p>${o.h}</p></div>`).join("");
+}
+
+/* ===== TREND ===== */
+function yearMonths(y){const arr=MONTHS[y].slice();if(PERIOD==="ytd")for(let i=TODAY_M+1;i<12;i++)arr[i]=null;return arr;}
+function timelineSeries(){const yrs=YEAR==="all"?YEAR_KEYS:[YEAR];const pts=[];
+  yrs.forEach(y=>yearMonths(y).forEach((v,m)=>{if(v==null)return;pts.push({y,m,v,part:!!PARTIAL[y+"-"+m],lab:MN[m]+" "+y.slice(2)});}));return pts;}
+function drawTrend(){
+  const host=$("#trend"),leg=$("#trendLegend");
+  const W=host.clientWidth||900,H=300,m={t:16,r:14,b:44,l:36},iw=W-m.l-m.r,ih=H-m.t-m.b,ac=cvar("--accent");leg.innerHTML="";
+  const axisY=(mx,st)=>{let g="";for(let v=0;v<=mx;v+=st){const y=m.t+ih-ih*v/mx;g+=`<line class="gridline" x1="${m.l}" y1="${y}" x2="${W-m.r}" y2="${y}"/><text class="axis-txt" x="${m.l-8}" y="${y+4}" text-anchor="end">${v}</text>`;}return g;};
+  const MX=28;
+
+  if(MODE==="yoy"){
+    const X=i=>m.l+iw*i/11,Y=v=>m.t+ih-ih*v/MX;let svg=axisY(28,7);
+    for(let i=0;i<12;i++)svg+=`<text class="axis-txt" x="${X(i)}" y="${H-24}" text-anchor="middle">${MN[i]}</text>`;
+    const focus=YEAR==="all"?null:YEAR,hit=[];
+    YEAR_KEYS.forEach(y=>{const arr=yearMonths(y),col=cvar(YEAR_COL[y]),faded=focus&&focus!==y,op=faded?.28:1,wid=focus===y?2.6:1.8;let path="",st=false;
+      arr.forEach((v,i)=>{if(v==null)return;path+=(st?"L":"M")+X(i).toFixed(1)+","+Y(v).toFixed(1)+" ";st=true;});
+      svg+=`<path d="${path}" fill="none" stroke="${col}" stroke-width="${wid}" stroke-linejoin="round" stroke-linecap="round" opacity="${op}"/>`;
+      arr.forEach((v,i)=>{if(v==null)return;svg+=`<circle cx="${X(i).toFixed(1)}" cy="${Y(v).toFixed(1)}" r="${focus===y?3.2:2.4}" fill="${col}" opacity="${op}"/>`;hit.push({x:X(i),y:Y(v),year:y,mo:i,v,col});});});
+    host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Year over year">${svg}<circle id="hi" r="5" fill="none" stroke-width="2" opacity="0"/><rect x="0" y="0" width="${W}" height="${H}" fill="transparent" id="thit"/></svg>`;
+    leg.innerHTML=YEAR_KEYS.map(y=>`<span class="it" style="${focus&&focus!==y?"opacity:.5":""}"><span class="sw" style="background:${cvar(YEAR_COL[y])}"></span>${y}${y==="2023"?" (Jul+)":y==="2026"?" (–Aug)":""}</span>`).join("");
+    const se=host.querySelector("svg"),hi=host.querySelector("#hi"),ht=host.querySelector("#thit");
+    ht.addEventListener("pointermove",e=>{const r=se.getBoundingClientRect(),sx=(e.clientX-r.left)*(W/r.width),sy=(e.clientY-r.top)*(H/r.height);let best=null,bd=1e9;hit.forEach(p=>{const dd=(p.x-sx)**2+(p.y-sy)**2;if(dd<bd){bd=dd;best=p;}});
+      if(best&&bd<900){hi.setAttribute("cx",best.x);hi.setAttribute("cy",best.y);hi.setAttribute("stroke",best.col);hi.setAttribute("opacity","1");showTip(`<b>${MN[best.mo]} ${best.year}</b>${PARTIAL[best.year+"-"+best.mo]?" (partial)":""}<br>${best.v} incidents`,e.clientX,e.clientY);}else{hi.setAttribute("opacity","0");hideTip();}});
+    ht.addEventListener("pointerleave",()=>{hi.setAttribute("opacity","0");hideTip();});return;
+  }
+
+  const pts=timelineSeries(),n=pts.length;
+  if(MODE==="mom"){
+    const dl=[];for(let i=1;i<n;i++)dl.push({...pts[i],d:pts[i].v-pts[i-1].v});
+    if(!dl.length){host.innerHTML=`<div class="card-sub" style="padding:30px 0;text-align:center">Not enough months in this selection for a month-over-month view.</div>`;return;}
+    const mxAbs=Math.max(...dl.map(x=>Math.abs(x.d)),1),X=i=>m.l+(dl.length>1?iw*i/(dl.length-1):iw/2),zero=m.t+ih/2,sc=(ih/2)/mxAbs,bw=Math.max(3,Math.min(16,iw/dl.length-3));
+    let svg=`<line class="gridline" x1="${m.l}" y1="${zero}" x2="${W-m.r}" y2="${zero}"/>`;
+    [mxAbs,-mxAbs].forEach(v=>{const y=zero-v*sc;svg+=`<text class="axis-txt" x="${m.l-8}" y="${y+4}" text-anchor="end">${v>0?"+":""}${v}</text>`;});
+    const up=cvar("--serious"),dn=cvar("--good");
+    dl.forEach((x,i)=>{const h=Math.abs(x.d)*sc,y=x.d>=0?zero-h:zero,col=x.d>0?up:x.d<0?dn:cvar("--ink-3");
+      svg+=`<rect class="mb" data-i="${i}" x="${(X(i)-bw/2).toFixed(1)}" y="${y.toFixed(1)}" width="${bw.toFixed(1)}" height="${Math.max(h,1).toFixed(1)}" rx="2" fill="${col}"/>`;});
+    dl.forEach((x,i)=>{if(x.m===0)svg+=`<text class="axis-txt" x="${X(i)}" y="${H-24}" text-anchor="middle">’${x.y.slice(2)}</text>`;});
+    host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Month over month change">${svg}<rect x="0" y="0" width="${W}" height="${H}" fill="transparent"/></svg>`;
+    leg.innerHTML=`<span class="it"><span class="sw" style="background:${up}"></span>More than prior month</span><span class="it"><span class="sw" style="background:${dn}"></span>Fewer than prior month</span>`;
+    host.querySelectorAll(".mb").forEach(b=>{const x=dl[b.dataset.i];
+      b.addEventListener("pointermove",e=>showTip(`<b>${MN[x.m]} 20${x.y.slice(2)}</b><br>${x.v} incidents · <b style="color:${x.d>0?up:dn}">${x.d>0?"+":""}${x.d}</b> vs prior month`,e.clientX,e.clientY));
+      b.addEventListener("pointerleave",hideTip);});return;
+  }
+
+  // timeline
+  const X=i=>m.l+(n>1?iw*i/(n-1):iw/2),Y=v=>m.t+ih-ih*v/MX;let svg=axisY(28,7);
+  pts.forEach((p,i)=>{if(p.m===0||i===0)svg+=`<text class="axis-txt" x="${X(i)}" y="${H-24}" text-anchor="middle">${YEAR==="all"?("’"+p.y.slice(2)):MN[p.m]}</text>`;
+    else if(YEAR!=="all")svg+=`<text class="axis-txt" x="${X(i)}" y="${H-24}" text-anchor="middle">${MN[p.m]}</text>`;});
+  const line=pts.map((p,i)=>(i?"L":"M")+X(i).toFixed(1)+","+Y(p.v).toFixed(1)).join(" ");
+  const area=`M${X(0)},${Y(0)} `+pts.map((p,i)=>"L"+X(i).toFixed(1)+","+Y(p.v).toFixed(1)).join(" ")+` L${X(n-1)},${Y(0)} Z`;
+  const dots=pts.map((p,i)=>`<circle cx="${X(i).toFixed(1)}" cy="${Y(p.v).toFixed(1)}" r="${p.part?4:3}" fill="${p.part?"var(--surface)":ac}" stroke="${ac}" stroke-width="${p.part?2:1.5}"/>`).join("");
+  host.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Monthly timeline">
+    <defs><linearGradient id="tg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${ac}" stop-opacity="0.22"/><stop offset="1" stop-color="${ac}" stop-opacity="0"/></linearGradient></defs>
+    ${svg}<path d="${area}" fill="url(#tg)"/><path d="${line}" fill="none" stroke="${ac}" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${dots}
+    <line id="cx" x1="0" y1="${m.t}" x2="0" y2="${m.t+ih}" stroke="${ac}" stroke-width="1" stroke-dasharray="3 3" opacity="0"/>
+    <rect x="${m.l}" y="${m.t}" width="${iw}" height="${ih}" fill="transparent" id="thit"/></svg>`;
+  leg.innerHTML=`<span class="it" style="color:var(--ink-3)">○ hollow marker = partial month</span>`;
+  const se=host.querySelector("svg"),cx=host.querySelector("#cx"),ht=host.querySelector("#thit");
+  ht.addEventListener("pointermove",e=>{const r=se.getBoundingClientRect(),sx=(e.clientX-r.left)*(W/r.width);let i=Math.round((sx-m.l)/(iw/Math.max(1,n-1)));i=Math.max(0,Math.min(n-1,i));const p=pts[i];
+    cx.setAttribute("x1",X(i));cx.setAttribute("x2",X(i));cx.setAttribute("opacity","1");
+    showTip(`<b>${MN[p.m]} 20${p.y.slice(2)}</b>${p.part?" (partial)":""}<br>${p.v} incident${p.v===1?"":"s"} reported`,e.clientX,e.clientY);});
+  ht.addEventListener("pointerleave",()=>{cx.setAttribute("opacity","0");hideTip();});
+}
+function updateTrendChrome(){
+  const yl=YEAR==="all"?"all years":YEAR, ytd=PERIOD==="ytd"?" · YTD ≤ Aug":"";
+  const subs={timeline:YEAR==="all"?`Continuous monthly counts, ${yl}${ytd}. First and last months are partial.`:`Monthly counts for ${YEAR}${ytd}. Hollow markers denote partial months.`,
+    yoy:`Each year overlaid across calendar months${ytd}.`+(YEAR!=="all"?` ${YEAR} emphasized.`:" Select a year to emphasize it."),
+    mom:`Change vs the previous month, ${yl}${ytd}. Upward bars = more incidents than the month before.`};
+  $("#trendTitle").textContent=MODE==="yoy"?"Year-over-Year by Month":MODE==="mom"?"Month-over-Month Change":"Incidents Reported per Month";
+  $("#trendSub").textContent=subs[MODE];
+  $("#trendCount").textContent=(MODE==="yoy"?"all years":yl)+(MODE==="mom"?" · Δ":"");
+}
+
+/* ===== orchestrate ===== */
+function renderAll(){
+  const recs=filtered();
+  renderKPIs(recs);renderCompare();renderWhatWhere(recs);renderAffil(recs);renderSeverity(recs);renderResponse(recs);renderInsights(recs);
+  updateTrendChrome();drawTrend();
+  $("#winVal").textContent=winText(recs);
+  const per=MONTH!=="all"?MONTH_NAMES[+MONTH]:(PERIOD==="ytd"?"YTD ≤ Aug 17":"full period");
+  $("#scopeNote").innerHTML=`${recs.length} reports · ${YEAR==="all"?"all years":YEAR} · ${per}`;
+  $("#glanceCount").textContent=`${recs.length} reports in view`;
+}
+
+$("#yearSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;YEAR=b.dataset.y;
+  document.querySelectorAll("#yearSeg button").forEach(x=>x.classList.toggle("on",x===b));renderAll();});
+$("#perSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;PERIOD=b.dataset.pp;
+  document.querySelectorAll("#perSeg button").forEach(x=>x.classList.toggle("on",x===b));renderAll();});
+$("#monthSel").addEventListener("change",e=>{MONTH=e.target.value;renderAll();});
+$("#cmpBtn").addEventListener("click",()=>{COMPARE=!COMPARE;const b=$("#cmpBtn");b.classList.toggle("on",COMPARE);b.setAttribute("aria-pressed",COMPARE);renderCompare();});
+$("#modeSeg").addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;MODE=b.dataset.m;
+  document.querySelectorAll("#modeSeg button").forEach(x=>x.classList.toggle("on",x===b));updateTrendChrome();drawTrend();});
+
+/* ===== PDF / Email ===== */
+function scopeLabel(){const per=MONTH!=="all"?MONTH_NAMES[+MONTH]:(PERIOD==="ytd"?"Year-to-date (through Aug 17)":"Full period");
+  return `${YEAR==="all"?"All years":YEAR} · ${per}`;}
+function summaryText(){
+  const recs=filtered(),t=recs.length||1;
+  const med=recs.filter(r=>r[2]==="Injury / Illness / Medical").length,severe=recs.filter(r=>r[7]==="S").length;
+  const c9=countYes(recs,9),c9b=answered(recs,9),tr=countYes(recs,10),minor=countYes(recs,13),ss=countYes(recs,12),pol=countYes(recs,11),polb=answered(recs,11);
+  const nat=tally(recs,2),loc=tally(recs,3);
+  const L=[];
+  L.push("FBCG SAFETY & SECURITY — INCIDENT SUMMARY");
+  L.push(scopeLabel()+"  |  "+winText(recs));
+  L.push("Reporting window: "+winText(recs));
+  L.push("");
+  L.push("KEY FIGURES");
+  L.push("- Total reports: "+recs.length);
+  L.push("- Medical / injury: "+med+" ("+pct1(med,t)+"%)");
+  L.push("- Severe injuries: "+severe);
+  L.push("- 911 called: "+c9+(c9b?" ("+Math.round(pct(c9,c9b))+"% of answered)":""));
+  L.push("- Hospital transports: "+tr);
+  L.push("- Minors involved: "+minor+" ("+pct1(minor,t)+"%)");
+  L.push("- Safety & Security notified: "+pct1(ss,t)+"%   Police notified: "+(polb?Math.round(pct(pol,polb)):0)+"% of answered");
+  L.push("");
+  L.push("TOP REPORT TYPES");
+  nat.slice(0,5).forEach(n=>L.push("- "+n[0]+": "+n[1]+" ("+pct1(n[1],t)+"%)"));
+  L.push("");
+  L.push("TOP LOCATIONS");
+  loc.slice(0,4).forEach(n=>L.push("- "+n[0]+": "+n[1]+" ("+pct1(n[1],t)+"%)"));
+  L.push("");
+  L.push("Figures are computed directly from the Safety & Security incident log (Smartsheet), pulled Aug 17, 2026.");
+  L.push("A formatted PDF of the full dashboard can be attached separately (Save PDF button).");
+  return L.join("\n");
+}
+$("#pdfBtn").addEventListener("click",()=>{$("#printScope").textContent=scopeLabel()+"  —  generated Aug 17, 2026";
+  setTimeout(()=>window.print(),60);});
+$("#emailBtn").addEventListener("click",()=>{
+  const subj="FBCG Safety & Security — Incident Summary ("+scopeLabel()+")";
+  const body=summaryText()+"\n\n";
+  const href="mailto:?subject="+encodeURIComponent(subj)+"&body="+encodeURIComponent(body);
+  window.location.href=href;});
+
+/* ===== password gate ===== */
+const PW_HASH="5585a7d96a4098b7325b9a88b2569702b4d289ad2f75323431b76a2a367e6951";
+(function(){const g=$("#gate");
+  async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("");}
+  let ok=false;try{ok=sessionStorage.getItem("fbcg-gate")==="1";}catch(e){}
+  if(ok)return;
+  document.body.classList.add("locked");g.hidden=false;
+  const f=$("#gateForm"),pw=$("#gatePw"),err=$("#gateErr");setTimeout(()=>pw.focus(),50);
+  f.addEventListener("submit",async e=>{e.preventDefault();const h=await sha(pw.value);
+    if(h===PW_HASH){try{sessionStorage.setItem("fbcg-gate","1");}catch(e){}g.hidden=true;document.body.classList.remove("locked");}
+    else{err.textContent="Incorrect password. Please try again.";pw.value="";pw.focus();
+      f.animate([{transform:"translateX(-6px)"},{transform:"translateX(6px)"},{transform:"translateX(0)"}],{duration:220});}});
+})();
+
+renderAll();
+let rt;addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(drawTrend,150);});
+</script>
